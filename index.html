@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#f4f4f6" media="(prefers-color-scheme: light)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=Duw4gqjVucuPSJkTezQmzBK0w5g_7e4fvPdQzpcXE_7gndc3-c47fJOEYYUFAuNXRFC8O6Bnrui6T6yqG5X2NBd6JxUvsYDk-HU0qBMtgCfQN8GAag2b7_WGPSgoStWayOppGIXgi7-zQ_s9bcSdbARc6UUsazahPdr5iSxF69GIVE5aVZOgj2MPjadg3Rf1jYO6yyNAbsbu4vTLiik2-2UBLZX6FV7PuM5kH0SmCfNelnDdB7dnh2RQr84hYwyoj3EqIJCoQZX7bRj4i_ooeKVpZMsuzj7A7TxnVpdwTig8MJ1iucbg55BUcnUcjU8G1rm8_OdtnVXxCSyV8WPf0g" charset="UTF-8"></script><script>
+  <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=m7lTJVGe-vPV2xx23-px_Zqlzx51q2_0Um5mdpfLtRgFHNF-Hy3or9oplq7_-R2fbqGgKVXvc000Dzp_s33kf09bf5xqpB1d-uO9osFb49iqfcotSfwF8_f73YPEVl-O4cktQnpORUYQxZUBkL5RJruEnjYHWqDCITCMGFVA1xgANkc4m7TaTWUQiRPCu5T2AdQp55roW1sH-WTAfwEmc3Fmxq_1ePayxPxKx7K_KVPaRicdQJvM1SCgDRaX4frxHG4VODDYHZk4fZaxpNajE-9FyuExhFkqRYI_CrgGEwYapF6sIU-LqqLMBjYND5q0pnKbo4YXE66hsvs89MrnOQ" charset="UTF-8"></script><script>
     (() => {
       const root = document.documentElement;
       const storedTheme = (() => {
@@ -425,128 +425,6 @@
     .philosophy-statement { margin-bottom: var(--space-2xl); }
     .philosophy-line { width: 60px; height: 1px; background: var(--fg-primary); margin-bottom: var(--space-xl); }
     
-
-    /* Filosofía móvil — scrub estilo Apple */
-    @media (max-width: 767px) {
-      .philosophy {
-        --philosophy-mobile-pin-distance: 1900px;
-        --philosophy-content-opacity: 1;
-        --philosophy-body-opacity: 0;
-        --philosophy-copy-y: 0px;
-        --philosophy-body-y: 14px;
-        min-height: calc(100svh + var(--philosophy-mobile-pin-distance));
-        border-top: 0;
-        border-bottom: 0;
-        overflow: clip;
-      }
-      .philosophy-pin {
-        isolation: isolate;
-        background: oklch(0% 0 0);
-      }
-      .philosophy-pin::before,
-      .philosophy-pin::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        pointer-events: none;
-      }
-      .philosophy-pin::before {
-        background:
-          linear-gradient(180deg, oklch(0% 0 0 / 0.82) 0%, oklch(0% 0 0 / 0.28) 23%, transparent 44%),
-          radial-gradient(circle at 50% 48%, transparent 0 42%, oklch(0% 0 0 / 0.32) 76%, oklch(0% 0 0 / 0.76) 100%);
-      }
-      .philosophy-pin::after {
-        background: linear-gradient(180deg, transparent 55%, oklch(0% 0 0 / 0.22) 74%, oklch(0% 0 0 / 0.88) 100%);
-      }
-      .philosophy-visual .label {
-        top: calc(76px + env(safe-area-inset-top));
-        left: max(22px, env(safe-area-inset-left));
-        z-index: 6;
-        font-size: 0.62rem;
-        letter-spacing: 0.145em;
-        color: oklch(98% 0 0 / 0.54);
-      }
-      .philosophy-sequence {
-        z-index: 1;
-        background: oklch(0% 0 0);
-        transform: translate3d(0, 0, 0);
-      }
-      .philosophy-sequence canvas {
-        width: 100%;
-        height: 100%;
-        transform: translate3d(0, 0, 0) scale(1.015);
-        transform-origin: center center;
-        will-change: transform;
-      }
-      .philosophy-content {
-        top: clamp(116px, 16svh, 154px);
-        bottom: auto;
-        left: max(22px, env(safe-area-inset-left));
-        right: max(22px, env(safe-area-inset-right));
-        z-index: 6;
-        max-width: 340px;
-        pointer-events: none;
-        opacity: var(--philosophy-content-opacity);
-        transform: translate3d(0, var(--philosophy-copy-y), 0);
-        transition: none;
-      }
-      .philosophy-statement {
-        max-width: 11.5ch;
-        margin-bottom: 18px;
-        font-size: clamp(1.85rem, 8.6vw, 2.45rem);
-        line-height: 0.96;
-        letter-spacing: -0.06em;
-        text-wrap: balance;
-        color: oklch(98% 0 0);
-        text-shadow: 0 18px 52px oklch(0% 0 0 / 0.66);
-      }
-      .philosophy-line {
-        width: 44px;
-        margin-bottom: 16px;
-        background: oklch(98% 0 0 / 0.56);
-      }
-      .philosophy-content .body-lg {
-        max-width: 31ch;
-        font-size: 0.92rem;
-        line-height: 1.48;
-        letter-spacing: -0.012em;
-        color: oklch(88% 0 0 / 0.78);
-        opacity: var(--philosophy-body-opacity);
-        transform: translate3d(0, var(--philosophy-body-y), 0);
-        text-shadow: 0 14px 44px oklch(0% 0 0 / 0.72);
-      }
-      [data-theme="light"] .philosophy,
-      [data-theme="light"] .philosophy-pin {
-        background: oklch(97.6% 0.003 260);
-      }
-      [data-theme="light"] .philosophy-pin::before {
-        background:
-          linear-gradient(180deg, oklch(97.6% 0.003 260 / 0.9) 0%, oklch(97.6% 0.003 260 / 0.48) 24%, transparent 46%),
-          radial-gradient(circle at 50% 48%, transparent 0 42%, oklch(97.6% 0.003 260 / 0.34) 76%, oklch(97.6% 0.003 260 / 0.88) 100%);
-      }
-      [data-theme="light"] .philosophy-pin::after {
-        background: linear-gradient(180deg, transparent 55%, oklch(97.6% 0.003 260 / 0.3) 74%, oklch(97.6% 0.003 260 / 0.92) 100%);
-      }
-      [data-theme="light"] .philosophy-sequence {
-        background: oklch(97.6% 0.003 260);
-      }
-      [data-theme="light"] .philosophy-statement {
-        color: oklch(10% 0 0);
-        text-shadow: 0 18px 48px oklch(100% 0 0 / 0.62);
-      }
-      [data-theme="light"] .philosophy-visual .label {
-        color: oklch(18% 0 0 / 0.54);
-      }
-      [data-theme="light"] .philosophy-line {
-        background: oklch(12% 0 0 / 0.46);
-      }
-      [data-theme="light"] .philosophy-content .body-lg {
-        color: oklch(28% 0 0 / 0.78);
-        text-shadow: 0 14px 44px oklch(100% 0 0 / 0.72);
-      }
-    }
-
     /* Servicios */
     .services-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-xl); padding-bottom: var(--space-lg); border-bottom: 1px solid var(--border-subtle); }
     @media (max-width: 768px) { .services-header { flex-direction: column; align-items: flex-start; gap: var(--space-lg); } }
@@ -1200,6 +1078,140 @@
       body.custom-cursor-ready * { cursor: auto !important; }
       .custom-cursor { display: none !important; }
     }
+
+
+    /* ==================== */
+    /* FIX MOBILE CARDS + WORK LOOP */
+    /* ==================== */
+    .work-card.is-mobile-work-clone { display: none; }
+
+    @media (max-width: 700px) {
+      .services-stack { overflow: hidden; }
+      .services-stage {
+        min-height: 424px;
+        padding-bottom: 58px;
+        perspective: 1000px;
+        overflow: hidden;
+        touch-action: pan-y;
+      }
+      .services-card-track {
+        position: relative;
+        inset: auto;
+        display: block;
+        height: 344px;
+        transform-style: preserve-3d;
+      }
+      .services-spotlight {
+        display: block;
+        left: 50%;
+        bottom: 76px;
+        width: 84%;
+        height: 150px;
+        opacity: 0.72;
+      }
+      .service-card {
+        position: absolute !important;
+        top: 0;
+        left: 50%;
+        bottom: auto;
+        width: min(86vw, 370px);
+        height: 330px;
+        min-height: 330px;
+        transform: translateX(-50%) translateY(0) scale(0.96);
+        opacity: var(--card-opacity);
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+          transform 620ms var(--ease-out-expo),
+          opacity 420ms ease,
+          visibility 420ms ease,
+          filter 420ms ease,
+          border-color 420ms ease,
+          box-shadow 420ms ease;
+      }
+      .service-card[hidden] {
+        display: block;
+      }
+      .service-card[aria-current="true"] {
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      .service-card-content { min-height: 330px; }
+      .service-card-top { top: 16px; left: 16px; right: 16px; }
+      .service-card-bottom { max-width: 30ch; }
+      .services-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        z-index: 8;
+      }
+      .services-arrow {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        background: oklch(100% 0 0 / 0.06);
+        backdrop-filter: blur(14px);
+      }
+      [data-theme="light"] .services-arrow {
+        background: oklch(0% 0 0 / 0.045);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .work-section .container { overflow: hidden; }
+      .work-sparkles { overflow: hidden; }
+      .work-proof-row {
+        animation: workLogoMarqueeMobile 18s linear infinite;
+      }
+      .work-layout {
+        display: flex;
+        align-items: stretch;
+        gap: var(--space-md);
+        width: max-content;
+        max-width: none;
+        animation: workCardsMarqueeMobile 30s linear infinite;
+        will-change: transform;
+      }
+      .work-layout:hover { animation-play-state: paused; }
+      .work-grid-secondary { display: contents; }
+      .work-card {
+        flex: 0 0 min(84vw, 370px);
+        width: min(84vw, 370px);
+      }
+      .work-card.is-mobile-work-clone { display: block; }
+      .work-featured { grid-row: auto; }
+      .work-featured .work-card-image,
+      .work-featured .work-card-image.has-preview,
+      .work-card-image { aspect-ratio: 16 / 11; }
+      .work-card-content { min-height: 174px; }
+      .work-card-cta {
+        opacity: 1;
+        transform: none;
+      }
+      @keyframes workLogoMarqueeMobile {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(-50%, 0, 0); }
+      }
+      @keyframes workCardsMarqueeMobile {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(calc(-50% - (var(--space-md) / 2)), 0, 0); }
+      }
+    }
+
+    @media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+      .work-layout,
+      .work-proof-row {
+        animation: none;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
   </style>
 </head>
 <body class="intro-active">
@@ -2092,6 +2104,7 @@
       if (!stage || !dotsRoot || !cards.length) return;
 
       const stackQuery = window.matchMedia('(min-width: 701px)');
+      const mobileServiceQuery = window.matchMedia('(max-width: 700px)');
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       let activeIndex = 0;
       let pointerStartX = null;
@@ -2121,6 +2134,10 @@
       function setActiveService(index) {
         activeIndex = wrapServiceIndex(index);
         layoutServices();
+      }
+
+      function isMobileServiceCarousel() {
+        return mobileServiceQuery.matches;
       }
 
       function isServiceControl(target) {
@@ -2163,7 +2180,9 @@
           card.style.zIndex = String(100 - abs);
 
           if (!isStack) {
-            card.style.transform = 'none';
+            card.style.visibility = isActive ? 'visible' : 'hidden';
+            card.style.pointerEvents = isActive ? 'auto' : 'none';
+            card.style.transform = `translateX(-50%) translateY(${isActive ? '0' : '12px'}) scale(${isActive ? '1' : '0.96'})`;
             card.style.setProperty('--card-opacity', isActive ? '1' : '0');
             return;
           }
@@ -2239,12 +2258,40 @@
           return;
         }
         if (isServiceControl(event.target)) return;
+        if (isMobileServiceCarousel()) {
+          setActiveService(activeIndex + 1);
+          return;
+        }
         navigateServiceFromPoint(event.clientX);
       });
 
       stackQuery.addEventListener('change', layoutServices);
+      mobileServiceQuery.addEventListener('change', layoutServices);
       window.addEventListener('resize', layoutServices);
       layoutServices();
+    })();
+
+
+    // Proyectos: carrusel infinito real en móvil con clones DOM para evitar brincos al terminar.
+    (() => {
+      const layout = document.querySelector('.work-layout');
+      if (!layout || layout.dataset.mobileLoopReady === 'true') return;
+
+      const originalCards = Array.from(layout.querySelectorAll('.work-card:not(.is-mobile-work-clone)'));
+      if (originalCards.length < 2) return;
+
+      originalCards.forEach(card => {
+        const clone = card.cloneNode(true);
+        clone.classList.add('is-mobile-work-clone');
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('tabindex', '-1');
+        clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(item => {
+          item.setAttribute('tabindex', '-1');
+        });
+        layout.appendChild(clone);
+      });
+
+      layout.dataset.mobileLoopReady = 'true';
     })();
 
     // Destellos de proyectos comprobados: adaptación vanilla de la idea de partículas de 21st.dev
@@ -2664,12 +2711,9 @@
 
         philosophyContext.clearRect(0, 0, width, height);
 
-        philosophyContext.imageSmoothingEnabled = true;
-        philosophyContext.imageSmoothingQuality = 'high';
-
         if (isMobilePhilosophySequence()) {
-          // Mobile: Apple-like full-bleed scrub. Fill the viewport to avoid letterboxing/jumpy edges.
-          const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight) * 1.01;
+          // Mobile frames are authored as final 9:16 compositions. Draw them as-is.
+          const scale = Math.min(width / img.naturalWidth, height / img.naturalHeight);
           const outputWidth = img.naturalWidth * scale;
           const outputHeight = img.naturalHeight * scale;
           const outputX = (width - outputWidth) / 2;
@@ -2744,7 +2788,7 @@
 
       function preloadNearbyPhilosophyFrames(index) {
         const safeIndex = Math.round(Math.max(0, Math.min(philosophyFrameCount - 1, index)));
-        const lead = philosophyScrollDirection >= 0 ? 96 : -96;
+        const lead = philosophyScrollDirection >= 0 ? 72 : -72;
         for (let offset = -8; offset <= 8; offset += 1) loadPhilosophyFrame(safeIndex + offset);
         if (isMobilePhilosophySequence()) {
           const visibleIndex = Math.round(Math.max(0, Math.min(philosophyFrameCount - 1, visiblePhilosophyFrame)));
@@ -2758,8 +2802,7 @@
 
       function trimMobilePhilosophyFrameCache(centerIndex) {
         if (!isMobilePhilosophySequence()) return;
-        // En móvil priorizamos suavidad estilo Apple: conservar frames ya cargados evita parpadeos al regresar.
-        const keepDistance = philosophyFrameCount;
+        const keepDistance = 120;
         for (let index = 0; index < philosophyFrames.length; index += 1) {
           const isAnchor = index === 0 || index === philosophyFrameCount - 1 || index % 40 === 0;
           if (isAnchor || Math.abs(index - centerIndex) <= keepDistance) continue;
@@ -2798,20 +2841,6 @@
           progress = clampPhilosophyProgress((start - rect.top) / (start - end || 1));
         }
 
-        if (isMobilePhilosophySequence()) {
-          const bodyProgress = clampPhilosophyProgress((progress - 0.50) / 0.26);
-          const lateFade = clampPhilosophyProgress((progress - 0.82) / 0.16);
-          philosophySection.style.setProperty('--philosophy-content-opacity', (1 - lateFade * 0.28).toFixed(3));
-          philosophySection.style.setProperty('--philosophy-body-opacity', bodyProgress.toFixed(3));
-          philosophySection.style.setProperty('--philosophy-copy-y', `${Math.round(-18 * clampPhilosophyProgress(progress / 0.72))}px`);
-          philosophySection.style.setProperty('--philosophy-body-y', `${Math.round(14 * (1 - bodyProgress))}px`);
-        } else {
-          philosophySection.style.removeProperty('--philosophy-content-opacity');
-          philosophySection.style.removeProperty('--philosophy-body-opacity');
-          philosophySection.style.removeProperty('--philosophy-copy-y');
-          philosophySection.style.removeProperty('--philosophy-body-y');
-        }
-
         const nextTargetFrame = progress * (philosophyFrameCount - 1);
         philosophyScrollDirection = nextTargetFrame >= targetPhilosophyFrame ? 1 : -1;
         targetPhilosophyFrame = nextTargetFrame;
@@ -2822,8 +2851,8 @@
       function animatePhilosophyFrame() {
         const remaining = targetPhilosophyFrame - visiblePhilosophyFrame;
         const mobileSequence = isMobilePhilosophySequence();
-        const maxStep = mobileSequence ? 9 : (philosophyPinQuery.matches ? 5 : 9);
-        const easedStep = remaining * (mobileSequence ? 0.18 : 0.16);
+        const maxStep = mobileSequence ? 18 : (philosophyPinQuery.matches ? 5 : 9);
+        const easedStep = remaining * (mobileSequence ? 0.34 : 0.16);
         const clampedStep = Math.max(-maxStep, Math.min(maxStep, easedStep));
 
         if (Math.abs(remaining) <= 0.05) {
@@ -2851,8 +2880,7 @@
           loadPhilosophyFrame(1, true);
           loadPhilosophyFrame(2, true);
           [4, 8, 16, 32, 64, 96, 128, 160, 200, 240, 280, 320, 369].forEach(index => loadPhilosophyFrame(index, index <= 16));
-          warmPhilosophyFrames(0, 160);
-          window.setTimeout(() => warmPhilosophyFrames(161, MOBILE_PHILOSOPHY_FRAME_COUNT - 1), 650);
+          warmPhilosophyFrames(0, 48);
           return;
         }
 
