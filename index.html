@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#f4f4f6" media="(prefers-color-scheme: light)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=m7lTJVGe-vPV2xx23-px_Zqlzx51q2_0Um5mdpfLtRgFHNF-Hy3or9oplq7_-R2fbqGgKVXvc000Dzp_s33kf09bf5xqpB1d-uO9osFb49iqfcotSfwF8_f73YPEVl-O4cktQnpORUYQxZUBkL5RJruEnjYHWqDCITCMGFVA1xgANkc4m7TaTWUQiRPCu5T2AdQp55roW1sH-WTAfwEmc3Fmxq_1ePayxPxKx7K_KVPaRicdQJvM1SCgDRaX4frxHG4VODDYHZk4fZaxpNajE-9FyuExhFkqRYI_CrgGEwYapF6sIU-LqqLMBjYND5q0pnKbo4YXE66hsvs89MrnOQ" charset="UTF-8"></script><script>
+  <script>
     (() => {
       const root = document.documentElement;
       const storedTheme = (() => {
@@ -1212,6 +1212,121 @@
       }
     }
 
+
+    /* ==================== */
+    /* FINAL MOBILE ALIGNMENT FIX */
+    /* ==================== */
+    @media (max-width: 700px) {
+      .services-stack {
+        overflow: hidden !important;
+      }
+      .services-stage {
+        min-height: 500px !important;
+        padding-bottom: 72px !important;
+        overflow: hidden !important;
+      }
+      .services-card-track {
+        position: relative !important;
+        height: 382px !important;
+        display: block !important;
+        overflow: visible !important;
+      }
+      .service-card {
+        left: 50% !important;
+        right: auto !important;
+        top: 0 !important;
+        width: calc(100vw - 44px) !important;
+        max-width: 392px !important;
+        height: 360px !important;
+        min-height: 360px !important;
+        margin: 0 !important;
+        transform: translate3d(-50%, 0, 0) scale(0.985) !important;
+        transform-origin: center center !important;
+      }
+      .service-card[aria-current="true"] {
+        transform: translate3d(-50%, 0, 0) scale(1) !important;
+      }
+      .service-card-content {
+        min-height: 360px !important;
+        padding: 18px !important;
+      }
+      .service-card-top {
+        top: 16px !important;
+        left: 16px !important;
+        right: 16px !important;
+        padding: 0.78rem 0.82rem !important;
+      }
+      .service-title {
+        max-width: calc(100vw - 150px) !important;
+        font-size: 1.02rem !important;
+        line-height: 1.08 !important;
+      }
+      .service-card-bottom {
+        max-width: 28ch !important;
+      }
+      .service-desc {
+        font-size: 0.9rem !important;
+        line-height: 1.42 !important;
+      }
+      .services-controls {
+        bottom: 8px !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .work-sparkles-inner {
+        overflow: hidden !important;
+      }
+      .work-proof-row {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0 !important;
+        width: max-content !important;
+        max-width: none !important;
+        margin: var(--space-xl) 0 0 !important;
+        padding-inline: 0 !important;
+        animation: workLogoMarqueeContinuous 20s linear infinite !important;
+        will-change: transform !important;
+      }
+      .work-proof-mark {
+        flex: 0 0 118px !important;
+        min-height: 46px !important;
+        margin-inline: 0.72rem !important;
+      }
+      .work-proof-logo {
+        width: min(118px, 100%) !important;
+        max-height: 42px !important;
+      }
+      @keyframes workLogoMarqueeContinuous {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(-50%, 0, 0); }
+      }
+
+      /* Proyectos de abajo: quedan estáticos otra vez. Solo se mueve la tira de logos de arriba. */
+      .work-layout {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: var(--space-lg) !important;
+        animation: none !important;
+        transform: none !important;
+        will-change: auto !important;
+      }
+      .work-grid-secondary {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: var(--space-lg) !important;
+      }
+      .work-card {
+        width: 100% !important;
+        flex: none !important;
+      }
+      .work-card.is-mobile-work-clone {
+        display: none !important;
+      }
+    }
+
   </style>
 </head>
 <body class="intro-active">
@@ -2272,26 +2387,32 @@
     })();
 
 
-    // Proyectos: carrusel infinito real en móvil con clones DOM para evitar brincos al terminar.
+    // Logos de proyectos: loop infinito real en móvil. No toca las tarjetas de proyectos de abajo.
     (() => {
-      const layout = document.querySelector('.work-layout');
-      if (!layout || layout.dataset.mobileLoopReady === 'true') return;
+      const row = document.querySelector('.work-proof-row');
+      if (!row || row.dataset.logoLoopReady === 'true') return;
 
-      const originalCards = Array.from(layout.querySelectorAll('.work-card:not(.is-mobile-work-clone)'));
-      if (originalCards.length < 2) return;
+      const originals = Array.from(row.querySelectorAll('.work-proof-mark:not(.is-clone)'));
+      if (!originals.length) return;
 
-      originalCards.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.classList.add('is-mobile-work-clone');
-        clone.setAttribute('aria-hidden', 'true');
-        clone.setAttribute('tabindex', '-1');
-        clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(item => {
-          item.setAttribute('tabindex', '-1');
+      row.querySelectorAll('.work-proof-mark.is-clone').forEach(clone => clone.remove());
+
+      // 4 grupos iguales en total: 1 original + 3 clones. Al animar -50%, la primera mitad
+      // coincide con la segunda mitad y el loop no deja huecos visuales.
+      for (let set = 0; set < 3; set += 1) {
+        originals.forEach(mark => {
+          const clone = mark.cloneNode(true);
+          clone.classList.add('is-clone');
+          clone.setAttribute('aria-hidden', 'true');
+          clone.querySelectorAll('img').forEach(img => {
+            img.setAttribute('alt', '');
+            img.setAttribute('aria-hidden', 'true');
+          });
+          row.appendChild(clone);
         });
-        layout.appendChild(clone);
-      });
+      }
 
-      layout.dataset.mobileLoopReady = 'true';
+      row.dataset.logoLoopReady = 'true';
     })();
 
     // Destellos de proyectos comprobados: adaptación vanilla de la idea de partículas de 21st.dev
