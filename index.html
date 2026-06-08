@@ -2127,21 +2127,36 @@
 
     if (siteIntro && siteIntroVideo instanceof HTMLVideoElement) {
       warmVisualAssets();
+      let introProgressTimer = 0;
+      const introStartedAt = () => siteIntroVideo.currentTime > 0.15 && !siteIntroVideo.paused;
+      const releaseIntroIfBlocked = () => {
+        if (!siteIntro || siteIntro.classList.contains('is-leaving')) return;
+        if (!introStartedAt()) closeSiteIntro();
+      };
+      const scheduleIntroProgressGuard = () => {
+        window.clearTimeout(introProgressTimer);
+        introProgressTimer = window.setTimeout(releaseIntroIfBlocked, 3200);
+      };
+
       siteIntroVideo.volume = 1;
-      siteIntroVideo.muted = false;
+      siteIntroVideo.muted = true;
+      siteIntroVideo.addEventListener('playing', () => window.clearTimeout(introProgressTimer), { once: true });
       siteIntroVideo.addEventListener('ended', closeSiteIntro, { once: true });
+      siteIntroVideo.addEventListener('error', closeSiteIntro, { once: true });
+      siteIntroVideo.addEventListener('stalled', scheduleIntroProgressGuard);
       siteIntro.addEventListener('click', closeSiteIntro);
       siteIntro.addEventListener('keydown', event => {
         if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') closeSiteIntro();
       });
       siteIntro.setAttribute('tabindex', '0');
+      window.setTimeout(closeSiteIntro, 9500);
       window.setTimeout(() => {
+        scheduleIntroProgressGuard();
         const attempt = siteIntroVideo.play();
         if (attempt?.catch) {
           attempt.catch(() => {
             siteIntro.classList.add('needs-gesture');
-            siteIntroVideo.muted = true;
-            siteIntroVideo.play().catch(() => {});
+            closeSiteIntro();
           });
         }
       }, 120);
@@ -2289,12 +2304,15 @@
         splineContainer?.classList.toggle('has-fallback', useFallback);
       };
       if (reducedMotionPreference?.matches) {
+
+=======
 =======
       const finishSpline = (useFallback = false) => {
         splineLoader?.classList.add('loaded');
         splineContainer?.classList.toggle('has-fallback', useFallback);
       };
       if (reducedMotionPreference?.matches || window.matchMedia('(max-width: 767px)').matches) {
+
 
         splineViewer?.remove();
         finishSpline(true);
@@ -2310,7 +2328,7 @@
       window.setTimeout(() => {
         if (!splineResolved) finishSpline(true);
       }, 9000);
-=======
+
       window.setTimeout(() => finishSpline(!splineViewer), 4200);
       window.setTimeout(() => finishSpline(true), 9000);
 
@@ -3201,6 +3219,12 @@
       { name: 'message', label: 'Mensaje' }
     ];
 
+
+    function fieldValue(form, fieldName) {
+      return form.elements[fieldName]?.value?.trim() || '';
+    }
+
+
     function fieldValue(form, fieldName) {
       return form.elements[fieldName]?.value?.trim() || '';
     }
@@ -3219,6 +3243,34 @@
         error.textContent = message;
         if (field) field.setAttribute('aria-describedby', error.id);
       }
+
+    }
+
+    function setFormStatus(message, type = '') {
+      if (!formStatus) return;
+      formStatus.textContent = message;
+      formStatus.classList.toggle('is-error', type === 'error');
+      formStatus.classList.toggle('is-success', type === 'success');
+    }
+
+    function validateContactForm(form) {
+      const errors = [];
+      requiredContactFields.forEach(({ name, label }) => {
+        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
+        setFieldError(form, name, message);
+        if (message) errors.push({ name, message });
+      });
+
+      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
+      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
+        const message = 'Ingresa un WhatsApp válido con lada.';
+        setFieldError(form, 'whatsapp', message);
+        errors.push({ name: 'whatsapp', message });
+      }
+      return errors;
+    }
+
+
     }
 
     function setFormStatus(message, type = '') {
