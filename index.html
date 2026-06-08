@@ -2281,9 +2281,10 @@
       const splineViewer = splineContainer?.querySelector('spline-viewer');
       const splineLoader = document.getElementById('spline-loader');
       let splineResolved = false;
+      const hideSplineLoader = () => splineLoader?.classList.add('loaded');
       const finishSpline = (useFallback = false) => {
         splineResolved = true;
-        splineLoader?.classList.add('loaded');
+        hideSplineLoader();
         splineContainer?.classList.toggle('has-fallback', useFallback);
       };
       if (reducedMotionPreference?.matches) {
@@ -2294,7 +2295,8 @@
       splineViewer?.addEventListener('load', () => finishSpline(false), { once: true });
       splineViewer?.addEventListener('error', () => finishSpline(true), { once: true });
       window.setTimeout(() => {
-        if (!splineResolved) finishSpline(!splineViewer);
+        if (!splineViewer) finishSpline(true);
+        else hideSplineLoader();
       }, 4200);
       window.setTimeout(() => {
         if (!splineResolved) finishSpline(true);

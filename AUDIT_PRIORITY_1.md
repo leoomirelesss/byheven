@@ -27,7 +27,7 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Se agregaron errores visibles por campo, estado global accesible y mensaje de éxito antes de abrir WhatsApp.
 - Se alineó el copy del formulario con el flujo real: validar datos y enviar por WhatsApp prellenado.
 - Se agregó compensación de header fijo con `scroll-padding-top`, `scroll-margin-top` y cálculo JS de offset.
-- Se agregó fallback visual premium para Spline y se evita cargar el visor en mobile/reduced motion.
+- Se agregó fallback visual premium para Spline y se evita cargar el visor solo cuando `prefers-reduced-motion` está activo.
 - Se cambió el video de intro a `preload="metadata"` y se redujo el preload inicial de imágenes pesadas.
 - La secuencia de filosofía inicia por `IntersectionObserver` cerca de la sección, no inmediatamente al cargar la página.
 - El cursor personalizado y timeline orbital reducen/pausan movimiento cuando `prefers-reduced-motion` está activo.
@@ -48,6 +48,14 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Smoke test con `python3 -m http.server 4173` y `curl -I http://127.0.0.1:4173/index.html` devolviendo HTTP 200.
 - Revisión de existencia de scripts: no hay `package.json`; no se ejecutó npm build/lint/test.
 
+
+
+## Resolución de conflictos contra `main`
+
+- Se revisaron `index.html` y `AUDIT_PRIORITY_1.md`; no quedaron marcadores `<<<<<<<`, `=======` ni `>>>>>>>`.
+- Se conservaron los ajustes publicados de `main` para hero mobile, composición del robot, tarjetas/servicios/proyectos y logo loop mobile.
+- Se conservaron los cambios del PR de Prioridad 1: menú mobile, anchors con offset, formulario validado, WhatsApp prellenado, fallback Spline, lazy loading de filosofía, reduced-motion y accesibilidad del footer/timeline.
+- Se ajustó el fallback Spline para que el loader pueda ocultarse temprano sin marcar el viewer como fallido; si el viewer no resuelve tras el timeout real, entonces aparece el fallback.
 
 ## Corrección posterior — Hero 3D mobile
 
