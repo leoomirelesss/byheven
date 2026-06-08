@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#f4f4f6" media="(prefers-color-scheme: light)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <script>
+  <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=AXZmIQ4L0YkAV2syy5ifAhCNaCHPNCDx10paKbM2vM9FcK--OQDOt8sA4WdSio68dJciv4YgD_HijRqW-Hk89ZxWqOv6pRni6GYRUuc7H1AqsqEh489hZ3PxvgtzRoQv5cKaz9n52yGrWGQ6Z79LWhX1CLviXPB9CnG4dBBMTV9dmYRU1-iR4on_p027G5Boz2DAsXK19xtcxWd8A_ylzCMrf0dnN3RA0liRXSGdKnlR3gUftYzhbFnDz4vfzyDx5lL3J07jvdq0VSRfY5fodkMeRrKdEgoq6tLGlINwHOBv7McoJ2AKo56vJEcIk9BzFQEhreoBOe5xaWT3fcIMxQ" charset="UTF-8"></script><script>
     (() => {
       const root = document.documentElement;
       const storedTheme = (() => {
@@ -201,14 +201,14 @@
     
     .main-content { position: relative; z-index: 10; background: var(--bg-deep); }
 
-    .site-intro { position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; background: oklch(0% 0 0); color: oklch(98% 0 0); overflow: hidden; cursor: pointer; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 700ms var(--ease-out-expo), visibility 700ms var(--ease-out-expo); }
-    .site-intro.is-ready { opacity: 1; visibility: visible; pointer-events: auto; }
+    .site-intro { position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; background: oklch(0% 0 0); color: oklch(98% 0 0); overflow: hidden; cursor: pointer; opacity: 1; visibility: visible; transition: opacity 700ms var(--ease-out-expo), visibility 700ms var(--ease-out-expo); }
     .site-intro.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
     .site-intro-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: oklch(0% 0 0); }
     .site-intro::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 52%, oklch(0% 0 0 / 0.38) 100%), linear-gradient(180deg, oklch(0% 0 0 / 0.12), transparent 34%, transparent 66%, oklch(0% 0 0 / 0.22)); }
     .site-intro-status { position: absolute; left: clamp(18px, 3vw, 44px); bottom: clamp(18px, 3vw, 44px); z-index: 2; font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.13em; text-transform: uppercase; color: oklch(100% 0 0 / 0.54); }
-    .site-intro.needs-gesture .site-intro-status::after { content: 'Audio bloqueado por navegador'; }
-    @media (max-width: 640px) { .site-intro-status { display: none; } }
+    .site-intro-status::before { content: 'Click / toca para entrar'; }
+    .site-intro.needs-gesture .site-intro-status::before { content: 'Toca para entrar'; }
+    @media (max-width: 640px) { .site-intro-status { left: 18px; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom)); display: block; text-align: center; } }
     
     /* Héroe */
     .hero { height: 100vh; min-height: 720px; padding: 0; position: relative; overflow: hidden; background: oklch(4% 0.005 260 / 0.96); }
@@ -1379,11 +1379,10 @@
 
   </style>
 </head>
-<body id="inicio">
 <body class="intro-active" id="inicio">
   <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
   <div class="site-intro" data-site-intro aria-label="Intro de by ˈHevən. Haz click para saltar.">
-    <video class="site-intro-video" data-site-intro-video autoplay playsinline preload="metadata">
+    <video class="site-intro-video" data-site-intro-video autoplay muted playsinline preload="metadata">
       <source src="assets/intro/mobile-intro.mov" media="(max-width: 767px)">
       <source src="mpy809jo-copy_3344B0C8-37C1-47F6-87A0-5B593B29CECF.mov">
     </video>
@@ -1442,7 +1441,7 @@
           <div class="spline-container">
             <div class="spline-fallback" aria-hidden="true"></div>
             <div class="spline-loader" id="spline-loader"><div class="loader-spinner"></div><p class="label">Cargando 3D</p></div>
-            <spline-viewer loading="lazy" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
+            <spline-viewer url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
             <div class="spline-watermark-cover" aria-hidden="true"></div>
           </div>
         </div>
@@ -2110,10 +2109,11 @@
       else window.setTimeout(() => loadNext(), 80);
     }
 
+    let introSafetyTimer = 0;
     function closeSiteIntro() {
       if (!siteIntro || siteIntro.classList.contains('is-leaving')) return;
+      window.clearTimeout(introSafetyTimer);
       siteIntro.classList.add('is-leaving');
-      siteIntro.classList.remove('is-ready');
       document.body.classList.remove('intro-active');
       const introCursor = document.querySelector('.custom-cursor');
       const introCursorLabel = introCursor?.querySelector('.custom-cursor-label');
@@ -2130,41 +2130,35 @@
 
     if (siteIntro && siteIntroVideo instanceof HTMLVideoElement) {
       warmVisualAssets();
-      siteIntro.classList.add('is-ready');
-      document.body.classList.add('intro-active');
-      let introProgressTimer = 0;
-      const introStartedAt = () => siteIntroVideo.currentTime > 0.15 && !siteIntroVideo.paused;
-      const releaseIntroIfBlocked = () => {
-        if (!siteIntro || siteIntro.classList.contains('is-leaving')) return;
-        if (!introStartedAt()) closeSiteIntro();
-      };
-      const scheduleIntroProgressGuard = () => {
-        window.clearTimeout(introProgressTimer);
-        introProgressTimer = window.setTimeout(releaseIntroIfBlocked, 3200);
-      };
-
-      siteIntroVideo.volume = 1;
       siteIntroVideo.muted = true;
-      siteIntroVideo.addEventListener('playing', () => window.clearTimeout(introProgressTimer), { once: true });
+      siteIntroVideo.defaultMuted = true;
+      siteIntroVideo.playsInline = true;
       siteIntroVideo.addEventListener('ended', closeSiteIntro, { once: true });
-      siteIntroVideo.addEventListener('error', closeSiteIntro, { once: true });
-      siteIntroVideo.addEventListener('stalled', scheduleIntroProgressGuard);
+      siteIntroVideo.addEventListener('error', () => window.setTimeout(closeSiteIntro, 450), { once: true });
+      siteIntroVideo.addEventListener('loadedmetadata', () => {
+        const duration = Number.isFinite(siteIntroVideo.duration) ? siteIntroVideo.duration : 0;
+        if (duration > 0 && duration < 20) {
+          window.clearTimeout(introSafetyTimer);
+          introSafetyTimer = window.setTimeout(closeSiteIntro, Math.min(9000, Math.max(3000, duration * 1000 + 900)));
+        }
+      }, { once: true });
       siteIntro.addEventListener('click', closeSiteIntro);
       siteIntro.addEventListener('keydown', event => {
         if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') closeSiteIntro();
       });
       siteIntro.setAttribute('tabindex', '0');
-      window.setTimeout(closeSiteIntro, 9500);
+      introSafetyTimer = window.setTimeout(closeSiteIntro, 6500);
       window.setTimeout(() => {
-        scheduleIntroProgressGuard();
         const attempt = siteIntroVideo.play();
         if (attempt?.catch) {
           attempt.catch(() => {
             siteIntro.classList.add('needs-gesture');
-            closeSiteIntro();
+            window.setTimeout(closeSiteIntro, 2200);
           });
         }
-      }, 120);
+      }, 80);
+    } else {
+      document.body.classList.remove('intro-active');
     }
     
 
@@ -2300,36 +2294,27 @@
       const splineContainer = document.querySelector('.spline-container');
       const splineViewer = splineContainer?.querySelector('spline-viewer');
       const splineLoader = document.getElementById('spline-loader');
-      let splineResolved = false;
-      const hideSplineLoader = () => splineLoader?.classList.add('loaded');
+      let splineFinished = false;
       const finishSpline = (useFallback = false) => {
-        splineResolved = true;
-        hideSplineLoader();
-        splineContainer?.classList.toggle('has-fallback', useFallback);
-      };
-      if (reducedMotionPreference?.matches) {
-      const finishSpline = (useFallback = false) => {
+        splineFinished = true;
         splineLoader?.classList.add('loaded');
-        splineContainer?.classList.toggle('has-fallback', useFallback);
+        splineContainer?.classList.toggle('has-fallback', Boolean(useFallback));
       };
-      if (reducedMotionPreference?.matches || window.matchMedia('(max-width: 767px)').matches) {
-
-        splineViewer?.remove();
+      if (!splineContainer) return;
+      if (!splineViewer) {
         finishSpline(true);
         return;
       }
-      splineViewer?.addEventListener('load', () => finishSpline(false), { once: true });
-      splineViewer?.addEventListener('error', () => finishSpline(true), { once: true });
+      splineViewer.addEventListener('load', () => finishSpline(false), { once: true });
+      splineViewer.addEventListener('error', () => finishSpline(true), { once: true });
+      // El robot 3D vive en el hero; no se elimina en mobile. Si Spline tarda, se quita el loader
+      // para que el sitio siga usable y solo se muestra fallback si el componente falla.
       window.setTimeout(() => {
-        if (!splineViewer) finishSpline(true);
-        else hideSplineLoader();
+        if (!splineFinished) splineLoader?.classList.add('loaded');
       }, 4200);
       window.setTimeout(() => {
-        if (!splineResolved) finishSpline(true);
+        if (!splineFinished) finishSpline(false);
       }, 9000);
-      window.setTimeout(() => finishSpline(!splineViewer), 4200);
-      window.setTimeout(() => finishSpline(true), 9000);
-
     })();
     
     // Animaciones de aparición
@@ -3221,11 +3206,6 @@
       return form.elements[fieldName]?.value?.trim() || '';
     }
 
-
-    function fieldValue(form, fieldName) {
-      return form.elements[fieldName]?.value?.trim() || '';
-    }
-
     function selectedOptionLabel(form, fieldName) {
       const field = form.elements[fieldName];
       return field?.options?.[field.selectedIndex]?.textContent?.trim() || fieldValue(form, fieldName);
@@ -3247,53 +3227,6 @@
       formStatus.textContent = message;
       formStatus.classList.toggle('is-error', type === 'error');
       formStatus.classList.toggle('is-success', type === 'success');
-    }
-
-    function validateContactForm(form) {
-      const errors = [];
-      requiredContactFields.forEach(({ name, label }) => {
-        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
-        setFieldError(form, name, message);
-        if (message) errors.push({ name, message });
-      });
-
-      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
-      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
-        const message = 'Ingresa un WhatsApp válido con lada.';
-        setFieldError(form, 'whatsapp', message);
-        errors.push({ name: 'whatsapp', message });
-      }
-      return errors;
-    }
-
-    }
-
-    function setFormStatus(message, type = '') {
-      if (!formStatus) return;
-      formStatus.textContent = message;
-      formStatus.classList.toggle('is-error', type === 'error');
-      formStatus.classList.toggle('is-success', type === 'success');
-
-    }
-
-    function validateContactForm(form) {
-      const errors = [];
-      requiredContactFields.forEach(({ name, label }) => {
-        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
-        setFieldError(form, name, message);
-        if (message) errors.push({ name, message });
-      });
-
-      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
-      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
-        const message = 'Ingresa un WhatsApp válido con lada.';
-        setFieldError(form, 'whatsapp', message);
-        errors.push({ name: 'whatsapp', message });
-      }
-      return errors;
-    }
-
-
     }
 
     function validateContactForm(form) {
