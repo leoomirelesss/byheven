@@ -27,7 +27,7 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Se agregaron errores visibles por campo, estado global accesible y mensaje de éxito antes de abrir WhatsApp.
 - Se alineó el copy del formulario con el flujo real: validar datos y enviar por WhatsApp prellenado.
 - Se agregó compensación de header fijo con `scroll-padding-top`, `scroll-margin-top` y cálculo JS de offset.
-- Se agregó fallback visual premium para Spline y se evita cargar el visor solo cuando `prefers-reduced-motion` está activo.
+
 - Se cambió el video de intro a `preload="metadata"` y se redujo el preload inicial de imágenes pesadas.
 - La secuencia de filosofía inicia por `IntersectionObserver` cerca de la sección, no inmediatamente al cargar la página.
 - El cursor personalizado y timeline orbital reducen/pausan movimiento cuando `prefers-reduced-motion` está activo.
@@ -47,8 +47,6 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Revisión estática de assets enlazados directamente.
 - Smoke test con `python3 -m http.server 4173` y `curl -I http://127.0.0.1:4173/index.html` devolviendo HTTP 200.
 - Revisión de existencia de scripts: no hay `package.json`; no se ejecutó npm build/lint/test.
-
-
 
 ## Resolución de conflictos contra `main`
 

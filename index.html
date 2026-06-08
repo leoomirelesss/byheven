@@ -1380,6 +1380,7 @@
   </style>
 </head>
 <body id="inicio">
+<body class="intro-active" id="inicio">
   <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
   <div class="site-intro" data-site-intro aria-label="Intro de by ˈHevən. Haz click para saltar.">
     <video class="site-intro-video" data-site-intro-video autoplay playsinline preload="metadata">
@@ -1441,7 +1442,7 @@
           <div class="spline-container">
             <div class="spline-fallback" aria-hidden="true"></div>
             <div class="spline-loader" id="spline-loader"><div class="loader-spinner"></div><p class="label">Cargando 3D</p></div>
-            <spline-viewer url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
+            <spline-viewer loading="lazy" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
             <div class="spline-watermark-cover" aria-hidden="true"></div>
           </div>
         </div>
@@ -2307,6 +2308,12 @@
         splineContainer?.classList.toggle('has-fallback', useFallback);
       };
       if (reducedMotionPreference?.matches) {
+      const finishSpline = (useFallback = false) => {
+        splineLoader?.classList.add('loaded');
+        splineContainer?.classList.toggle('has-fallback', useFallback);
+      };
+      if (reducedMotionPreference?.matches || window.matchMedia('(max-width: 767px)').matches) {
+
         splineViewer?.remove();
         finishSpline(true);
         return;
@@ -2320,6 +2327,9 @@
       window.setTimeout(() => {
         if (!splineResolved) finishSpline(true);
       }, 9000);
+      window.setTimeout(() => finishSpline(!splineViewer), 4200);
+      window.setTimeout(() => finishSpline(true), 9000);
+
     })();
     
     // Animaciones de aparición
@@ -3211,6 +3221,11 @@
       return form.elements[fieldName]?.value?.trim() || '';
     }
 
+
+    function fieldValue(form, fieldName) {
+      return form.elements[fieldName]?.value?.trim() || '';
+    }
+
     function selectedOptionLabel(form, fieldName) {
       const field = form.elements[fieldName];
       return field?.options?.[field.selectedIndex]?.textContent?.trim() || fieldValue(form, fieldName);
@@ -3232,6 +3247,53 @@
       formStatus.textContent = message;
       formStatus.classList.toggle('is-error', type === 'error');
       formStatus.classList.toggle('is-success', type === 'success');
+    }
+
+    function validateContactForm(form) {
+      const errors = [];
+      requiredContactFields.forEach(({ name, label }) => {
+        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
+        setFieldError(form, name, message);
+        if (message) errors.push({ name, message });
+      });
+
+      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
+      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
+        const message = 'Ingresa un WhatsApp válido con lada.';
+        setFieldError(form, 'whatsapp', message);
+        errors.push({ name: 'whatsapp', message });
+      }
+      return errors;
+    }
+
+    }
+
+    function setFormStatus(message, type = '') {
+      if (!formStatus) return;
+      formStatus.textContent = message;
+      formStatus.classList.toggle('is-error', type === 'error');
+      formStatus.classList.toggle('is-success', type === 'success');
+
+    }
+
+    function validateContactForm(form) {
+      const errors = [];
+      requiredContactFields.forEach(({ name, label }) => {
+        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
+        setFieldError(form, name, message);
+        if (message) errors.push({ name, message });
+      });
+
+      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
+      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
+        const message = 'Ingresa un WhatsApp válido con lada.';
+        setFieldError(form, 'whatsapp', message);
+        errors.push({ name: 'whatsapp', message });
+      }
+      return errors;
+    }
+
+
     }
 
     function validateContactForm(form) {
