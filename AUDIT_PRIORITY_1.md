@@ -77,6 +77,14 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Corrección: la intro queda oculta/no bloqueante por defecto y JS la activa solo cuando el controlador está listo; además conserva guardas por error, stall, rechazo de autoplay y timeout máximo.
 - Carga local validada: el sitio responde HTTP 200 servido como estático y el HTML/JS embebido no presenta errores de sintaxis.
 
+
+## Estado de resolución de conflictos del PR
+
+- Se verificó nuevamente `index.html` y `AUDIT_PRIORITY_1.md` en el branch actual: no hay marcadores de conflicto reales.
+- La versión conservada mantiene el hero mobile publicado de `main` con el robot Spline visible y la composición responsive existente.
+- También conserva los cambios del PR: menú mobile accesible, anchors con offset, validación del formulario, WhatsApp prellenado, fallback Spline bajo fallo/timeout, `prefers-reduced-motion`, LinkedIn deshabilitado y botones orbitales accesibles.
+- Nota operativa: desde este entorno no fue posible traer `main` ni empujar al remoto por bloqueo de red/túnel; el contenido local queda listo y validado para empujarse desde un entorno con acceso.
+
 ## Pendientes que requieren decisión del dueño
 
 - Confirmar URL real de LinkedIn para activar el enlace.
