@@ -27,7 +27,7 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Se agregaron errores visibles por campo, estado global accesible y mensaje de éxito antes de abrir WhatsApp.
 - Se alineó el copy del formulario con el flujo real: validar datos y enviar por WhatsApp prellenado.
 - Se agregó compensación de header fijo con `scroll-padding-top`, `scroll-margin-top` y cálculo JS de offset.
-- Se agregó fallback visual premium para Spline y se evita cargar el visor solo cuando `prefers-reduced-motion` está activo.
+
 - Se cambió el video de intro a `preload="metadata"` y se redujo el preload inicial de imágenes pesadas.
 - La secuencia de filosofía inicia por `IntersectionObserver` cerca de la sección, no inmediatamente al cargar la página.
 - El cursor personalizado y timeline orbital reducen/pausan movimiento cuando `prefers-reduced-motion` está activo.
@@ -50,6 +50,7 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 
 
 
+
 ## Resolución de conflictos contra `main`
 
 - Se revisaron `index.html` y `AUDIT_PRIORITY_1.md`; no quedaron marcadores `<<<<<<<`, `=======` ni `>>>>>>>`.
@@ -69,6 +70,8 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Problema: si el video de intro quedaba bloqueado por autoplay, red lenta o primer frame sin progreso, `body.intro-active` podía mantener el sitio sin scroll esperando el evento `ended`.
 - Corrección: la intro ahora arranca silenciada para maximizar compatibilidad de autoplay, libera el sitio ante error/stall/sin progreso y tiene un timeout máximo de seguridad.
 - Resultado: ningún asset pesado de intro puede dejar el sitio congelado; el usuario puede seguir navegando aunque el video falle.
+
+=======
 
 ## Pendientes que requieren decisión del dueño
 
