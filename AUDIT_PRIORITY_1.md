@@ -1,0 +1,76 @@
+# AUDIT_PRIORITY_1 — by ˈHevən
+
+Fecha: 2026-06-08  
+Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, responsive, animaciones, accesibilidad básica y experiencia mobile. No incluye SEO avanzado, nuevas páginas ni campañas.
+
+## Problemas encontrados
+
+- En tablet/mobile los enlaces principales se ocultaban bajo `max-width: 1024px` sin un menú alternativo.
+- Había enlaces internos muertos con `href="#"` que podían provocar errores al pasar por el listener global de anchors.
+- LinkedIn no tenía URL real y estaba implementado como enlace roto en footer y redes.
+- El formulario permitía enviar campos obligatorios vacíos y reemplazaba valores faltantes por “No especificado”.
+- El copy del formulario sugería un contacto automático, aunque el flujo real disponible es WhatsApp prellenado.
+- El scroll a anchors no compensaba el header fijo y podía dejar títulos debajo de la navegación.
+- El loader de Spline se ocultaba por timeout sin un fallback visual robusto si el visor fallaba o tardaba.
+- La intro y la secuencia de filosofía podían precargar recursos pesados demasiado pronto.
+- Algunas animaciones JS continuas no respetaban completamente `prefers-reduced-motion`.
+- Los nodos del timeline orbital y enlaces relacionados eran elementos no semánticos clickeables.
+- Las redes sociales tenían labels accesibles incompletos.
+
+## Cambios realizados
+
+- Se agregó menú mobile/tablet accesible con botón hamburguesa, `aria-expanded`, `aria-controls`, cierre por enlace y cierre con Escape.
+- Se cambió el logo para apuntar a `#inicio` y se robusteció el scroll interno contra anchors vacíos o selectores inválidos.
+- Se eliminó “Nosotros” del footer al no existir sección real.
+- LinkedIn quedó como elemento visual deshabilitado con `aria-disabled="true"` hasta contar con URL real.
+- Se implementó validación real del formulario para nombre, WhatsApp, negocio, giro, necesidad, prioridad y mensaje.
+- Se agregaron errores visibles por campo, estado global accesible y mensaje de éxito antes de abrir WhatsApp.
+- Se alineó el copy del formulario con el flujo real: validar datos y enviar por WhatsApp prellenado.
+- Se agregó compensación de header fijo con `scroll-padding-top`, `scroll-margin-top` y cálculo JS de offset.
+- Se agregó fallback visual premium para Spline y se evita cargar el visor en mobile/reduced motion.
+- Se cambió el video de intro a `preload="metadata"` y se redujo el preload inicial de imágenes pesadas.
+- La secuencia de filosofía inicia por `IntersectionObserver` cerca de la sección, no inmediatamente al cargar la página.
+- El cursor personalizado y timeline orbital reducen/pausan movimiento cuando `prefers-reduced-motion` está activo.
+- Los nodos orbitales y links relacionados ahora son botones reales con estados aria.
+- Se agregaron `aria-label` a Instagram y WhatsApp del footer.
+
+## Archivos modificados
+
+- `index.html`
+- `AUDIT_PRIORITY_1.md`
+
+## Pruebas realizadas
+
+- `node --check /tmp/byheven-inline.js` para validar sintaxis del JS embebido extraído desde `index.html`.
+- Parse HTML básico con `html.parser` de Python.
+- Revisión estática con `rg` para confirmar que no quedan `href="#"` activos.
+- Revisión estática de assets enlazados directamente.
+- Smoke test con `python3 -m http.server 4173` y `curl -I http://127.0.0.1:4173/index.html` devolviendo HTTP 200.
+- Revisión de existencia de scripts: no hay `package.json`; no se ejecutó npm build/lint/test.
+
+
+## Corrección posterior — Hero 3D mobile
+
+- Problema: el robot 3D dejó de aparecer en mobile porque la lógica de fallback removía el `<spline-viewer>` en `max-width: 767px` y dejaba el fallback como reemplazo permanente.
+- Corrección: el visor Spline vuelve a cargarse en mobile; el fallback se mantiene solo para `prefers-reduced-motion`, error del viewer o timeout real de carga.
+- Se retiró el `loading="lazy"` del custom element para evitar retrasos extra en el hero mobile.
+
+## Pendientes que requieren decisión del dueño
+
+- Confirmar URL real de LinkedIn para activar el enlace.
+- Confirmar si el Instagram actual es el definitivo de by ˈHevən.
+- Definir backend real o servicio transaccional si se quiere envío sin depender de WhatsApp.
+- Optimizar/reexportar videos de intro y secuencias de filosofía; no se borraron assets por instrucción explícita.
+- Hacer QA visual con navegador real en dispositivos físicos antes de campañas.
+
+## Notas de performance futura
+
+- Los videos de intro y secuencias de frames siguen siendo pesados; se redujo su impacto inicial sin eliminarlos.
+- Para Prioridad 2 conviene evaluar formatos web optimizados (`webm/mp4`), reducción de frames o reemplazo por video/sprites según calidad visual requerida.
+
+## Confirmación de alcance
+
+- No se hizo SEO avanzado.
+- No se crearon páginas nuevas.
+- No se agregaron dependencias.
+- No se inventó backend ni integración falsa.
