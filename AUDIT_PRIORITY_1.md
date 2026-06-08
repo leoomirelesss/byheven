@@ -48,6 +48,40 @@ Alcance: Prioridad 1 — funcionamiento, navegación, enlaces, formulario, respo
 - Smoke test con `python3 -m http.server 4173` y `curl -I http://127.0.0.1:4173/index.html` devolviendo HTTP 200.
 - Revisión de existencia de scripts: no hay `package.json`; no se ejecutó npm build/lint/test.
 
+## Resolución de conflictos contra `main`
+
+- Se revisaron `index.html` y `AUDIT_PRIORITY_1.md`; no quedaron marcadores `<<<<<<<`, `=======` ni `>>>>>>>`.
+- Se conservaron los ajustes publicados de `main` para hero mobile, composición del robot, tarjetas/servicios/proyectos y logo loop mobile.
+- Se conservaron los cambios del PR de Prioridad 1: menú mobile, anchors con offset, formulario validado, WhatsApp prellenado, fallback Spline, lazy loading de filosofía, reduced-motion y accesibilidad del footer/timeline.
+- Se ajustó el fallback Spline para que el loader pueda ocultarse temprano sin marcar el viewer como fallido; si el viewer no resuelve tras el timeout real, entonces aparece el fallback.
+
+## Corrección posterior — Hero 3D mobile
+
+- Problema: el robot 3D dejó de aparecer en mobile porque la lógica de fallback removía el `<spline-viewer>` en `max-width: 767px` y dejaba el fallback como reemplazo permanente.
+- Corrección: el visor Spline vuelve a cargarse en mobile; el fallback se mantiene solo para `prefers-reduced-motion`, error del viewer o timeout real de carga.
+- Se retiró el `loading="lazy"` del custom element para evitar retrasos extra en el hero mobile.
+
+
+## Corrección crítica — bloqueo de intro/carga inicial
+
+- Problema: si el video de intro quedaba bloqueado por autoplay, red lenta o primer frame sin progreso, `body.intro-active` podía mantener el sitio sin scroll esperando el evento `ended`.
+- Corrección: la intro ahora arranca silenciada para maximizar compatibilidad de autoplay, libera el sitio ante error/stall/sin progreso y tiene un timeout máximo de seguridad.
+- Resultado: ningún asset pesado de intro puede dejar el sitio congelado; el usuario puede seguir navegando aunque el video falle.
+
+
+## Hotfix crítico — intro no bloqueante por defecto
+
+- Problema adicional: la intro se renderizaba activa desde el HTML/CSS inicial (`body.intro-active` + overlay visible). Si cualquier asset, autoplay o JS fallaba antes de cerrar la intro, el sitio podía quedar visualmente congelado y sin scroll.
+- Corrección: la intro queda oculta/no bloqueante por defecto y JS la activa solo cuando el controlador está listo; además conserva guardas por error, stall, rechazo de autoplay y timeout máximo.
+- Carga local validada: el sitio responde HTTP 200 servido como estático y el HTML/JS embebido no presenta errores de sintaxis.
+
+
+## Estado de resolución de conflictos del PR
+
+- Se verificó nuevamente `index.html` y `AUDIT_PRIORITY_1.md` en el branch actual: no hay marcadores de conflicto reales.
+- La versión conservada mantiene el hero mobile publicado de `main` con el robot Spline visible y la composición responsive existente.
+- También conserva los cambios del PR: menú mobile accesible, anchors con offset, validación del formulario, WhatsApp prellenado, fallback Spline bajo fallo/timeout, `prefers-reduced-motion`, LinkedIn deshabilitado y botones orbitales accesibles.
+- Nota operativa: desde este entorno no fue posible traer `main` ni empujar al remoto por bloqueo de red/túnel; el contenido local queda listo y validado para empujarse desde un entorno con acceso.
 
 ## Pendientes que requieren decisión del dueño
 
