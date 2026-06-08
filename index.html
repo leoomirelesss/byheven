@@ -2280,19 +2280,40 @@
       const splineContainer = document.querySelector('.spline-container');
       const splineViewer = splineContainer?.querySelector('spline-viewer');
       const splineLoader = document.getElementById('spline-loader');
+
+      let splineResolved = false;
+      const hideSplineLoader = () => splineLoader?.classList.add('loaded');
+      const finishSpline = (useFallback = false) => {
+        splineResolved = true;
+        hideSplineLoader();
+        splineContainer?.classList.toggle('has-fallback', useFallback);
+      };
+      if (reducedMotionPreference?.matches) {
+=======
       const finishSpline = (useFallback = false) => {
         splineLoader?.classList.add('loaded');
         splineContainer?.classList.toggle('has-fallback', useFallback);
       };
       if (reducedMotionPreference?.matches || window.matchMedia('(max-width: 767px)').matches) {
+
         splineViewer?.remove();
         finishSpline(true);
         return;
       }
       splineViewer?.addEventListener('load', () => finishSpline(false), { once: true });
       splineViewer?.addEventListener('error', () => finishSpline(true), { once: true });
+
+      window.setTimeout(() => {
+        if (!splineViewer) finishSpline(true);
+        else hideSplineLoader();
+      }, 4200);
+      window.setTimeout(() => {
+        if (!splineResolved) finishSpline(true);
+      }, 9000);
+=======
       window.setTimeout(() => finishSpline(!splineViewer), 4200);
       window.setTimeout(() => finishSpline(true), 9000);
+
     })();
     
     // Animaciones de aparición
@@ -3205,6 +3226,27 @@
       formStatus.textContent = message;
       formStatus.classList.toggle('is-error', type === 'error');
       formStatus.classList.toggle('is-success', type === 'success');
+
+    }
+
+    function validateContactForm(form) {
+      const errors = [];
+      requiredContactFields.forEach(({ name, label }) => {
+        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
+        setFieldError(form, name, message);
+        if (message) errors.push({ name, message });
+      });
+
+      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
+      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
+        const message = 'Ingresa un WhatsApp válido con lada.';
+        setFieldError(form, 'whatsapp', message);
+        errors.push({ name: 'whatsapp', message });
+      }
+      return errors;
+    }
+
+=======
     }
 
     function validateContactForm(form) {
