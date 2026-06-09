@@ -25,19 +25,21 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="by ˈHevən | Diseño web, Shopify e IA en México">
   <meta name="twitter:description" content="Sitios web premium, Shopify, automatización con IA, branding y sistemas digitales para negocios modernos.">
-    (() => {
-      const root = document.documentElement;
-      const storedTheme = (() => {
-        try {
-          const value = localStorage.getItem('theme');
-          return value === 'light' || value === 'dark' ? value : null;
-        } catch {
-          return null;
-        }
-      })();
-      const systemTheme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      root.setAttribute('data-theme', storedTheme || systemTheme);
+    <script>
+  (() => {
+    const root = document.documentElement;
+    const storedTheme = (() => {
+      try {
+        const value = localStorage.getItem('theme');
+        return value === 'light' || value === 'dark' ? value : null;
+      } catch {
+        return null;
+      }
     })();
+    const systemTheme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    root.setAttribute('data-theme', storedTheme || systemTheme);
+  })();
+</script>
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
