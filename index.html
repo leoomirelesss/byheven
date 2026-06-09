@@ -25,7 +25,6 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="by ˈHevən | Diseño web, Shopify e IA en México">
   <meta name="twitter:description" content="Sitios web premium, Shopify, automatización con IA, branding y sistemas digitales para negocios modernos.">
-<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=ISbVnm0i4HvXan1YGr2t7LXRV0hzOIe2VFVYJHe2EyuJNIvbhsTM3DAiFarwmlLmheg2Rs6ba-qXEYEf7xl09rwPdQg8oNbspCWvKhbNBprW9NIdlXTPpEMDIMmKgxKuAZpQoD9RBqsW2iUOvnc_FDj9ltyu8ur5A7ElY0WNkVQLuOCWxLgpb-M6IbBlzTLCLT1_wOKfH0hRq-jzh7MDaZi3HwE2Xx9hyjGIxKtsjY4yB-zOtuMHFIFtHDihQzccZI4WOXqnVHlQjSia9mvTA2Mn2AMBcbd1QTPC_oRYi1IK3tiyLB1EiEPG9UiV64s0gR6hVX0Ye61iCsvXgf0Feg" charset="UTF-8"></script><script>
     (() => {
       const root = document.documentElement;
       const storedTheme = (() => {
@@ -517,6 +516,8 @@
     .service-card-bottom { display: grid; gap: var(--space-sm); max-width: 36ch; }
     .service-desc { font-size: 0.98rem; color: oklch(93% 0 0 / 0.78); line-height: 1.45; text-shadow: 0 1px 18px oklch(0% 0 0 / 0.5); }
     .service-points { display: none; }
+    .service-detail-link { width: fit-content; color: oklch(98% 0 0); font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid oklch(98% 0 0 / 0.72); padding-bottom: 0.2rem; }
+    .service-detail-link:hover { border-color: oklch(98% 0 0); }
     .services-controls { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: var(--space-lg); }
     .services-arrow { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid var(--border-subtle); background: transparent; color: var(--fg-primary); cursor: pointer; transition: background 240ms ease, border-color 240ms ease, transform 240ms ease; }
     .services-arrow:hover { background: var(--bg-hover); border-color: var(--border-medium); transform: translateY(-1px); }
@@ -720,7 +721,7 @@
     .orbital-node.active .orbital-node-label { color: var(--fg-primary); transform: translateX(-50%) scale(1.1); }
     
     /* Tarjeta expandida */
-    .orbital-card { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 320px; background: var(--bg-elevated); border: 1px solid var(--border-medium); padding: var(--space-lg); z-index: 100; opacity: 0; visibility: hidden; transition: all 0.4s var(--ease-out-expo); }
+    .orbital-card { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 340px; background: oklch(4% 0.005 260 / 0.9); border: 1px solid oklch(100% 0 0 / 0.18); padding: var(--space-lg); z-index: 120; opacity: 0; visibility: hidden; transition: all 0.4s var(--ease-out-expo); pointer-events: none; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 26px 80px oklch(0% 0 0 / 0.42); }
     .orbital-card.visible { opacity: 1; visibility: visible; }
     .orbital-card::before { content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 1px; height: 20px; background: var(--border-medium); }
     .orbital-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); }
@@ -730,7 +731,7 @@
     .orbital-card-badge.pending { background: var(--bg-secondary); color: var(--fg-muted); }
     .orbital-card-date { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--fg-dim); }
     .orbital-card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--fg-primary); }
-    .orbital-card-content { font-size: 0.875rem; color: var(--fg-secondary); line-height: 1.6; margin-bottom: var(--space-md); }
+    .orbital-card-content { font-size: 0.9375rem; color: oklch(90% 0.004 260); line-height: 1.65; margin-bottom: var(--space-md); text-shadow: 0 1px 14px oklch(0% 0 0 / 0.78); }
     .orbital-card-progress { border-top: 1px solid var(--border-subtle); padding-top: var(--space-md); }
     .orbital-card-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs); font-size: 0.75rem; }
     .orbital-card-progress-label { color: var(--fg-muted); display: flex; align-items: center; gap: var(--space-xs); }
@@ -740,7 +741,7 @@
     .orbital-card-related { border-top: 1px solid var(--border-subtle); padding-top: var(--space-md); margin-top: var(--space-md); }
     .orbital-card-related-title { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: var(--space-sm); }
     .orbital-card-related-links { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
-    .orbital-card-related-link { font-size: 0.75rem; padding: var(--space-xs) var(--space-sm); border: 1px solid var(--border-subtle); color: var(--fg-secondary); cursor: pointer; transition: all 0.3s ease; }
+    .orbital-card-related-link { font-size: 0.75rem; padding: var(--space-xs) var(--space-sm); border: 1px solid var(--border-subtle); color: var(--fg-secondary); cursor: pointer; transition: all 0.3s ease; pointer-events: auto; }
     .orbital-card-related-link:hover { border-color: var(--fg-primary); color: var(--fg-primary); }
     [data-theme="light"] .process-orbital { background: var(--bg-primary); }
     [data-theme="light"] .orbital-center { background: radial-gradient(circle at 34% 28%, oklch(100% 0 0), oklch(74% 0 0) 38%, oklch(18% 0 0) 100%); box-shadow: 0 18px 70px oklch(0% 0 0 / 0.16); }
@@ -1576,9 +1577,10 @@
                       <p class="service-desc">Sitios de alto impacto para que tu negocio se vea grande, venda mejor y sea fácil de entender.</p>
                       <ul class="service-points">
                         <li>Página de aterrizaje</li>
-                        <li>SEO base</li>
+                       <li>SEO base</li>
                         <li>Conversión</li>
                       </ul>
+                      <a class="service-detail-link" href="/diseno-web-torreon/" aria-label="Ver página de diseño web en Torreón">Ver diseño web en Torreón</a>
                     </div>
                   </div>
                 </div>
@@ -3497,6 +3499,7 @@
         const nodeIndex = processData.findIndex(p => p.id === id);
         const targetAngle = (nodeIndex / processData.length) * 360;
         rotationAngle = 270 - targetAngle;
+        updateNodePositions();
       }
     }
     
@@ -3525,8 +3528,8 @@
       if (autoRotate && !reducedMotionPreference?.matches) {
         rotationAngle = (rotationAngle + 0.2) % 360;
         updateNodePositions();
-        requestAnimationFrame(animate);
       }
+      requestAnimationFrame(animate);
     }
     updateNodePositions();
     if (!reducedMotionPreference?.matches) requestAnimationFrame(animate);
