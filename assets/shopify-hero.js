@@ -37,14 +37,8 @@
   const device = scene?.querySelector('.flow-phone-position');
   if (!story || !scene || !device) return;
   const slides = [...scene.querySelectorAll('[data-phase]')];
-  const phoneTitle = scene.querySelector('.flow-phone-title');
-  const phoneCaption = scene.querySelector('.flow-phone-caption');
-  const rows = [...scene.querySelectorAll('.flow-phone-row')];
-  const screens = [
-    {title: ['Todo en', 'su lugar.', 'Todo fluye.'], caption: 'Tu operación, con atención.', rows: [['Catálogo & colecciones', 'Productos · Precios · Organización'], ['Promociones & campañas', 'Descuentos · Actualizaciones'], ['Pedidos & seguimiento', 'Operación · Reportes']]},
-    {title: ['Catálogo al día.', 'Pedidos', 'con orden.'], caption: 'Lo cotidiano también importa.', rows: [['Productos actualizados', 'Fichas · Colecciones · Precios'], ['Promociones listas', 'Descuentos · Campañas'], ['Seguimiento de pedidos', 'Operación · Atención']]},
-    {title: ['Entiende.', 'Decide.', 'Avanza.'], caption: 'Tu tienda, con dirección.', rows: [['Reportes de operación', 'Información para decidir'], ['Mejoras de tu tienda', 'Prioridades · Seguimiento'], ['Tu siguiente paso', 'Web · Automatización']]}
-  ];
+  const phoneImage = scene.querySelector('.flow-screen-image');
+  const screenNames = ['home', 'collection', 'product'];
   let active = -1, frame = 0, start = 0, distance = 1;
   let pointerX = 0, pointerY = 0;
   const clamp = n => Math.max(0, Math.min(1, n));
@@ -53,10 +47,7 @@
   const setScreen = index => {
     if (index === active) return;
     active = index;
-    const screen = screens[index];
-    phoneTitle.replaceChildren(...screen.title.flatMap((line, i) => i ? [document.createElement('br'), document.createTextNode(line)] : [document.createTextNode(line)]));
-    phoneCaption.textContent = screen.caption;
-    rows.forEach((row,i) => { row.querySelector('span').textContent = screen.rows[i][0]; row.querySelector('small').textContent = screen.rows[i][1]; });
+    if (phoneImage) phoneImage.src = `assets/phone/screen-${screenNames[index]}.webp`;
   };
   const render = () => {
     frame = 0;
@@ -86,12 +77,15 @@
     ];
     const from = keys[Math.min(1, Math.floor(progress))], to = keys[Math.min(2, Math.floor(progress) + 1)];
     const t = smooth(progress - Math.min(1, Math.floor(progress)));
+    const pose = {index, progress, px:pointerX, py:pointerY};
     for (const key of ['left','top','ry','rz','rx','scale']) {
       const value = mix(from[key],to[key],t);
+      pose[key] = value;
       scene.style.setProperty(`--phone-${key}`, `${value}${['left','top'].includes(key) ? '%' : ['ry','rz','rx'].includes(key) ? 'deg' : ''}`);
     }
     device.style.setProperty('--scene-x', `${pointerX}px`);
     device.style.setProperty('--scene-y', `${pointerY}px`);
+    window.dispatchEvent(new CustomEvent('flow:pose', {detail:pose}));
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(render); };
   const measure = () => {
@@ -104,6 +98,7 @@
       pointerX = pointerY = 0;
       device.style.setProperty('--scene-x','0px'); device.style.setProperty('--scene-y','0px');
       setScreen(0);
+      window.dispatchEvent(new CustomEvent('flow:pose', {detail:{index:0,progress:0,left:scene.clientWidth<=700 ? 51 : 43,top:33,rx:0,ry:-24,rz:15,scale:1,px:0,py:0}}));
     } else schedule();
   };
   scene.addEventListener('pointermove', event => {
@@ -117,5 +112,6 @@
   window.addEventListener('scroll', schedule, {passive:true});
   window.addEventListener('resize', measure, {passive:true});
   motion.addEventListener('change', measure);
+  window.addEventListener('flow:ready', measure);
   measure();
 })();

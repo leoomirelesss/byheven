@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+import * as T from 'three';
+import validator from 'gltf-validator';
+import {createPhone} from './model.mjs';
+
+const bytes=await readFile(new URL('../../assets/phone/heven-phone.glb',import.meta.url));
+const result=await validator.validateBytes(new Uint8Array(bytes));
+assert.equal(result.issues.numErrors,0,JSON.stringify(result.issues.messages));
+const model=createPhone(), box=new T.Box3().setFromObject(model), size=box.getSize(new T.Vector3());
+assert(size.x>1.97 && size.x<2.2 && size.y>4.2 && size.y<4.3 && size.z>.35 && size.z<.5);
+for(const name of ['Display','TitaniumFrame','BackGlass','CameraIsland','USBPort','Power','VolumeUp','LensGlass1','LensGlass2','LensGlass3']) assert(model.getObjectByName(name),name);
+const screen=model.getObjectByName('Display');
+assert(screen.material.isMeshBasicMaterial);
+for(const value of screen.geometry.attributes.uv.array) assert(value>=-1e-6 && value<=1.000001,'Screen UV outside bounds');
+let triangles=0;
+model.traverse(mesh=> {if(mesh.geometry) triangles+=(mesh.geometry.index?.count || mesh.geometry.attributes.position.count)/3;});
+assert(triangles<20000);
+
+// Exercise the real scroll controller: emitted 3D poses, reverse, fallback and reduced motion.
+const code=await readFile(new URL('../../assets/shopify-hero.js',import.meta.url),'utf8');
+const listeners={}, events=[], queued=[];
+const motion={matches:false,addEventListener:(type,fn)=>listeners.motion=fn};
+const style=()=>({setProperty(){},removeProperty(){}});
+const slides=Array.from({length:3},()=>({style:style(),classList:{toggle(){}},setAttribute(){},removeAttribute(){}}));
+const image={src:''},device={style:style()};
+const scene={clientWidth:1363,offsetHeight:936,style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
+const win={scrollY:0,matchMedia:query=>query.includes('reduced')?motion:{matches:true},addEventListener:(type,fn)=>listeners[type]=fn,dispatchEvent:event=>{events.push(event.detail);listeners[event.type]?.(event);}};
+const story={offsetHeight:2808,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
+const doc={querySelector:selector=>selector==='[data-flow-story]'?story:null,getElementById:()=>null};
+vm.runInNewContext(code,{window:win,document:doc,requestAnimationFrame:fn=>{queued.push(fn);return queued.length},CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});
+const flush=()=>{while(queued.length)queued.shift()();};
+const at=y=>{win.scrollY=y;listeners.scroll();flush();return events.at(-1);};
+flush();
+assert.equal(events.at(-1).index,0);assert(image.src.endsWith('screen-home.webp'));
+const middle=at(936);assert.equal(middle.index,1);assert.equal(middle.ry,-66);assert(image.src.endsWith('screen-collection.webp'));
+const end=at(1872);assert.equal(end.index,2);assert.equal(end.ry,-8);assert(image.src.endsWith('screen-product.webp'));
+assert.deepEqual(at(936),middle,'Scroll must reverse to the identical pose');
+assert.equal(at(-500).progress,0);assert.equal(at(99999).progress,2);
+scene.clientWidth=390;const mobile=at(936);assert.equal(mobile.ry,-64);assert.equal(mobile.left,57);
+motion.matches=true;listeners.motion();assert.equal(events.at(-1).index,0);assert(slides.every(slide=>slide.inert===false));
+const staticCount=events.length;at(1400);assert.equal(events.length,staticCount,'Reduced motion must not animate');
+console.log(JSON.stringify({glbBytes:bytes.length,triangles,errors:result.issues.numErrors,warnings:result.issues.numWarnings,checks:'Geometry, glTF, UVs, screen sequence, reverse, mobile poses, reduced motion passed.'},null,2));
