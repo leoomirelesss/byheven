@@ -1485,89 +1485,66 @@
   }
 }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/shopify-hero.css">
+  <script src="assets/shopify-hero.js" defer></script>
 </head>
 <body id="inicio">
   <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
-  <nav class="nav growth-nav" id="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a href="#inicio" class="nav-logo" aria-label="Ir al inicio"><span class="nav-logo-mark">'H</span> by ˈHevən.</a>
-        <ul class="nav-links">
-          <li><a href="#work">Proyectos</a></li>
-          <li><a href="#services">Servicios</a></li>
-          <li><a href="#process">Cómo trabajamos</a></li>
-          <li><a href="#contact">Contacto</a></li>
-        </ul>
-        <div class="nav-actions">
-          <button class="theme-toggle" aria-label="Cambiar tema">
-            <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-          <button class="mobile-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel">
-            <span></span><span></span><span></span>
-          </button>
-          <a href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." class="btn btn-primary" target="_blank" rel="noopener noreferrer">Hablemos de Shopify</a>
-        </div>
-      </div>
-    </div>
+  <nav class="cinema-nav" id="nav" aria-label="Navegación principal">
+    <button class="mobile-menu-toggle cinema-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel"><span></span><span></span></button>
+    <a class="cinema-nav-mark" href="#inicio" aria-label="by Heven, inicio">ˈH</a>
+    <a class="cinema-nav-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos ↗</a>
   </nav>
-  <div class="mobile-menu-panel" id="mobile-menu-panel" aria-hidden="true">
-    <a href="#work">Proyectos</a>
+  <div class="mobile-menu-panel cinema-menu-panel" id="mobile-menu-panel" aria-label="Menú de by Heven" aria-hidden="true" inert>
+    <p>by ˈHevən / Digital commerce</p>
+    <a href="#inicio">Inicio</a>
     <a href="#services">Servicios</a>
+    <a href="#work">Proyectos</a>
     <a href="#process">Cómo trabajamos</a>
-    <a href="#contact">Contacto</a>
+    <a href="#contact">Hablemos</a>
   </div>
-  <a href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." class="btn btn-primary mobile-floating-cta" target="_blank" rel="noopener noreferrer" aria-label="Consultar administración de Shopify por WhatsApp">Hablemos</a>
 
   <main class="main-content">
-    <!-- Portada: administración de Shopify -->
-    <section class="growth-hero" aria-labelledby="growth-title">
-      <div class="growth-inner">
-        <div class="growth-layout">
-          <div class="growth-copy">
-            <p class="growth-eyebrow">Administración de Shopify · by ˈHevən</p>
-            <h1 class="growth-title" id="growth-title">Tu Shopify.<br><span>En buenas manos.</span></h1>
-            <p class="growth-description"><strong>Nos encargamos del día a día de tu tienda.</strong> Catálogo, promociones y seguimiento de pedidos, con la atención que tu negocio necesita.</p>
-            <div class="growth-actions">
-              <a class="growth-primary" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-              <a class="growth-secondary" href="#work">Ver nuestro trabajo ↗</a>
+    <!-- Portada editorial: administración de Shopify -->
+    <section class="flow-hero" aria-labelledby="flow-title" data-flow-scene>
+      <div class="flow-light" aria-hidden="true"></div>
+      <a class="flow-brand" href="#inicio" aria-label="by Heven, inicio">by ˈHevən.</a>
+      <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">bajo<span class="flow-asterisk" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M44 0h12l-1 35 29-18 7 12-30 18 34 6-3 14-34-8 14 32-13 6-14-33-18 29-12-8 20-29-35-1 1-14 35 3-21-28 11-8 20 29Z"/></svg></span>control</span></h1>
+      <div class="flow-description">
+        <p class="flow-service-label">Administración de Shopify</p>
+        <p>Catálogo, promociones y pedidos.<br>Nos encargamos del día a día de tu tienda.<br>Tú enfócate en lo que viene.</p>
+        <div class="flow-actions">
+          <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda</a>
+          <a class="flow-icon-link" href="#work" aria-label="Ver proyectos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/></svg></a>
+          <a class="flow-icon-link" href="#services" aria-label="Explorar servicios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16 M6 14l6 6 6-6"/></svg></a>
+        </div>
+        <p class="flow-smallprint">* El alcance se adapta a tu operación.</p>
+      </div>
+      <div class="flow-scene" role="img" aria-label="Concepto visual de un teléfono con catálogo, promociones y pedidos. Ilustración del servicio, no una aplicación conectada a una tienda.">
+        <div class="flow-phone-position" aria-hidden="true">
+          <div class="flow-phone">
+            <div class="flow-screen">
+              <div class="flow-island"></div>
+              <div class="flow-phone-status"><span>9:41</span><svg viewBox="0 0 34 12"><path d="M1 10V8 M5 10V6 M9 10V3 M14 4q5-5 10 0 M17 7q2-2 4 0"/><rect x="26" y="3" width="7" height="7" rx="1"/></svg></div>
+              <div class="flow-phone-greeting">Hola, tu tienda.<small>by ˈHevən / Commerce</small></div>
+              <span class="flow-phone-stamp">ˈH</span>
+              <p class="flow-phone-title">Todo en<br>su lugar.<br>Todo fluye.</p>
+              <p class="flow-phone-caption">Tu operación, con atención.</p>
+              <div class="flow-phone-tabs"><span>Shopify</span><span><i></i>Catálogo</span><span><i></i>Pedidos</span></div>
+              <div class="flow-phone-row"><span>Catálogo & colecciones</span><small>Productos · Precios · Organización</small></div>
+              <div class="flow-phone-row"><span>Promociones & campañas</span><small>Descuentos · Actualizaciones</small></div>
+              <div class="flow-phone-row"><span>Pedidos & seguimiento</span><small>Operación · Reportes</small></div>
+              <div class="flow-phone-home"></div>
             </div>
-            <p class="growth-note">Cuéntanos qué necesitas. Definimos el alcance contigo.</p>
-          </div>
-          <div class="growth-visual" role="img" aria-label="Vista ilustrativa del servicio de administración de Shopify: catálogo, promociones y seguimiento de pedidos. No representa un panel conectado a una tienda.">
-            <div class="growth-orbit" aria-hidden="true"></div>
-            <div class="growth-console" aria-hidden="true">
-              <div class="growth-console-top">
-                <span class="growth-console-brand"><span class="growth-mark">ˈH</span> Tu tienda, al día.</span>
-                <small>Shopify management</small>
-              </div>
-              <div class="growth-console-body">
-                <p class="growth-console-label">Menos pendientes. Más enfoque.</p>
-                <h2 class="growth-console-heading">Detrás de tu tienda,<br>estamos nosotros.</h2>
-                <div class="growth-task">
-                  <span class="growth-task-icon"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z M4 7.5l8 4.5 8-4.5 M12 12v9"/></svg></span>
-                  <div><p class="growth-task-title">Catálogo en orden</p><p class="growth-task-description">Productos, precios y colecciones</p></div><span class="growth-task-arrow">↗</span>
-                </div>
-                <div class="growth-task">
-                  <span class="growth-task-icon"><svg viewBox="0 0 24 24"><path d="m4 10 14-5v14L4 14v-4Z M8 15l1 6h3l-1-5 M21 9v6"/></svg></span>
-                  <div><p class="growth-task-title">Promociones listas</p><p class="growth-task-description">Descuentos y actualizaciones de la tienda</p></div><span class="growth-task-arrow">↗</span>
-                </div>
-                <div class="growth-task">
-                  <span class="growth-task-icon"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2v4 M15 2v4 M8 11h8 M8 15h5"/></svg></span>
-                  <div><p class="growth-task-title">Operación con seguimiento</p><p class="growth-task-description">Pedidos y reportes para tomar decisiones</p></div><span class="growth-task-arrow">↗</span>
-                </div>
-              </div>
-              <div class="growth-console-footer"><span>by ˈHevən / Commerce</span><span>Vista ilustrativa del servicio</span></div>
-            </div>
-            <div class="growth-float" aria-hidden="true"><span>Tú llevas el negocio.</span>Nosotros, tu Shopify.</div>
           </div>
         </div>
-        <div class="growth-proof">
-          <span>Experiencia aplicada en</span><a href="#work">EMYASA ↗</a>
-          <span class="growth-support">También creamos sitios web y automatizaciones a medida.</span>
+        <div class="flow-companion" aria-hidden="true">
+          <p class="flow-companion-copy">Un aliado detrás<br>de tu operación.<span>Experiencia en EMYASA ↗</span></p>
+          <div class="flow-mini-device"><div class="flow-mini-screen"><span class="flow-mini-symbol">ˈH</span><small>Commerce, sin ruido.</small></div></div>
         </div>
       </div>
+      <p class="flow-scene-caption">Concepto visual del servicio.<br>Shopify · Web · Automatización</p>
     </section>
 
     <!-- Filosofía -->
@@ -2389,7 +2366,7 @@
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const mobileMenuPanel = document.getElementById('mobile-menu-panel');
     function updateNavOffset() {
-      const navHeight = nav?.offsetHeight || 80;
+      const navHeight = nav?.classList.contains('cinema-nav') ? 0 : (nav?.offsetHeight || 80);
       document.documentElement.style.setProperty('--nav-offset', `${navHeight + 20}px`);
     }
     function setMobileMenu(open) {
@@ -2397,6 +2374,8 @@
       mobileMenuToggle?.setAttribute('aria-expanded', String(open));
       mobileMenuToggle?.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
       mobileMenuPanel?.setAttribute('aria-hidden', String(!open));
+      if (mobileMenuPanel) mobileMenuPanel.inert = !open;
+      if (open) requestAnimationFrame(() => mobileMenuPanel?.querySelector('a')?.focus());
     }
     updateNavOffset();
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 100), { passive: true });
