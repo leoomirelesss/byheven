@@ -1492,8 +1492,8 @@
 <body id="inicio">
   <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
   <nav class="cinema-nav" id="nav" aria-label="Navegación principal">
+    <button class="cinema-nav-mark" type="button" aria-label="Expandir navegación" aria-expanded="false" aria-controls="nav">ˈH</button>
     <button class="mobile-menu-toggle cinema-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel"><span></span><span></span></button>
-    <a class="cinema-nav-mark" href="#inicio" aria-label="by Heven, inicio">ˈH</a>
     <a class="cinema-nav-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos ↗</a>
   </nav>
   <div class="mobile-menu-panel cinema-menu-panel" id="mobile-menu-panel" aria-label="Menú de by Heven" aria-hidden="true" inert>
@@ -1507,19 +1507,33 @@
 
   <main class="main-content">
     <!-- Portada editorial: administración de Shopify -->
+    <div class="flow-story" id="shopify" data-flow-story>
     <section class="flow-hero" aria-labelledby="flow-title" data-flow-scene>
       <div class="flow-light" aria-hidden="true"></div>
       <a class="flow-brand" href="#inicio" aria-label="by Heven, inicio">by ˈHevən.</a>
-      <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">bajo<span class="flow-asterisk" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M44 0h12l-1 35 29-18 7 12-30 18 34 6-3 14-34-8 14 32-13 6-14-33-18 29-12-8 20-29-35-1 1-14 35 3-21-28 11-8 20 29Z"/></svg></span>control</span></h1>
-      <div class="flow-description">
-        <p class="flow-service-label">Administración de Shopify</p>
-        <p>Catálogo, promociones y pedidos.<br>Nos encargamos del día a día de tu tienda.<br>Tú enfócate en lo que viene.</p>
-        <div class="flow-actions">
-          <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda</a>
-          <a class="flow-icon-link" href="#work" aria-label="Ver proyectos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/></svg></a>
-          <a class="flow-icon-link" href="#services" aria-label="Explorar servicios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16 M6 14l6 6 6-6"/></svg></a>
+      <div class="flow-slide is-active" data-phase="0">
+        <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">bajo<span class="flow-asterisk" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M44 0h12l-1 35 29-18 7 12-30 18 34 6-3 14-34-8 14 32-13 6-14-33-18 29-12-8 20-29-35-1 1-14 35 3-21-28 11-8 20 29Z"/></svg></span>control</span></h1>
+        <div class="flow-description">
+          <p class="flow-service-label">Administración de Shopify</p>
+          <p>Catálogo, promociones y pedidos.<br>Nos encargamos del día a día de tu tienda.<br>Tú enfócate en lo que viene.</p>
+          <div class="flow-actions">
+            <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda</a>
+          </div>
         </div>
-        <p class="flow-smallprint">* El alcance se adapta a tu operación.</p>
+      </div>
+      <div class="flow-slide" data-phase="1">
+        <h2 class="flow-feature-title">Tu operación,<br>sin pendientes.</h2>
+        <div class="flow-feature-copy">
+          <p>Productos actualizados. Promociones listas.<br>Pedidos con seguimiento.<br>Nos encargamos de lo que pasa detrás de tu tienda.</p>
+          <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu operación</a>
+        </div>
+      </div>
+      <div class="flow-slide" data-phase="2">
+        <h2 class="flow-feature-title">Nosotros<br>operamos.<br>Tú decides.</h2>
+        <div class="flow-feature-copy">
+          <p>Catálogo, campañas y reportes para entender tu operación y decidir el siguiente paso.<br>Como lo hacemos con EMYASA.</p>
+          <a class="flow-proof-link" href="#work">Conoce nuestro trabajo ↗</a>
+        </div>
       </div>
       <div class="flow-scene" role="img" aria-label="Concepto visual de un teléfono con catálogo, promociones y pedidos. Ilustración del servicio, no una aplicación conectada a una tienda.">
         <div class="flow-phone-position" aria-hidden="true">
@@ -1539,34 +1553,9 @@
             </div>
           </div>
         </div>
-        <div class="flow-companion" aria-hidden="true">
-          <p class="flow-companion-copy">Un aliado detrás<br>de tu operación.<span>Experiencia en EMYASA ↗</span></p>
-          <div class="flow-mini-device"><div class="flow-mini-screen"><span class="flow-mini-symbol">ˈH</span><small>Commerce, sin ruido.</small></div></div>
-        </div>
-      </div>
-      <p class="flow-scene-caption">Concepto visual del servicio.<br>Shopify · Web · Automatización</p>
-    </section>
-
-    <!-- Filosofía -->
-    <section class="philosophy">
-      <div class="philosophy-pin">
-        <div class="container">
-          <div class="philosophy-inner">
-            <div class="philosophy-visual">
-              <p class="label reveal">Filosofía</p>
-              <div class="philosophy-sequence reveal" aria-hidden="true">
-                <canvas id="philosophy-frame" width="1040" height="520"></canvas>
-              </div>
-            </div>
-            <div class="philosophy-content">
-              <h2 class="display-lg philosophy-statement reveal">No diseñamos páginas.<br>Diseñamos cómo tu negocio se presenta, vende y opera.</h2>
-              <div class="philosophy-line reveal"></div>
-              <p class="body-lg reveal">Sitios web, comercio electrónico, automatizaciones e identidad digital para negocios que quieren verse grandes, vender mejor y operar con más orden.</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
+    </div>
 
     <!-- Servicios -->
     <section id="services">
@@ -2375,6 +2364,8 @@
       mobileMenuToggle?.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
       mobileMenuPanel?.setAttribute('aria-hidden', String(!open));
       if (mobileMenuPanel) mobileMenuPanel.inert = !open;
+      const mainContent = document.querySelector('main');
+      if (mainContent) mainContent.inert = open;
       if (open) requestAnimationFrame(() => mobileMenuPanel?.querySelector('a')?.focus());
     }
     updateNavOffset();
