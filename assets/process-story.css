@@ -18,7 +18,7 @@
 .is-process-story .home-heading { flex: none; }
 .is-process-story .process-story-scene { position: relative; flex: 1; min-height: 0; }
 .is-process-story .process-story-cards { display: block; margin: 0; }
-.is-process-story .process-story-card { position: absolute; left: var(--process-card-x,50%); bottom: 152px; display: block; width: min(510px,46vw); height: min(328px,calc(100% - 160px)); min-height: 230px; transform: translateX(-50%) scaleX(var(--process-card-scale-x,.16)) scaleY(var(--process-card-scale-y,.1)); transform-origin: var(--process-card-origin,50%) calc(100% + 40px); opacity: var(--process-card-open,0); visibility: hidden; pointer-events: none; }
+.is-process-story .process-story-card { position: absolute; left: var(--process-card-x,50%); bottom: 152px; display: block; width: min(510px,46vw); height: min(328px,calc(100% - 160px)); min-height: 280px; transform: translateX(-50%) scaleX(var(--process-card-scale-x,.16)) scaleY(var(--process-card-scale-y,.1)); transform-origin: var(--process-card-origin,50%) calc(100% + 40px); opacity: var(--process-card-open,0); visibility: hidden; pointer-events: none; }
 .is-process-story .process-story-card.is-current { visibility: visible; }
 .is-process-story .process-story-card::after { content: ''; position: absolute; bottom: -40px; left: var(--process-card-origin,50%); width: 1px; height: 40px; background: linear-gradient(#aa94bf80,#b7a2d1); }
 .is-process-story .process-story-axis { display: block; position: absolute; left: clamp(32px,11vw,180px); right: clamp(32px,11vw,180px); bottom: 112px; height: 1px; background: linear-gradient(90deg,#7e6d9433,#b5a2cb5c,#7e6d9433); }

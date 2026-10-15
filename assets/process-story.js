@@ -43,7 +43,7 @@
   const measure = () => {
     if (motion.matches || window.innerHeight < 600) { fallback(); return; }
     section.classList.add('is-process-story');
-    if (scene.clientHeight < 390) { fallback(); return; }
+    if (scene.clientHeight < 440) { fallback(); return; }
     enabled = true;
     scene.setAttribute('aria-hidden', 'true');
     if (summary) summary.hidden = false;
