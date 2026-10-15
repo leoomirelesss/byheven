@@ -1,0 +1,24 @@
+/* Refraction from the supplied LiquidButton, adapted to the existing native links. */
+.button-glass-defs { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+.flow-hero .flow-contact { --glass-rim: 255, 255, 255; position: relative; isolation: isolate; overflow: hidden; border: 1px solid #e9dff547; background: #2b2038; color: #e5deed; box-shadow: 0 2px 6px #00000014, 0 0 12px #ffffff14; transition: color .3s, border-color .3s, box-shadow .3s, transform .3s; }
+.sticky-footer .social-link { --glass-rim: 36, 24, 51; background: #f0edf4; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.flow-hero .flow-contact::before,
+.sticky-footer .social-link::before { content: ''; position: absolute; z-index: -2; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, #ffffff1f, #ffffff05 50%, #ffffff14); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .3s; }
+.flow-hero .flow-contact::after,
+.sticky-footer .social-link::after { content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(145deg, #ffffff1f, transparent 40%, #ffffff08 70%, transparent); box-shadow: inset 3px 3px .5px -3px rgb(var(--glass-rim) / .85), inset -3px -3px .5px -3px rgb(var(--glass-rim) / .7), inset 1px 1px 1px -.5px rgb(var(--glass-rim) / .5), inset -1px -1px 1px -.5px rgb(var(--glass-rim) / .4), inset 0 0 6px 6px rgb(var(--glass-rim) / .06), inset 0 0 2px 2px rgb(var(--glass-rim) / .04); }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .flow-hero .flow-contact, .sticky-footer .social-link { background: transparent; }
+}
+@supports (backdrop-filter: url('#heven-button-glass')) {
+  .flow-hero .flow-contact::before, .sticky-footer .social-link::before { backdrop-filter: url('#heven-button-glass') blur(1px); }
+}
+.flow-hero .flow-contact:is(:hover,:focus-visible) { background: #624378; color: #ffffff; border-color: #d7c2ec85; box-shadow: 0 3px 12px #24183338, 0 0 14px #b493d329; transform: translateY(-2px); }
+.sticky-footer .social-link:is(:hover,:focus-visible) { background: linear-gradient(135deg, #4b345fe0, #241833e6); color: #f3edf8; --glass-rim: 255, 255, 255; }
+@media (prefers-reduced-motion: reduce) {
+  .flow-hero .flow-contact, .flow-hero .flow-contact::before, .sticky-footer .social-link, .sticky-footer .social-link::before { transition: none; }
+  .flow-hero .flow-contact:is(:hover,:focus-visible) { transform: none; }
+}
+@media (forced-colors: active) {
+  .flow-hero .flow-contact, .flow-hero .flow-contact:is(:hover,:focus-visible), .sticky-footer .social-link, .sticky-footer .social-link:is(:hover,:focus-visible) { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
+  .flow-hero .flow-contact::before, .flow-hero .flow-contact::after, .sticky-footer .social-link::before, .sticky-footer .social-link::after { display: none; }
+}
