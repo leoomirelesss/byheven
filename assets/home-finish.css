@@ -3,6 +3,7 @@
 .home-skip { position: fixed; z-index: 1100; top: -100px; left: 24px; padding: 14px 20px; background: #ceced7; color: var(--brand-dark); font: 400 14px 'Outfit',sans-serif; }
 .home-skip:focus { top: 24px; }
 .cinema-menu-panel.mobile-menu-panel { overflow-y: auto; }
+.cinema-nav.is-footer-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 html { --nav-offset: 20px; scroll-padding-top: 20px; }
 .home-chapter { scroll-margin-top: 20px; }
 .home-chapter { color: #ceced7; font-family: 'Outfit', sans-serif; }
@@ -58,6 +59,9 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 .footer-nav-col, .footer-brand, .footer-info { opacity: 1; transform: none; }
 .footer-animated .footer-nav-col:not(.visible) { opacity: 0; transform: translateY(30px); }
 .footer-animated :is(.footer-brand,.footer-info):not(.visible) { opacity: 0; transform: translateY(18px); }
+.sticky-footer .social-link { position: relative; isolation: isolate; overflow: hidden; border: 1px solid #ffffffb3; border-radius: 7px; background: linear-gradient(135deg, #ffffffb3, #ded8e773); color: var(--brand-dark); box-shadow: inset 0 1px 0 #ffffffed, inset 0 -1px 0 #2418331c, 0 0 0 1px #24183312, 0 4px 12px #24183314; -webkit-backdrop-filter: blur(12px) saturate(1.1); backdrop-filter: blur(12px) saturate(1.1); }
+.sticky-footer .social-link::before { content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, #ffffff4d, transparent 42%, #ffffff14 65%, transparent); }
+.sticky-footer .social-link:is(:hover,:focus-visible) { border-color: #a992bd99; background: linear-gradient(135deg, #4b345fe0, #241833e6); color: #f3edf8; box-shadow: inset 0 1px 0 #ffffff52, inset 0 -1px 0 #24183352, 0 0 0 1px #24183326, 0 7px 18px #24183333; }
 #contact.home-contact { padding-bottom: clamp(90px, 10vw, 185px); }
 .home-contact-title { margin: 0 0 60px; max-width: 1600px; font: 400 clamp(53px, 8.7vw, 164px)/.97 'Outfit', sans-serif; letter-spacing: -.055em; }
 .home-contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 9vw; align-items: start; }
@@ -141,6 +145,8 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 @media (forced-colors: active) {
   .home-primary-link { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
   .home-primary-link::before, .home-primary-link::after { display: none; }
+  .sticky-footer .social-link { border-color: ButtonText; background: ButtonFace; color: ButtonText; box-shadow: none; }
+  .sticky-footer .social-link::before { display: none; }
 }
 @media (max-height:650px) {
   .cinema-menu-panel.mobile-menu-panel { justify-content: flex-start; padding-top: 32px; padding-bottom: 100px; }

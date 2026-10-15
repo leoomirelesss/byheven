@@ -3,6 +3,16 @@
   const panel = document.getElementById('mobile-menu-panel');
   const main = document.querySelector('main');
   const footer = document.querySelector('.sticky-footer-wrapper');
+  const nav = document.querySelector('.cinema-nav');
+  let footerVisible = false;
+  const syncNavigation = () => {
+    if (!nav) return;
+    const hidden = footerVisible && !document.body.classList.contains('mobile-menu-open');
+    if (hidden && nav.contains(document.activeElement)) footer?.querySelector('a')?.focus({preventScroll: true});
+    nav.classList.toggle('is-footer-hidden', hidden);
+    nav.inert = hidden;
+    nav.setAttribute('aria-hidden', String(hidden));
+  };
   const setMenu = (open, returnFocus = false) => {
     document.body.classList.toggle('mobile-menu-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
@@ -11,8 +21,12 @@
     if (panel) panel.inert = !open;
     if (main) main.inert = open;
     if (footer) footer.inert = open;
+    syncNavigation();
     if (open) requestAnimationFrame(() => panel?.querySelector('a')?.focus());
-    else if (returnFocus) toggle?.focus();
+    else if (returnFocus) {
+      if (footerVisible) footer?.querySelector('a')?.focus({preventScroll: true});
+      else toggle?.focus();
+    }
   };
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
   panel?.addEventListener('click', event => {
@@ -80,6 +94,32 @@
     });
   });
   motion.addEventListener('change', () => { if (motion.matches) questions.forEach(resetReply); });
+
+  if (footer && nav) {
+    const checkFooter = () => {
+      const rect = footer.getBoundingClientRect();
+      footerVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      syncNavigation();
+    };
+    checkFooter();
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        const entry = entries.find(entry => entry.target === footer);
+        if (!entry) return;
+        footerVisible = entry.isIntersecting && entry.intersectionRect.height > 0;
+        syncNavigation();
+      }, {threshold: .001});
+      observer.observe(footer);
+    } else {
+      let frame = 0;
+      const schedule = () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = 0; checkFooter(); });
+      };
+      window.addEventListener('scroll', schedule, {passive: true});
+      window.addEventListener('resize', schedule, {passive: true});
+    }
+  }
 
   if (footer && 'IntersectionObserver' in window && !motion.matches) {
     const observer = new IntersectionObserver(entries => {
