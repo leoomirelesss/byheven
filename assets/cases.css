@@ -12,10 +12,10 @@
 .case-track { display: flex; gap: 20px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: #61616c #151518; }
 .case-card { position: relative; isolation: isolate; display: block; flex: 0 0 calc(46vw - 12px); height: min(76svh, 850px); min-height: 440px; overflow: hidden; scroll-snap-align: start; background: #202023; color: #fff; text-decoration: none; }
 .case-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--case-focus, 50%) 50%; transition: transform .8s cubic-bezier(.16,1,.3,1); }
-.case-card--emyasa { --case-focus: 37%; }
-.case-card--stone-kuche { --case-focus: 72%; }
-.case-card--parsomen { --case-focus: 64%; }
-.case-card--dor { --case-focus: 47%; }
+.case-card--emyasa { --case-focus: 50%; }
+.case-card--stone-kuche { --case-focus: 56%; }
+.case-card--parsomen { --case-focus: 50%; }
+.case-card--dor { --case-focus: 60%; }
 .case-card--all { background: transparent; }
 .case-card--all::after { display: none; }
 .case-all-content { position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 32px; padding: 10%; color: #ceced7; }
@@ -94,6 +94,7 @@ body[data-case-page] a { color: inherit; }
   .case-detail-intro { grid-template-columns: 1fr; gap: 36px; }
 }
 @media (max-width: 600px) {
+  .case-card--dor { --case-focus: 100%; }
   .case-home-intro { padding: 65px 24px 20px; }
   .case-overline { margin-bottom: 36px; font-size: 11px; }
   .case-home-title { font-size: 10.3vw; }
