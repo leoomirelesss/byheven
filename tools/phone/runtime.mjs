@@ -5,11 +5,20 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 const sceneElement=document.querySelector('.flow-scene');
 const viewer=document.querySelector('[data-phone-viewer]');
 const host=viewer || sceneElement;
+if(viewer) {
+  let selected='home',back=false;
+  const update=()=>{const image=viewer.querySelector('.viewer-fallback');if(image)image.src=`assets/phone/review-${back?'back':selected}.webp`;};
+  document.querySelectorAll('[data-phone-view]').forEach(button=>button.addEventListener('click',()=>{back=button.dataset.phoneView==='back';update();}));
+  document.querySelectorAll('[data-phone-screen]').forEach(button=>button.addEventListener('click',()=>{
+    selected=['home','collection','product'][Number(button.dataset.phoneScreen)];update();
+    document.querySelectorAll('[data-phone-screen]').forEach(control=>control.setAttribute('aria-pressed',String(control===button)));
+  }));
+}
 if(host) init().catch(error=> {
   host.classList.remove('has-phone-3d');
   host.dataset.phoneState='fallback';
   const status=document.querySelector('[data-viewer-status]');
-  if(status) status.textContent='La vista 3D no está disponible en este navegador.';
+  if(status) status.textContent='Render del modelo. El giro interactivo requiere WebGL.';
   console.warn('Phone 3D: using static screen fallback.',error.message);
 });
 
@@ -40,10 +49,12 @@ async function init() {
       textures[index]=texture; return texture;
     });
   }
-  const [gltf]=await Promise.all([new GLTFLoader().loadAsync(new URL('heven-phone.glb',base).href),loadScreen(0)]);
+  const [gltf]=await Promise.all([new GLTFLoader().loadAsync(new URL('iphone-17-pro.glb',base).href),loadScreen(0)]);
   const phone=gltf.scene; scene.add(phone);
-  const display=phone.getObjectByName('Display');
+  let display;
+  phone.traverse(mesh=>{if(mesh.isMesh && mesh.material?.name==='PLIEGUE Display') display=mesh;});
   if(!display) throw new Error('Display mesh missing');
+  display.material.map?.dispose();
   display.material.toneMapped=false;
   display.material.map=textures[0]; display.material.needsUpdate=true;
   let pose={left:43,top:33,rx:0,ry:-24,rz:15,scale:1,index:0,px:0,py:0};
@@ -106,3 +117,4 @@ async function init() {
     textures.forEach(texture=>texture.dispose()); environment.dispose(); renderer.dispose();
   },{once:true});
 }
+

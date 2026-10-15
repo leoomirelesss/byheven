@@ -1,22 +1,35 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-import * as T from 'three';
+import {Texture,Box3,Vector3} from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import validator from 'gltf-validator';
-import {createPhone} from './model.mjs';
+import {NodeIO} from '@gltf-transform/core';
+import {ALL_EXTENSIONS} from '@gltf-transform/extensions';
+import {getBounds} from '@gltf-transform/functions';
 
-const bytes=await readFile(new URL('../../assets/phone/heven-phone.glb',import.meta.url));
+const bytes=await readFile(new URL('../../assets/phone/iphone-17-pro.glb',import.meta.url));
 const result=await validator.validateBytes(new Uint8Array(bytes));
 assert.equal(result.issues.numErrors,0,JSON.stringify(result.issues.messages));
-const model=createPhone(), box=new T.Box3().setFromObject(model), size=box.getSize(new T.Vector3());
-assert(size.x>1.97 && size.x<2.2 && size.y>4.2 && size.y<4.3 && size.z>.35 && size.z<.5);
-for(const name of ['Display','TitaniumFrame','BackGlass','CameraIsland','USBPort','Power','VolumeUp','LensGlass1','LensGlass2','LensGlass3']) assert(model.getObjectByName(name),name);
-const screen=model.getObjectByName('Display');
-assert(screen.material.isMeshBasicMaterial);
-for(const value of screen.geometry.attributes.uv.array) assert(value>=-1e-6 && value<=1.000001,'Screen UV outside bounds');
+const io=new NodeIO().registerExtensions(ALL_EXTENSIONS),model=await io.readBinary(bytes);
+const bounds=getBounds(model.getRoot().listScenes()[0]);
+assert(Math.abs(bounds.max[0]-bounds.min[0]-2)<.01);
+assert(Math.abs(bounds.max[1]-bounds.min[1]-4.104)<.01);
+const display=model.getRoot().listMaterials().find(m=>m.getName()==='PLIEGUE Display');
+assert(display?.getExtension('KHR_materials_unlit'));
+assert(display.getBaseColorTexture().getImage().length>0);
 let triangles=0;
-model.traverse(mesh=> {if(mesh.geometry) triangles+=(mesh.geometry.index?.count || mesh.geometry.attributes.position.count)/3;});
-assert(triangles<20000);
+for(const mesh of model.getRoot().listMeshes())for(const primitive of mesh.listPrimitives()){
+ triangles+=(primitive.getIndices()?.getCount() || primitive.getAttribute('POSITION').getCount())/3;
+ if(primitive.getMaterial()===display){const uv=primitive.getAttribute('TEXCOORD_0');for(let i=0;i<uv.getCount();i++)for(const value of uv.getElement(i,[]))assert(value>=0 && value<=1);}
+}
+assert(triangles<55000);assert(bytes.length<2000000);
+const browserLoader=new GLTFLoader().register(()=>({name:'EXT_texture_webp',loadTexture:async()=>new Texture()}));
+const loaded=await browserLoader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
+let displayMesh;loaded.scene.traverse(mesh=>{if(mesh.isMesh && mesh.material?.name==='PLIEGUE Display')displayMesh=mesh;});
+assert(displayMesh?.material.isMeshBasicMaterial);
+const loadedSize=new Box3().setFromObject(loaded.scene).getSize(new Vector3());
+assert(Math.abs(loadedSize.x-2)<.01 && Math.abs(loadedSize.y-4.104)<.01);
 
 // Exercise the real scroll controller: emitted 3D poses, reverse, fallback and reduced motion.
 const code=await readFile(new URL('../../assets/shopify-hero.js',import.meta.url),'utf8');
@@ -42,3 +55,4 @@ scene.clientWidth=390;const mobile=at(936);assert.equal(mobile.ry,-64);assert.eq
 motion.matches=true;listeners.motion();assert.equal(events.at(-1).index,0);assert(slides.every(slide=>slide.inert===false));
 const staticCount=events.length;at(1400);assert.equal(events.length,staticCount,'Reduced motion must not animate');
 console.log(JSON.stringify({glbBytes:bytes.length,triangles,errors:result.issues.numErrors,warnings:result.issues.numWarnings,checks:'Geometry, glTF, UVs, screen sequence, reverse, mobile poses, reduced motion passed.'},null,2));
+
