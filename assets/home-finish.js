@@ -2,6 +2,7 @@
   const toggle = document.querySelector('.cinema-menu-toggle');
   const panel = document.getElementById('mobile-menu-panel');
   const main = document.querySelector('main');
+  const footer = document.querySelector('.sticky-footer-wrapper');
   const setMenu = (open, returnFocus = false) => {
     document.body.classList.toggle('mobile-menu-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
@@ -9,6 +10,7 @@
     panel?.setAttribute('aria-hidden', String(!open));
     if (panel) panel.inert = !open;
     if (main) main.inert = open;
+    if (footer) footer.inert = open;
     if (open) requestAnimationFrame(() => panel?.querySelector('a')?.focus());
     else if (returnFocus) toggle?.focus();
   };
@@ -20,16 +22,61 @@
     if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open')) setMenu(false, true);
   });
 
-  const steps = [...document.querySelectorAll('[data-home-step]')];
-  const count = document.querySelector('[data-home-step-count]');
-  if ('IntersectionObserver' in window && steps.length) {
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const questions = [...document.querySelectorAll('.chat-item')];
+  const pending = new Map();
+  const resetReply = item => {
+    (pending.get(item) || []).forEach(clearTimeout);
+    pending.delete(item);
+    item.classList.remove('is-animated');
+    item.querySelector('.chat-typing').hidden = true;
+    item.querySelectorAll('.chat-message').forEach(message => { message.hidden = false; });
+    item.querySelector('.chat-reply').setAttribute('aria-busy', 'false');
+  };
+  const reply = item => {
+    questions.forEach(other => {
+      if (other !== item) { other.open = false; resetReply(other); }
+    });
+    resetReply(item);
+    if (motion.matches) return;
+    const messages = [...item.querySelectorAll('.chat-message')];
+    const typing = item.querySelector('.chat-typing');
+    const region = item.querySelector('.chat-reply');
+    item.classList.add('is-animated');
+    region.setAttribute('aria-busy', 'true');
+    messages.forEach(message => { message.hidden = true; });
+    typing.hidden = false;
+    pending.set(item, messages.map((message, index) => setTimeout(() => {
+      if (!item.open) return;
+      typing.hidden = true;
+      message.hidden = false;
+      if (index === messages.length - 1) region.setAttribute('aria-busy', 'false');
+    }, 380 + index * 220)));
+  };
+  questions.forEach(item => {
+    item.querySelector('summary').addEventListener('click', () => { if (!item.open) reply(item); });
+    item.addEventListener('toggle', () => {
+      if (!item.open) resetReply(item);
+      else if (!pending.has(item) && !motion.matches) reply(item);
+    });
+    item.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && item.open) {
+        item.open = false;
+        resetReply(item);
+        item.querySelector('summary').focus();
+      }
+    });
+  });
+  motion.addEventListener('change', () => { if (motion.matches) questions.forEach(resetReply); });
+
+  if (footer && 'IntersectionObserver' in window && !motion.matches) {
     const observer = new IntersectionObserver(entries => {
-      const current = entries.find(entry => entry.isIntersecting)?.target;
-      if (!current) return;
-      steps.forEach(step => step.classList.toggle('is-current', step === current));
-      if (count) count.textContent = current.dataset.homeStep.padStart(2, '0');
-    }, {rootMargin: '-25% 0px -40% 0px'});
-    steps.forEach(step => observer.observe(step));
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      footer.querySelectorAll('.footer-nav-col,.footer-brand,.footer-info').forEach(element => element.classList.add('visible'));
+      observer.disconnect();
+    }, {threshold: .15});
+    footer.classList.add('footer-animated');
+    observer.observe(footer);
   }
 
   const form = document.getElementById('contact-form');
