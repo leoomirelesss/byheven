@@ -22,6 +22,18 @@
     if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open')) setMenu(false, true);
   });
 
+  const steps = [...document.querySelectorAll('[data-home-step]')];
+  const count = document.querySelector('[data-home-step-count]');
+  if ('IntersectionObserver' in window && steps.length) {
+    const observer = new IntersectionObserver(entries => {
+      const current = entries.find(entry => entry.isIntersecting)?.target;
+      if (!current) return;
+      steps.forEach(step => step.classList.toggle('is-current', step === current));
+      if (count) count.textContent = current.dataset.homeStep.padStart(2, '0');
+    }, {rootMargin: '-25% 0px -40% 0px'});
+    steps.forEach(step => observer.observe(step));
+  }
+
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const questions = [...document.querySelectorAll('.chat-item')];
   const pending = new Map();
