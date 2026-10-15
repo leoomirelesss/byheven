@@ -15,6 +15,12 @@
 .case-card--emyasa { --case-focus: 37%; }
 .case-card--stone-kuche { --case-focus: 72%; }
 .case-card--parsomen { --case-focus: 64%; }
+.case-card--dor { --case-focus: 47%; }
+.case-card--all { background: transparent; }
+.case-card--all::after { display: none; }
+.case-all-content { position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 32px; padding: 10%; color: #ceced7; }
+.case-all-content > span:first-child { color: #aaaab5; font-size: 11px; letter-spacing: .04em; }
+.case-all-content h3 { margin: 0; font: 400 clamp(38px, 4.8vw, 90px)/1.02 'Outfit', sans-serif; letter-spacing: -.045em; }
 .case-card::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, #0002, transparent 40%, #0001 60%, #000c); transition: background .3s; }
 .case-tags { position: absolute; top: 22px; left: 22px; right: 22px; z-index: 3; display: flex; flex-wrap: wrap; gap: 7px; }
 .case-tags span { padding: 7px 11px; border-radius: 100px; color: #f1f1f4; background: #101013eb; font-size: 11px; line-height: 1.2; }

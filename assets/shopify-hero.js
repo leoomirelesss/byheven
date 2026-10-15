@@ -54,9 +54,6 @@
     if (motion.matches) return;
     const progress = clamp((window.scrollY - start) / (step * 2)) * 2;
     scene.style.setProperty('--asterisk-turn', `${(progress * 180).toFixed(3)}deg`);
-    const tail = Math.max(1, story.offsetHeight - scene.offsetHeight - step * 2);
-    const exit = smooth((window.scrollY - start - step * 2) / tail);
-    scene.style.setProperty('--chapter-light', String(1 - exit));
     const segment = Math.min(1, Math.floor(progress));
     // Hold each readable front view; make one complete turn between chapters.
     const turn = smooth((progress - segment - .12) / .76);
