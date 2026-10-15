@@ -31,12 +31,12 @@
 .case-arrow { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border: 1px solid #ffffff65; border-radius: 50%; background: #11111438; color: #f4f4f6; transition: color .3s, border-color .3s, background .3s; }
 .case-card--all .case-arrow { border-color: #ceced765; background: transparent; }
 .case-peek { position: absolute; z-index: 4; top: var(--peek-y, 50%); left: var(--peek-x, 50%); width: clamp(120px, 11vw, 190px); aspect-ratio: 4/5; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.96); transition: opacity .18s, transform .4s cubic-bezier(.22,1,.36,1); background: transparent; -webkit-backdrop-filter: invert(1); backdrop-filter: invert(1); outline: 1px solid #ffffff25; display: none; }
-.case-peek span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border: 1px solid #ffffff30; border-radius: 100px; background: #101013; color: #f4f4f5; padding: 10px 14px; font-size: 11px; white-space: nowrap; }
+.case-peek span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border: 1px solid #ffffff30; border-radius: 100px; background: var(--brand-dark, #241833); color: #f4f4f5; padding: 10px 14px; font-size: 11px; white-space: nowrap; }
 @supports not ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
   .case-peek { background: #fff; mix-blend-mode: difference; }
   .case-peek span { display: none; }
 }
-.case-card:focus-visible .case-arrow { background: #efeff3; border-color: #efeff3; color: #101013; }
+.case-card:focus-visible .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
 .case-card:focus-visible .case-arrow .ui-arrow, .case-text-link:focus-visible .ui-arrow { transform: translate(2px,-2px); }
 .case-story.is-pinned .case-viewport { position: sticky; top: 0; height: 100svh; min-height: 640px; display: flex; align-items: center; overflow: clip; }
 .case-story.is-pinned .case-track { width: max-content; overflow: visible; scroll-snap-type: none; will-change: transform; }
@@ -46,7 +46,7 @@
   .case-peek { display: block; }
   .case-card:hover .case-cover, .case-card:focus-visible .case-cover { transform: scale(1.035); }
   .case-card:hover .case-peek { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-  .case-card:hover .case-arrow { background: #efeff3; border-color: #efeff3; color: #101013; }
+  .case-card:hover .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
   .case-card:hover .case-arrow .ui-arrow, .case-text-link:hover .ui-arrow { transform: translate(2px,-2px); }
 }
 /* Dedicated index and case pages share the site's typography and navigation. */
@@ -56,7 +56,7 @@ body[data-case-page] a { color: inherit; }
 .case-page-chrome { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 30px 2.65vw; }
 .case-page-chrome .case-wordmark { font-size: 32px; line-height: 1; letter-spacing: -.065em; text-decoration: none; }
 .case-page-chrome .case-back { font-size: 13px; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
-.case-skip { position: absolute; left: 20px; top: -100px; padding: 12px; z-index: 1100; background: #ceced7; color: #111 !important; }
+.case-skip { position: absolute; left: 20px; top: -100px; padding: 12px; z-index: 1100; background: #ceced7; color: var(--brand-dark, #241833) !important; }
 .case-skip:focus { top: 12px; }
 .case-index-hero { padding: clamp(70px, 8vw, 150px) 2.65vw 72px; }
 .case-index-hero > p { margin: 0 0 32px; max-width: 340px; color: #aaaab5; font-size: 16px; line-height: 1.45; }
