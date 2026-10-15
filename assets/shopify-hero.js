@@ -53,6 +53,7 @@
     frame = 0;
     if (motion.matches) return;
     const progress = clamp((window.scrollY - start) / (step * 2)) * 2;
+    scene.style.setProperty('--asterisk-turn', `${(progress * 180).toFixed(3)}deg`);
     const segment = Math.min(1, Math.floor(progress));
     // Hold each readable front view; make one complete turn between chapters.
     const turn = smooth((progress - segment - .12) / .76);

@@ -7,7 +7,7 @@
 .flow-title { position: absolute; left: 2.65vw; top: 1.8vw; z-index: 4; margin: 0; font-size: clamp(84px, 8.85vw, 170px); font-weight: 400; line-height: .89; letter-spacing: -.035em; }
 .flow-title-line { display: block; white-space: nowrap; }
 .flow-title-line + .flow-title-line { margin-top: .035em; }
-.flow-asterisk { display: inline-block; width: .64em; height: .64em; margin: 0 .045em 0 .07em; vertical-align: .03em; color: inherit; animation: flow-star-turn 26s linear infinite; }
+.flow-asterisk { display: inline-block; width: .53em; height: .53em; margin: 0 .015em; vertical-align: 0; color: inherit; transform: rotate(var(--asterisk-turn, 0deg)); }
 .flow-asterisk svg { display: block; width: 100%; height: 100%; fill: currentColor; }
 .flow-description { position: absolute; bottom: 12.8%; left: 2.65vw; z-index: 6; width: 360px; }
 .flow-description p { font-size: clamp(13px, 1.03vw, 20px); font-weight: 400; line-height: 1.24; letter-spacing: -.01em; }
@@ -29,7 +29,7 @@
 .flow-scene { z-index: 2; }
 .flow-device-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
 .has-phone-3d .flow-phone-position { visibility: hidden; }
-.cinema-nav { position: fixed; z-index: 1000; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: 48px; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 4px; border-radius: 50%; border: 1px solid #ffffff18; background: #ceced7ec; box-shadow: 0 8px 30px #0003; backdrop-filter: blur(20px); font-family: 'Outfit', sans-serif; transition: width .45s cubic-bezier(.16,1,.3,1), border-radius .45s; }
+.cinema-nav { position: fixed; z-index: 1000; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: 88px; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 4px; border-radius: 16px; border: 1px solid #ffffff18; background: #ceced7ec; box-shadow: 0 8px 30px #0003; backdrop-filter: blur(20px); font-family: 'Outfit', sans-serif; transition: width .45s cubic-bezier(.16,1,.3,1), border-radius .45s; }
 .cinema-nav.is-expanded { width: min(390px, calc(100vw - 48px)); border-radius: 16px; }
 .cinema-menu-toggle.mobile-menu-toggle { position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px; width: 48px; height: 38px; border: 0; background: transparent; border-radius: 10px; padding: 8px; cursor: pointer; }
 .cinema-menu-toggle.mobile-menu-toggle span { display: block; width: 28px; height: 1px; background: #17171c; transition: transform .25s; }
@@ -50,7 +50,6 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
 .cinema-menu-panel a:hover { color: #a996cf; }
 .cinema-menu-panel p { color: #777381; font-size: 12px; margin-bottom: 24px; }
 .flow-hero a:focus-visible, .cinema-nav a:focus-visible, .cinema-nav button:focus-visible, .cinema-menu-panel a:focus-visible { outline: 2px solid #a89cc2; outline-offset: 5px; }
-@keyframes flow-star-turn { to { transform: rotate(360deg); } }
 @media (max-width: 1100px) and (min-width: 701px) {
   .flow-title { font-size: 9.1vw; }
   .flow-phone-position { left: 44%; top: 31%; }
@@ -60,7 +59,6 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
   .flow-hero { min-height: 850px; --phone-w: 270px; }
   .flow-brand { top: 26px; right: 24px; font-size: 28px; }
   .flow-title { top: 105px; left: 24px; font-size: clamp(42px, 11.4vw, 76px); line-height: .95; }
-  .flow-asterisk { margin: 0 .02em; }
   .flow-phone-position { left: 51%; top: 31%; }
   .flow-scene { --phone-ry: -25deg; --phone-rz: 14deg; }
   .flow-description { left: 24px; bottom: 100px; width: 255px; }
@@ -80,7 +78,7 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
   .flow-description { width: 245px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .flow-asterisk { animation: none; }
+  .flow-asterisk { transform: none; }
   .flow-phone-position, .flow-contact, .cinema-menu-panel, .cinema-menu-toggle span { transition: none; }
   .cinema-nav, .cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact { transition: none; }
 }
