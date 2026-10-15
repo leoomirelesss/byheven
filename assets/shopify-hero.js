@@ -101,7 +101,7 @@
   const measure = () => {
     story.toggleAttribute('data-scroll-ready', !motion.matches);
     start = story.getBoundingClientRect().top + window.scrollY;
-    step = Math.max(1, scene.offsetHeight * 1.1);
+    step = Math.max(1, scene.offsetHeight * 1.32);
     if (motion.matches) {
       slides.forEach(slide => { slide.inert = false; slide.removeAttribute('aria-hidden'); slide.style.removeProperty('--slide-y'); });
       for (const key of ['left','top','ry','rz','rx','scale']) scene.style.removeProperty(`--phone-${key}`);

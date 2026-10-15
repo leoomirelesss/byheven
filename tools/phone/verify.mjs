@@ -40,14 +40,14 @@ const slides=Array.from({length:3},()=>({style:style(),classList:{toggle(){}},se
 const image={src:''},device={style:style()};
 const scene={clientWidth:1363,offsetHeight:936,dataset:{},style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
 const win={scrollY:0,matchMedia:query=>query.includes('reduced')?motion:{matches:true},addEventListener:(type,fn)=>listeners[type]=fn,dispatchEvent:event=>{events.push(event.detail);listeners[event.type]?.(event);}};
-const story={offsetHeight:936*3.6,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
+const story={offsetHeight:936*4.04,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
 const doc={querySelector:selector=>selector==='[data-flow-story]'?story:null,getElementById:()=>null};
 vm.runInNewContext(code,{window:win,document:doc,requestAnimationFrame:fn=>{queued.push(fn);return queued.length},CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});
 const flush=()=>{while(queued.length)queued.shift()();};
 const at=y=>{win.scrollY=y;listeners.scroll();flush();return events.at(-1);};
 flush();
 assert.equal(events.at(-1).index,0);assert(image.src.endsWith('screen-home.webp'));
-const step=936*1.1;
+const step=936*1.32;
 const middle=at(step);assert.equal(middle.index,1);assert.equal(middle.ry,360);assert.equal(middle.rx,0);assert(image.src.endsWith('screen-collection.webp'));
 const end=at(step*2);assert.equal(end.index,2);assert.equal(end.ry,720);assert.equal(end.rx,0);assert(image.src.endsWith('screen-product.webp'));
 assert.deepEqual(at(step),middle,'Scroll must reverse to the identical pose');

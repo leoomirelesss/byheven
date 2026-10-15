@@ -23,7 +23,7 @@
     if (wide.matches && !reduced.matches && maxX > 0) {
       track.scrollLeft = 0;
       story.classList.add('is-pinned');
-      travel = Math.max(maxX, viewport.offsetHeight * .75);
+      travel = Math.max(maxX, viewport.offsetHeight * .75) * 1.25;
       story.style.height = `${viewport.offsetHeight + travel}px`;
       start = story.getBoundingClientRect().top + window.scrollY;
       schedule();

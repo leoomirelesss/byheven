@@ -1115,63 +1115,6 @@
     @media (max-width: 768px) { .footer-services-line { display: none; } }
 
 
-    /* Cursor personalizado Hevən */
-    .custom-cursor { display: none; }
-    html[data-theme="dark"] {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-dark-mode-white.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-dark-mode-white.png");
-    }
-    html[data-theme="light"] {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-light-mode-black.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-light-mode-black.png");
-    }
-    html[data-theme="dark"] .custom-cursor.is-over-footer {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-light-mode-black.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-light-mode-black.png");
-      filter: drop-shadow(0 6px 14px oklch(0% 0 0 / 0.22));
-    }
-    html[data-theme="light"] .custom-cursor.is-over-footer {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-dark-mode-white.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-dark-mode-white.png");
-      filter: drop-shadow(0 0 10px oklch(100% 0 0 / 0.14));
-    }
-    html[data-theme="dark"] .custom-cursor.is-over-footer .custom-cursor-label {
-      background: oklch(8% 0.005 260 / 0.86);
-      color: oklch(98% 0 0);
-      border-color: oklch(0% 0 0 / 0.14);
-    }
-    html[data-theme="light"] .custom-cursor.is-over-footer .custom-cursor-label {
-      background: oklch(98% 0 0 / 0.9);
-      color: oklch(8% 0 0);
-      border-color: oklch(100% 0 0 / 0.18);
-    }
-    @media (hover: hover) and (pointer: fine) {
-      body.custom-cursor-ready, body.custom-cursor-ready * { cursor: none !important; }
-      .custom-cursor { position: fixed; left: 0; top: 0; z-index: 2147483647; display: block; width: 30px; height: 30px; pointer-events: none; transform: translate3d(-80px, -80px, 0); opacity: 0; filter: drop-shadow(0 6px 14px oklch(0% 0 0 / 0.22)); transition: opacity 180ms ease, width 220ms var(--ease-out-expo), height 220ms var(--ease-out-expo); will-change: transform; }
-      [data-theme="dark"] .custom-cursor { filter: drop-shadow(0 0 10px oklch(100% 0 0 / 0.14)); }
-      .custom-cursor::before,
-      .custom-cursor::after { content: ''; position: absolute; inset: 0; background-position: center; background-repeat: no-repeat; background-size: contain; transition: opacity 180ms ease, transform 240ms var(--ease-out-expo); }
-      .custom-cursor::before { background-image: var(--cursor-heven-star); opacity: 1; transform: scale(1) rotate(-4deg); }
-      .custom-cursor::after { background-image: var(--cursor-heven-e); opacity: 0; transform: scale(0.76) rotate(8deg); }
-      .custom-cursor.is-visible { opacity: 1; }
-      .custom-cursor.is-hovering { width: 34px; height: 34px; }
-      .custom-cursor.is-hovering::before { opacity: 0; transform: scale(0.72) rotate(10deg); }
-      .custom-cursor.is-hovering::after { opacity: 1; transform: scale(1) rotate(0deg); }
-      .custom-cursor.is-down::before { transform: scale(0.84) rotate(-4deg); }
-      .custom-cursor.is-hovering.is-down::after { transform: scale(0.84) rotate(0deg); }
-      .custom-cursor-label { position: absolute; left: 42px; top: 50%; transform: translate3d(-8px, -50%, 0); padding: 6px 9px; border: 1px solid oklch(100% 0 0 / 0.18); background: oklch(8% 0.005 260 / 0.84); color: oklch(98% 0 0); backdrop-filter: blur(14px); font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; white-space: nowrap; opacity: 0; transition: opacity 180ms ease, transform 220ms var(--ease-out-expo); }
-      [data-theme="light"] .custom-cursor-label { background: oklch(98% 0 0 / 0.9); color: oklch(8% 0 0); border-color: oklch(0% 0 0 / 0.12); }
-      .custom-cursor.has-label .custom-cursor-label { opacity: 1; transform: translate3d(0, -50%, 0); }
-      .custom-cursor.is-label-left .custom-cursor-label { left: auto; right: 42px; transform: translate3d(8px, -50%, 0); }
-      .custom-cursor.is-label-left.has-label .custom-cursor-label { transform: translate3d(0, -50%, 0); }
-    }
-    @media (max-width: 767px) {
-      body.custom-cursor-ready,
-      body.custom-cursor-ready * { cursor: auto !important; }
-      .custom-cursor { display: none !important; }
-    }
-
-
     /* ==================== */
     /* FIX MOBILE CARDS + WORK LOOP */
     /* ==================== */
@@ -1495,9 +1438,8 @@
   <script type="module" src="assets/phone/phone-scene.js"></script>
 </head>
 <body id="inicio">
-  <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
   <nav class="cinema-nav" id="nav" aria-label="Navegación principal">
-    <button class="cinema-nav-mark" type="button" aria-label="Expandir navegación" aria-expanded="false" aria-controls="nav">ˈH</button>
+    <button class="cinema-nav-mark" type="button" aria-label="Expandir navegación" aria-expanded="false" aria-controls="nav"><img src="/assets/brand/star-black.svg" width="64" height="64" alt="" decoding="async"></button>
     <button class="mobile-menu-toggle cinema-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel"><span></span><span></span></button>
     <a class="cinema-nav-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos ↗</a>
   </nav>
@@ -1518,7 +1460,7 @@
       <div class="flow-light" aria-hidden="true"></div>
       <a class="flow-brand" href="#inicio" aria-label="by Heven, inicio">by ˈHevən.</a>
       <div class="flow-slide is-active" data-phase="0">
-        <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">baj<span class="flow-asterisk" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M44 0h12l-1 35 29-18 7 12-30 18 34 6-3 14-34-8 14 32-13 6-14-33-18 29-12-8 20-29-35-1 1-14 35 3-21-28 11-8 20 29Z"/></svg></span> control</span></h1>
+        <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">baj<span class="flow-asterisk" aria-hidden="true"><img src="/assets/brand/star-white.svg" width="64" height="64" alt="" decoding="async"></span> control</span></h1>
         <div class="flow-description">
           <p class="flow-service-label">Administración de Shopify</p>
           <p>Catálogo, promociones y pedidos.<br>Nos encargamos del día a día de tu tienda.<br>Tú enfócate en lo que viene.</p>
@@ -1598,22 +1540,18 @@
       <header class="case-home-intro"><p class="case-overline"><span>CASOS REALES</span><span>(04)</span></p><h2 class="case-home-title" id="case-work-title">Proyectos que<br>ya están en marcha.</h2><div class="case-home-bottom"><p>Comercio electrónico, sitios y operaciones digitales que ya forman parte de un negocio.</p><a class="case-text-link" href="/case-studies/">Todos los casos <span aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></div></header>
       <div class="case-story" data-case-story><div class="case-viewport"><div class="case-track" aria-label="Proyectos de BY HEVËN"><a class="case-card case-card--emyasa" href="/case-studies/emyasa/" aria-label="Ver caso: EMYASA">
   <img class="case-cover" src="/assets/cases/emyasa-cover.webp" width="1600" height="1280" alt="Detalle de trabajo en metal con chispas y luz azul para EMYASA" loading="lazy" decoding="async">
-  <div class="case-tags" aria-hidden="true"><span>Shopify</span><span>Operación</span></div>
   <div class="case-card-bottom"><div><h3>EMYASA</h3><p>Administración de Shopify</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
   <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
 </a><a class="case-card case-card--stone-kuche" href="/case-studies/stone-kuche/" aria-label="Ver caso: Stone Küchë">
   <img class="case-cover" src="/assets/cases/stone-kuche-cover.webp" width="1600" height="1280" alt="Interior contemporáneo con piedra natural, metal y luz cálida para Stone Küchë" loading="lazy" decoding="async">
-  <div class="case-tags" aria-hidden="true"><span>Diseño web</span><span>Interiores</span></div>
   <div class="case-card-bottom"><div><h3>Stone Küchë</h3><p>Diseño y desarrollo web</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
   <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
 </a><a class="case-card case-card--parsomen" href="/case-studies/parsomen/" aria-label="Ver caso: Parsömen Cymbals">
   <img class="case-cover" src="/assets/cases/parsomen-cover.webp" width="1600" height="1280" alt="Platillo Parsömen martillado a mano bajo luz cálida" loading="lazy" decoding="async">
-  <div class="case-tags" aria-hidden="true"><span>Diseño web</span><span>Producto</span></div>
   <div class="case-card-bottom"><div><h3>Parsömen Cymbals</h3><p>Diseño web y producto</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
   <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
 </a><a class="case-card case-card--dor" href="/case-studies/dor/" aria-label="Ver caso: D’OR Jewelry">
   <img class="case-cover" src="/assets/cases/dor-cover.webp" width="1600" height="1280" alt="Collares, anillos y aretes dorados en la portada editorial de D’OR" loading="lazy" decoding="async">
-  <div class="case-tags" aria-hidden="true"><span>Shopify</span><span>Joyería</span></div>
   <div class="case-card-bottom"><div><h3>D’OR Jewelry</h3><p>Ecommerce en Shopify</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
   <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
 </a><a class="case-card case-card--all" href="/case-studies/" aria-label="Ver todos los casos"><div class="case-all-content"><span>(04 PROYECTOS)</span><h3>Ver todos<br>los casos.</h3><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div></a></div></div></div>
@@ -2022,10 +1960,6 @@
       window.clearTimeout(introSafetyTimer);
       siteIntro.classList.add('is-leaving');
       document.body.classList.remove('intro-active');
-      const introCursor = document.querySelector('.custom-cursor');
-      const introCursorLabel = introCursor?.querySelector('.custom-cursor-label');
-      introCursor?.classList.remove('has-label', 'is-hovering');
-      if (introCursorLabel) introCursorLabel.textContent = '';
       if (siteIntroVideo instanceof HTMLVideoElement) {
         siteIntroVideo.pause();
         siteIntroVideo.removeAttribute('src');
@@ -2069,87 +2003,6 @@
     }
     
 
-
-    // Cursor personalizado Hevən
-    const customCursor = document.querySelector('.custom-cursor');
-    const customCursorLabel = customCursor?.querySelector('.custom-cursor-label');
-    const customCursorQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-    (() => {
-      if (!customCursor || !customCursorQuery.matches || reducedMotionPreference?.matches) return;
-      document.body.classList.add('custom-cursor-ready');
-      let cursorX = -80;
-      let cursorY = -80;
-      let targetX = -80;
-      let targetY = -80;
-      const interactiveSelector = 'a, button, input, textarea, select, [role="button"], [role="link"], .site-intro, .service-card, .package-item, .industry-item, .work-card, .orbital-node, .orbital-card-related-link';
-
-      function getContextLabel(event) {
-        const target = event.target;
-        if (!target?.closest) return '';
-
-        if (target.closest('.site-intro')) return 'SKIP';
-        if (target.closest('.orbital-node, .orbital-card-related-link')) return 'CLICK';
-        if (target.closest('.work-card')) return 'VER';
-        if (target.closest('[data-services-prev]')) return 'ANTERIOR';
-        if (target.closest('[data-services-next]')) return 'SIGUIENTE';
-
-        const servicesStage = target.closest('.services-stage');
-        if (servicesStage) {
-          const activeCard = servicesStage.querySelector('.service-card[aria-current="true"]');
-          const stageRect = servicesStage.getBoundingClientRect();
-          const activeRect = activeCard?.getBoundingClientRect();
-          const center = activeRect ? activeRect.left + activeRect.width / 2 : stageRect.left + stageRect.width / 2;
-          const deadZone = activeRect ? Math.min(190, activeRect.width * 0.34) : stageRect.width * 0.18;
-          if (event.clientX > center + deadZone) return 'SIGUIENTE';
-          if (event.clientX < center - deadZone) return 'ANTERIOR';
-          return '';
-        }
-
-        if (target.closest('.industries')) return 'MUEVE';
-        if (target.closest('.philosophy')) return 'SCROLL';
-        if (target.closest('.hero-3d, .spline-container, spline-viewer')) return 'SÍGUEME';
-        return '';
-      }
-
-      function updateContextLabel(label) {
-        if (customCursorLabel && customCursorLabel.textContent !== label) customCursorLabel.textContent = label;
-        customCursor.classList.toggle('has-label', Boolean(label));
-      }
-
-      function renderCursor() {
-        cursorX += (targetX - cursorX) * 0.32;
-        cursorY += (targetY - cursorY) * 0.32;
-        const cursorSize = customCursor.classList.contains('is-hovering') || customCursor.classList.contains('has-label') ? 34 : 30;
-        customCursor.style.transform = `translate3d(${cursorX - cursorSize / 2}px, ${cursorY - cursorSize / 2}px, 0)`;
-        requestAnimationFrame(renderCursor);
-      }
-
-      function isPointerOverFooter(event) {
-        const elementAtPointer = document.elementFromPoint(event.clientX, event.clientY);
-        return Boolean(elementAtPointer?.closest?.('#sticky-footer, .sticky-footer-wrapper'));
-      }
-
-      window.addEventListener('pointermove', event => {
-        targetX = event.clientX;
-        targetY = event.clientY;
-        customCursor.classList.add('is-visible');
-        customCursor.classList.toggle('is-label-left', event.clientX > window.innerWidth - 170);
-        const label = getContextLabel(event);
-        updateContextLabel(label);
-        const isOverFooter = isPointerOverFooter(event);
-        customCursor.classList.toggle('is-over-footer', isOverFooter);
-        const isInteractive = Boolean(event.target.closest?.(interactiveSelector)) || Boolean(label);
-        customCursor.classList.toggle('is-hovering', isInteractive);
-      }, { passive: true });
-
-      document.addEventListener('pointerdown', () => customCursor.classList.add('is-down'));
-      document.addEventListener('pointerup', () => customCursor.classList.remove('is-down'));
-      document.addEventListener('mouseleave', () => {
-        customCursor.classList.remove('is-visible');
-        updateContextLabel('');
-      });
-      renderCursor();
-    })();
 
     // Scroll de navegación
     const nav = document.getElementById('nav');

@@ -36,8 +36,6 @@
 .commerce-services-addon h3 { margin: 0; font: 400 clamp(22px, 2vw, 36px)/1.2 'Outfit', sans-serif; letter-spacing: -.025em; }
 .commerce-services-addon p { margin: 0; color: var(--services-muted); font-size: 14px; line-height: 1.5; max-width: 400px; }
 .commerce-services a:focus-visible, .commerce-service-toggle:focus-visible { outline: 2px solid #a89cc2; outline-offset: 5px; }
-body:has(.commerce-services:hover) .custom-cursor { opacity: 0; }
-body:has(.commerce-services:hover) .commerce-services, body:has(.commerce-services:hover) .commerce-services a, body:has(.commerce-services:hover) .commerce-services button { cursor: auto; }
 @media (hover: hover) and (pointer: fine) {
   .commerce-service:hover { border-color: #9898a4; }
   .commerce-service-toggle:hover { color: #efeff4; }
