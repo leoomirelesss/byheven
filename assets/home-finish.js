@@ -37,62 +37,6 @@
   });
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const route = document.querySelector('[data-process-route]');
-  if (route) {
-    const list = route.querySelector('.process-stops');
-    const stops = [...route.querySelectorAll('[data-process-step]')];
-    const panels = [...route.querySelectorAll('.process-panel')];
-    const scroller = route.querySelector('.process-route-scroll');
-    if (list && scroller && stops.length === panels.length && stops.length > 1) {
-      list.setAttribute('role', 'tablist');
-      const select = (index, focus = false) => {
-        stops.forEach((stop, position) => {
-          const selected = position === index;
-          stop.setAttribute('aria-selected', String(selected));
-          stop.tabIndex = selected ? 0 : -1;
-          stop.parentElement.classList.toggle('is-complete', position < index);
-          panels[position].hidden = !selected;
-        });
-        route.style.setProperty('--route-progress', String(index / (stops.length - 1)));
-        route.style.setProperty('--route-position', `${index / (stops.length - 1) * 100}%`);
-        if (focus) stops[index].focus({preventScroll: true});
-        if (focus && scroller.scrollWidth > scroller.clientWidth) {
-          const stop = stops[index];
-          const left = scroller.scrollLeft + stop.getBoundingClientRect().left - scroller.getBoundingClientRect().left - (scroller.clientWidth - stop.offsetWidth) / 2;
-          scroller.scrollTo({left, behavior: motion.matches ? 'instant' : 'smooth'});
-        }
-      };
-      stops.forEach((stop, index) => {
-        stop.parentElement.setAttribute('role', 'presentation');
-        stop.setAttribute('role', 'tab');
-        stop.setAttribute('aria-controls', panels[index].id);
-        panels[index].setAttribute('role', 'tabpanel');
-        panels[index].tabIndex = 0;
-        stop.addEventListener('click', event => { event.preventDefault(); select(index, true); });
-        stop.addEventListener('keydown', event => {
-          let next;
-          if (event.key === 'ArrowRight') next = (index + 1) % stops.length;
-          else if (event.key === 'ArrowLeft') next = (index + stops.length - 1) % stops.length;
-          else if (event.key === 'Home') next = 0;
-          else if (event.key === 'End') next = stops.length - 1;
-          else return;
-          event.preventDefault();
-          select(next, true);
-        });
-      });
-      select(0);
-      route.classList.add('is-enhanced');
-      if ('IntersectionObserver' in window && !motion.matches) {
-        const observer = new IntersectionObserver(entries => {
-          if (!entries.some(entry => entry.isIntersecting)) return;
-          route.classList.add('is-entering');
-          observer.disconnect();
-        }, {threshold: .25});
-        observer.observe(route);
-      }
-    }
-  }
-
   const questions = [...document.querySelectorAll('.chat-item')];
   const pending = new Map();
   const resetReply = item => {

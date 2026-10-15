@@ -1413,6 +1413,8 @@
   <link rel="stylesheet" href="assets/cases.css">
   <script src="assets/cases.js" defer></script>
   <link rel="stylesheet" href="assets/home-finish.css">
+  <link rel="stylesheet" href="assets/process-story.css">
+  <script src="assets/process-story.js" defer></script>
   <script src="assets/home-finish.js" defer></script>
   <script src="assets/contact-light.js" defer></script>
   <script src="assets/faq-scroll.js" defer></script>
@@ -1541,31 +1543,41 @@
     </section>
 
     <!-- Cómo trabajamos: un recorrido editorial continuo -->
-    <section id="process" class="home-chapter home-process" aria-labelledby="home-process-title">
-      <div class="home-inner">
+    <section id="process" class="home-chapter home-process" aria-labelledby="home-process-title" data-process-story>
+      <div class="home-inner process-story-stage">
         <p class="home-overline"><span>CÓMO TRABAJAMOS</span><span>(04 ETAPAS)</span></p>
-        <header class="process-intro">
-          <h2 class="home-heading" id="home-process-title">Claridad desde<br>el primer día.</h2>
-          <p class="home-copy">De la primera conversación al trabajo en marcha. Conoce cada etapa del recorrido.</p>
-        </header>
-        <div class="process-route" data-process-route>
-          <p class="process-swipe-hint">Desliza para explorar las etapas.</p>
-          <div class="process-route-scroll">
-            <div class="process-route-track">
-              <div class="process-rail" aria-hidden="true"><span class="process-rail-progress"></span><img class="process-route-star" src="/assets/brand/star-white.svg" width="28" height="28" alt="" decoding="async"></div>
-              <ol class="process-stops" aria-label="Etapas para trabajar con BY HEVËN">
-                <li class="process-stop"><a class="process-stop-link" id="process-stop-1" href="#process-panel-1" data-process-step><span class="process-stop-number">01</span><span class="process-stop-title">Tu negocio</span><span class="process-stop-dot" aria-hidden="true"></span><span class="process-stop-caption">Entendemos</span></a></li>
-                <li class="process-stop"><a class="process-stop-link" id="process-stop-2" href="#process-panel-2" data-process-step><span class="process-stop-number">02</span><span class="process-stop-title">Ruta clara</span><span class="process-stop-dot" aria-hidden="true"></span><span class="process-stop-caption">Acordamos</span></a></li>
-                <li class="process-stop"><a class="process-stop-link" id="process-stop-3" href="#process-panel-3" data-process-step><span class="process-stop-number">03</span><span class="process-stop-title">En marcha</span><span class="process-stop-dot" aria-hidden="true"></span><span class="process-stop-caption">Implementamos</span></a></li>
-                <li class="process-stop"><a class="process-stop-link" id="process-stop-4" href="#process-panel-4" data-process-step><span class="process-stop-number">04</span><span class="process-stop-title">Seguimiento</span><span class="process-stop-dot" aria-hidden="true"></span><span class="process-stop-caption">Acompañamos</span></a></li>
-              </ol>
-            </div>
+        <h2 class="home-heading" id="home-process-title">Claridad desde<br>el primer día.</h2>
+        <ol class="process-story-summary" aria-label="Etapas para trabajar con BY HEVËN" hidden>
+          <li><h3>Tu negocio</h3><p>Revisamos tu tienda y cómo trabajas para definir qué conviene resolver primero.</p></li>
+          <li><h3>Ruta clara</h3><p>Acordamos el alcance, los entregables y los tiempos antes de empezar.</p></li>
+          <li><h3>En marcha</h3><p>Implementamos lo acordado y revisamos contigo los avances.</p></li>
+          <li><h3>Seguimiento</h3><p>En Shopify, seguimos con la operación mensual. En otros proyectos, acordamos el soporte posterior.</p></li>
+        </ol>
+        <div class="process-story-scene">
+          <div class="process-story-cards">
+            <figure class="process-story-card" data-process-card data-step-title="Tu negocio">
+              <img src="/assets/process/review.svg" width="640" height="360" alt="Ilustración de una tienda en revisión y sus prioridades" loading="lazy" decoding="async">
+              <figcaption><span class="process-story-card-number">01 / 04</span><h3>Primero, lo que necesitas.</h3><p>Revisamos tu tienda y cómo trabajas para definir qué conviene resolver primero.</p></figcaption>
+            </figure>
+            <figure class="process-story-card" data-process-card data-step-title="Ruta clara">
+              <img src="/assets/process/plan.svg" width="640" height="360" alt="Ilustración de un plan con etapas y tareas acordadas" loading="lazy" decoding="async">
+              <figcaption><span class="process-story-card-number">02 / 04</span><h3>Sabes qué sigue.</h3><p>Acordamos el alcance, los entregables y los tiempos antes de empezar.</p></figcaption>
+            </figure>
+            <figure class="process-story-card" data-process-card data-step-title="En marcha">
+              <img src="/assets/process/build.svg" width="640" height="360" alt="Ilustración de desarrollo y vista previa de una tienda" loading="lazy" decoding="async">
+              <figcaption><span class="process-story-card-number">03 / 04</span><h3>Lo ponemos a funcionar.</h3><p>Implementamos lo acordado y revisamos contigo los avances.</p></figcaption>
+            </figure>
+            <figure class="process-story-card" data-process-card data-step-title="Seguimiento">
+              <img src="/assets/process/follow.svg" width="640" height="360" alt="Ilustración de reportes y tareas de seguimiento" loading="lazy" decoding="async">
+              <figcaption><span class="process-story-card-number">04 / 04</span><h3>Seguimos cerca.</h3><p>En Shopify, seguimos con la operación mensual. En otros proyectos, acordamos el soporte posterior.</p></figcaption>
+            </figure>
           </div>
-          <div class="process-panels">
-            <section class="process-panel" id="process-panel-1" aria-labelledby="process-stop-1"><div><span class="process-panel-number" aria-hidden="true">01 / 04</span><h3>Primero, lo que necesitas.</h3></div><div><p>Nos cuentas cómo vendes y qué necesitas resolver. Revisamos tu tienda, tu sitio o tu operación para definir las prioridades.</p><small>Punto de partida · necesidades · prioridades</small></div></section>
-            <section class="process-panel" id="process-panel-2" aria-labelledby="process-stop-2"><div><span class="process-panel-number" aria-hidden="true">02 / 04</span><h3>Sabes qué sigue.</h3></div><div><p>Definimos contigo el alcance, los entregables y los tiempos. Dejamos claro qué haremos, qué necesitamos de ti y cómo revisaremos los avances.</p><small>Propuesta · alcance · calendario</small></div></section>
-            <section class="process-panel" id="process-panel-3" aria-labelledby="process-stop-3"><div><span class="process-panel-number" aria-hidden="true">03 / 04</span><h3>Lo ponemos a funcionar.</h3></div><div><p>Diseñamos, desarrollamos o ajustamos lo acordado. Te compartimos los avances y revisamos contigo antes de ponerlo en marcha.</p><small>Implementación · revisión · puesta en marcha</small></div></section>
-            <section class="process-panel" id="process-panel-4" aria-labelledby="process-stop-4"><div><span class="process-panel-number" aria-hidden="true">04 / 04</span><h3>Seguimos cerca de tu negocio.</h3></div><div><p>En la administración mensual de Shopify nos encargamos del día a día y las mejoras acordadas. En sitios y automatizaciones, definimos contigo el soporte posterior.</p><small>Operación · mejoras · soporte acordado</small></div></section>
+          <div class="process-story-axis" aria-hidden="true">
+            <div class="process-story-ticks"></div>
+            <div class="process-story-axis-fill"></div>
+            <div class="process-story-stations"><i></i><i></i><i></i><i></i></div>
+            <span class="process-story-ball"></span>
+            <span class="process-story-current"><span data-process-number>01</span><span data-process-label>Tu negocio</span></span>
           </div>
         </div>
       </div>
