@@ -14,6 +14,11 @@ npm run build; npm test. Static deployment needs no build or external CDN.
 Keep the Three.js license beside the generated files.
 
 shopify-hero.js owns the reversible timeline and emits flow:pose. Rendering
+uses the CSS phone width so mobile and WebGL stay aligned. The text moves
+vertically by the scroll distance, with no crossfade. Each chapter transition
+makes a full turn, swaps screens with the back visible, then holds a front view.
+The final chapter has extra scroll space to read before leaving the scene.
+Rendering
 stops outside the hero and while the tab is hidden. Reduced motion leaves the
 phone static. The review page supports front/back and screen selection, with
 static renders for browsers without WebGL. Offline renders check the geometry

@@ -59,13 +59,13 @@ async function init() {
   display.material.map=textures[0]; display.material.needsUpdate=true;
   let pose={left:43,top:33,rx:0,ry:-24,rz:15,scale:1,index:0,px:0,py:0};
   let frame=0,visible=true,contextLost=false,disposed=false;
-  let width=1,height=1;
+  let width=1,height=1,phonePixelWidth=280;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const schedule=()=> { if(!frame && visible && !document.hidden && !contextLost && !disposed) frame=requestAnimationFrame(draw); };
   function draw() {
     frame=0;
     if(disposed || contextLost) return;
-    const pixelWidth=viewer ? Math.min(width*.6,height*.33,350) : width<=380 ? 245 : width<=700 ? 270 : Math.max(280,Math.min(width*.24,460));
+    const pixelWidth=viewer ? Math.min(width*.6,height*.33,350) : phonePixelWidth;
     const unit=2*camera.position.z*Math.tan(T.MathUtils.degToRad(camera.fov/2))/height;
     const centerX=viewer ? width/2 : width*pose.left/100+pixelWidth/2+(pose.px||0);
     const centerY=viewer ? height/2 : height*pose.top/100+pixelWidth*2.07/2+(pose.py||0);
@@ -80,6 +80,7 @@ async function init() {
   }
   function resize() {
     const rect=host.getBoundingClientRect(); width=Math.max(1,rect.width); height=Math.max(1,rect.height);
+    phonePixelWidth=sceneElement?.querySelector('.flow-phone-position')?.offsetWidth || 280;
     renderer.setSize(width,height,false); camera.aspect=width/height; camera.updateProjectionMatrix(); schedule();
   }
   function onPose(event) { if(!viewer) { pose={...pose,...event.detail}; schedule(); } }

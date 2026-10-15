@@ -39,7 +39,7 @@
   const slides = [...scene.querySelectorAll('[data-phase]')];
   const phoneImage = scene.querySelector('.flow-screen-image');
   const screenNames = ['home', 'collection', 'product'];
-  let active = -1, frame = 0, start = 0, distance = 1;
+  let active = -1, frame = 0, start = 0, step = 1;
   let pointerX = 0, pointerY = 0;
   const clamp = n => Math.max(0, Math.min(1, n));
   const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
@@ -52,48 +52,57 @@
   const render = () => {
     frame = 0;
     if (motion.matches) return;
-    const progress = clamp((window.scrollY - start) / distance) * 2;
-    const opacities = [1 - smooth(progress / .55), smooth((progress - .35) / .5) * (1 - smooth((progress - 1.35) / .5)), smooth((progress - 1.5) / .5)];
-    const index = opacities.indexOf(Math.max(...opacities));
+    const progress = clamp((window.scrollY - start) / (step * 2)) * 2;
+    const segment = Math.min(1, Math.floor(progress));
+    // Hold each readable front view; make one complete turn between chapters.
+    const turn = smooth((progress - segment - .12) / .76);
+    const index = segment + Number(turn >= .5);
     setScreen(index);
     slides.forEach((slide,i) => {
-      const opacity = opacities[i];
-      const y = i === 0 ? -progress * 80 : i === 1 ? (1 - smooth((progress - .35) / .5)) * 60 - smooth((progress - 1.35) / .5) * 60 : (1 - smooth((progress - 1.5) / .5)) * 60;
-      slide.style.setProperty('--slide-opacity', opacity.toFixed(4));
+      // A single vertical document, with no crossfade or slide easing.
+      const y = (i - progress) * step;
+      const visible = y < scene.offsetHeight && y > -scene.offsetHeight;
       slide.style.setProperty('--slide-y', `${y}px`);
-      slide.classList.toggle('is-active', i === index);
-      slide.inert = i !== index;
-      slide.setAttribute('aria-hidden', String(i !== index));
+      slide.classList.toggle('is-active', visible);
+      slide.inert = !visible;
+      slide.setAttribute('aria-hidden', String(!visible));
     });
     const mobile = scene.clientWidth <= 700;
     const keys = mobile ? [
-      {left:51, top:31, ry:-25, rz:14, rx:0, scale:1},
-      {left:57, top:30, ry:-64, rz:-6, rx:8, scale:.93},
-      {left:48, top:32, ry:-8, rz:-8, rx:2, scale:.84}
+      {left:42, top:32, ry:-24, rz:14, rx:0, scale:1},
+      {left:28, top:32, ry:360, rz:0, rx:0, scale:1},
+      {left:28, top:33, ry:720, rz:0, rx:0, scale:.96}
     ] : [
       {left:scene.clientWidth <= 1100 ? 44 : 43, top:33, ry:-24, rz:15, rx:0, scale:1},
-      {left:65, top:25, ry:-66, rz:-9, rx:8, scale:.96},
-      {left:17, top:19, ry:-8, rz:-12, rx:3, scale:.84}
+      {left:67, top:18, ry:360, rz:-3, rx:0, scale:.92},
+      {left:17, top:19, ry:720, rz:-5, rx:0, scale:.84}
     ];
-    const from = keys[Math.min(1, Math.floor(progress))], to = keys[Math.min(2, Math.floor(progress) + 1)];
-    const t = smooth(progress - Math.min(1, Math.floor(progress)));
+    const from = keys[segment], to = keys[segment + 1];
+    const arc = turn > 0 && turn < 1 ? Math.sin(Math.PI * turn) : 0;
     const pose = {index, progress, px:pointerX, py:pointerY};
     for (const key of ['left','top','ry','rz','rx','scale']) {
-      const value = mix(from[key],to[key],t);
+      let value = mix(from[key],to[key],turn);
+      if (key === 'rx') value += arc * 10;
+      if (key === 'rz') value -= arc * 14;
+      if (key === 'top') value -= arc * 5;
+      if (key === 'scale') value -= arc * .08;
       pose[key] = value;
       scene.style.setProperty(`--phone-${key}`, `${value}${['left','top'].includes(key) ? '%' : ['ry','rz','rx'].includes(key) ? 'deg' : ''}`);
     }
     device.style.setProperty('--scene-x', `${pointerX}px`);
     device.style.setProperty('--scene-y', `${pointerY}px`);
+    scene.dataset.storyProgress = progress.toFixed(4);
+    scene.dataset.phoneTurn = pose.ry.toFixed(2);
+    scene.dataset.storyScreen = String(index);
     window.dispatchEvent(new CustomEvent('flow:pose', {detail:pose}));
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(render); };
   const measure = () => {
     story.toggleAttribute('data-scroll-ready', !motion.matches);
     start = story.getBoundingClientRect().top + window.scrollY;
-    distance = Math.max(1, story.offsetHeight - scene.offsetHeight);
+    step = Math.max(1, scene.offsetHeight * 1.1);
     if (motion.matches) {
-      slides.forEach(slide => { slide.inert = false; slide.removeAttribute('aria-hidden'); });
+      slides.forEach(slide => { slide.inert = false; slide.removeAttribute('aria-hidden'); slide.style.removeProperty('--slide-y'); });
       for (const key of ['left','top','ry','rz','rx','scale']) scene.style.removeProperty(`--phone-${key}`);
       pointerX = pointerY = 0;
       device.style.setProperty('--scene-x','0px'); device.style.setProperty('--scene-y','0px');
@@ -115,3 +124,4 @@
   window.addEventListener('flow:ready', measure);
   measure();
 })();
+
