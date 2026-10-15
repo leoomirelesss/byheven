@@ -15,7 +15,8 @@
 .commerce-service-roll { position: relative; display: block; transition: transform .6s cubic-bezier(.22,1,.36,1); }
 .commerce-service-label, .commerce-service-copy { display: block; }
 .commerce-service-copy { position: absolute; top: 100%; left: 0; width: 100%; color: var(--services-ink); }
-.commerce-service-toggle:focus-visible .commerce-service-roll { transform: translateY(-100%); }
+.commerce-service:not(.is-open) .commerce-service-toggle:focus-visible .commerce-service-roll { transform: translateY(-100%); }
+.commerce-service.is-open .commerce-service-roll { transform: none; transition: none; }
 .commerce-service-mode { font-size: 12px; white-space: nowrap; }
 .commerce-service-symbol { font-size: 24px; text-align: right; font-weight: 400; }
 .commerce-service-panel { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .45s cubic-bezier(.16,1,.3,1), visibility .45s; }
@@ -40,7 +41,7 @@ body:has(.commerce-services:hover) .commerce-services, body:has(.commerce-servic
 @media (hover: hover) and (pointer: fine) {
   .commerce-service:hover { border-color: #9898a4; }
   .commerce-service-toggle:hover { color: #efeff4; }
-  .commerce-service-toggle:hover .commerce-service-roll { transform: translateY(-100%); }
+  .commerce-service:not(.is-open) .commerce-service-toggle:hover .commerce-service-roll { transform: translateY(-100%); }
   .commerce-service-link:hover .ui-arrow { transform: translate(2px, -2px); }
 }
 @media (max-width: 1000px) {
