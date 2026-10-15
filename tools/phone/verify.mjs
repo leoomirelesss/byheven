@@ -40,7 +40,7 @@ const slides=Array.from({length:3},()=>({style:style(),classList:{toggle(){}},se
 const image={src:''},device={style:style()};
 const scene={clientWidth:1363,offsetHeight:936,dataset:{},style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
 const win={scrollY:0,matchMedia:query=>query.includes('reduced')?motion:{matches:true},addEventListener:(type,fn)=>listeners[type]=fn,dispatchEvent:event=>{events.push(event.detail);listeners[event.type]?.(event);}};
-const story={offsetHeight:2808,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
+const story={offsetHeight:936*3.6,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
 const doc={querySelector:selector=>selector==='[data-flow-story]'?story:null,getElementById:()=>null};
 vm.runInNewContext(code,{window:win,document:doc,requestAnimationFrame:fn=>{queued.push(fn);return queued.length},CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});
 const flush=()=>{while(queued.length)queued.shift()();};
@@ -69,6 +69,10 @@ for(let i=200;i>=0;i--)assert.deepEqual(at(step*i/100),forward[i],'Reverse scrol
 assert.equal(at(step*.1).ry,-24,'Hold the opening pose before the transition');
 assert.equal(at(step*.9).ry,360,'Arrive front-facing before the next chapter');
 assert.equal(at(step*1.1).ry,360,'Keep the next chapter front-facing');
+at(step*2);assert.equal(scene.style.values['--chapter-light'],'1','Preserve the light through the last phone arrival');
+at((step*2+story.offsetHeight-scene.offsetHeight)/2);assert(Math.abs(Number(scene.style.values['--chapter-light'])-.5)<.001);
+at(story.offsetHeight-scene.offsetHeight);assert.equal(scene.style.values['--chapter-light'],'0','Meet the services background without a light seam');
+at(step);assert.equal(scene.style.values['--chapter-light'],'1','Restore the light on reverse scroll');
 assert.equal(at(-500).progress,0);assert.equal(at(99999).progress,2);
 scene.clientWidth=390;const mobile=at(step);assert.equal(mobile.ry,360);assert.equal(mobile.left,28);
 assert.equal(at(step*2).ry,720);
