@@ -1413,23 +1413,12 @@
   <link rel="stylesheet" href="assets/cases.css">
   <script src="assets/cases.js" defer></script>
   <link rel="stylesheet" href="assets/home-finish.css">
-  <link rel="stylesheet" href="assets/liquid-buttons.css">
   <script src="assets/home-finish.js" defer></script>
   <script src="assets/contact-light.js" defer></script>
   <script src="assets/faq-scroll.js" defer></script>
   <script type="module" src="assets/phone/phone-scene.js"></script>
 </head>
 <body id="inicio">
-  <svg class="button-glass-defs" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <filter id="heven-button-glass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="glass-noise"/>
-        <feGaussianBlur in="glass-noise" stdDeviation="2" result="glass-soft-noise"/>
-        <feDisplacementMap in="SourceGraphic" in2="glass-soft-noise" scale="18" xChannelSelector="R" yChannelSelector="B" result="glass-refraction"/>
-        <feGaussianBlur in="glass-refraction" stdDeviation="1.5"/>
-      </filter>
-    </defs>
-  </svg>
   <a class="home-skip" href="#main-content">Saltar al contenido</a>
   <nav class="cinema-nav" id="nav" aria-label="Navegación principal">
     <button class="cinema-nav-mark" type="button" aria-label="Expandir navegación" aria-expanded="false" aria-controls="nav"><img src="/assets/brand/star-black.svg" width="64" height="64" alt="" decoding="async"></button>
