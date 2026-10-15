@@ -27,10 +27,18 @@
 .case-card-bottom { position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 3; display: flex; gap: 18px; align-items: end; justify-content: space-between; }
 .case-card-bottom h3 { margin: 0; color: #fff; font: 400 clamp(24px, 2.5vw, 48px)/1.1 'Outfit', sans-serif; letter-spacing: -.045em; }
 .case-card-bottom p { margin: 9px 0 0; font-size: 12px; line-height: 1.35; color: #eeeef2; }
-.case-arrow { display: grid; place-items: center; flex-shrink: 0; width: 43px; height: 43px; border-radius: 50%; background: #efeff3; color: #101013; font-size: 21px; transition: transform .3s, background .3s; }
-.case-peek { position: absolute; z-index: 4; top: var(--peek-y, 50%); left: var(--peek-x, 50%); width: clamp(120px, 11vw, 190px); aspect-ratio: 4/5; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.92); transition: opacity .2s, transform .3s; background: #141417; display: none; }
-.case-peek img { width: 100%; height: 100%; object-fit: cover; object-position: var(--case-focus,50%) 50%; }
-.case-peek span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); background: #f4f4f5; color: #101013; padding: 12px 15px; font-size: 11px; white-space: nowrap; }
+.ui-arrow { width: 21px; height: 21px; display: block; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .4s cubic-bezier(.22,1,.36,1); }
+.case-text-link .ui-arrow { width: 18px; height: 18px; }
+.case-arrow { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border: 1px solid #ffffff65; border-radius: 50%; background: #11111438; color: #f4f4f6; transition: color .3s, border-color .3s, background .3s; }
+.case-card--all .case-arrow { border-color: #ceced765; background: transparent; }
+.case-peek { position: absolute; z-index: 4; top: var(--peek-y, 50%); left: var(--peek-x, 50%); width: clamp(120px, 11vw, 190px); aspect-ratio: 4/5; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.96); transition: opacity .18s, transform .4s cubic-bezier(.22,1,.36,1); background: transparent; -webkit-backdrop-filter: invert(1); backdrop-filter: invert(1); outline: 1px solid #ffffff25; display: none; }
+.case-peek span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border: 1px solid #ffffff30; border-radius: 100px; background: #101013; color: #f4f4f5; padding: 10px 14px; font-size: 11px; white-space: nowrap; }
+@supports not ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
+  .case-peek { background: #fff; mix-blend-mode: difference; }
+  .case-peek span { display: none; }
+}
+.case-card:focus-visible .case-arrow { background: #efeff3; border-color: #efeff3; color: #101013; }
+.case-card:focus-visible .case-arrow .ui-arrow, .case-text-link:focus-visible .ui-arrow { transform: translate(2px,-2px); }
 .case-story.is-pinned .case-viewport { position: sticky; top: 0; height: 100svh; min-height: 640px; display: flex; align-items: center; overflow: clip; }
 .case-story.is-pinned .case-track { width: max-content; overflow: visible; scroll-snap-type: none; will-change: transform; }
 .case-card:focus-visible { outline: 3px solid #ceced7; outline-offset: -5px; }
@@ -40,9 +48,9 @@ body:has(.case-card:hover) .case-card { cursor: auto; }
 @media (hover: hover) and (pointer: fine) {
   .case-peek { display: block; }
   .case-card:hover .case-cover, .case-card:focus-visible .case-cover { transform: scale(1.035); }
-  .case-card:hover::after { background: #0007; }
   .case-card:hover .case-peek { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-  .case-card:hover .case-arrow { background: #ceced7; transform: rotate(45deg); }
+  .case-card:hover .case-arrow { background: #efeff3; border-color: #efeff3; color: #101013; }
+  .case-card:hover .case-arrow .ui-arrow, .case-text-link:hover .ui-arrow { transform: translate(2px,-2px); }
 }
 /* Dedicated index and case pages share the site's typography and navigation. */
 body[data-case-page] { margin: 0; padding: 0 0 90px; }
@@ -99,7 +107,7 @@ body[data-case-page] a { color: inherit; }
   .case-card-bottom { bottom: 18px; left: 18px; right: 18px; }
   .case-card-bottom h3 { font-size: 28px; }
   .case-card-bottom p { max-width: 180px; font-size: 11px; }
-  .case-arrow { width: 40px; height: 40px; }
+  .case-arrow { width: 46px; height: 46px; }
   .case-page-chrome { padding: 22px 24px; }
   .case-page-chrome .case-wordmark { font-size: 27px; }
   .case-index-hero { padding: 66px 24px 45px; }
@@ -118,6 +126,6 @@ body[data-case-page] a { color: inherit; }
   .case-next { padding: 30px 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .case-cover, .case-arrow, .case-peek { transition: none; transform: none; }
+  .case-cover, .case-arrow, .case-peek, .ui-arrow { transition: none !important; transform: none !important; }
   .case-peek { display: none; }
 }

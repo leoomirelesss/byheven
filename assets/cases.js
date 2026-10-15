@@ -51,6 +51,8 @@
     document.fonts?.ready.then(measure); measure();
   }
   document.querySelectorAll('.case-card').forEach(card => {
+    const peek = card.querySelector('.case-peek');
+    if (!peek) return;
     let pending = 0, point;
     card.addEventListener('pointermove', event => {
       if (!fine.matches || reduced.matches) return;
@@ -59,8 +61,8 @@
       pending = requestAnimationFrame(() => {
         pending = 0;
         const rect = card.getBoundingClientRect();
-        const halfWidth = Math.min(190, Math.max(120, window.innerWidth * .11)) / 2;
-        const halfHeight = halfWidth * 1.25;
+        const halfWidth = peek.offsetWidth / 2;
+        const halfHeight = peek.offsetHeight / 2;
         card.style.setProperty('--peek-x', `${Math.max(halfWidth + 16, Math.min(rect.width - halfWidth - 16, point.x - rect.left))}px`);
         card.style.setProperty('--peek-y', `${Math.max(halfHeight + 16, Math.min(rect.height - halfHeight - 16, point.y - rect.top))}px`);
       });
