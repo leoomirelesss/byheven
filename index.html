@@ -1,16 +1,17 @@
-﻿<head>
+<!doctype html>
+<html lang="es-MX">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>by ˈHevən | Diseño web, Shopify e IA en México</title>
-  <meta name="description" content="Creamos sitios web premium, tiendas Shopify, automatizaciones con IA y sistemas digitales para negocios que quieren vender mejor y verse profesionales.">
+  <title>by ˈHevən | Administración de Shopify y diseño web</title>
+  <meta name="description" content="Administramos tu tienda Shopify: catálogo, promociones, pedidos y reportes. También creamos sitios web y automatizaciones a medida en México.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="author" content="by ˈHevən">
   <meta name="application-name" content="by ˈHevən">
   <meta name="format-detection" content="telephone=no">
-  <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f4f4f6" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#090909">
   <link rel="canonical" href="https://www.byheven.com/">
   <link rel="alternate" hreflang="es-MX" href="https://www.byheven.com/">
   <link rel="alternate" hreflang="x-default" href="https://www.byheven.com/">
@@ -20,31 +21,15 @@
   <meta property="og:site_name" content="by ˈHevən">
   <meta property="og:locale" content="es_MX">
   <meta property="og:url" content="https://www.byheven.com/">
-  <meta property="og:title" content="by ˈHevən | Diseño web, Shopify e IA en México">
-  <meta property="og:description" content="Sitios web premium, Shopify, automatización con IA, branding y sistemas digitales para negocios que quieren vender mejor.">
+  <meta property="og:title" content="by ˈHevən | Administración de Shopify y diseño web">
+  <meta property="og:description" content="Administración de Shopify, desarrollo web y automatizaciones a medida para tu negocio.">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="by ˈHevən | Diseño web, Shopify e IA en México">
-  <meta name="twitter:description" content="Sitios web premium, Shopify, automatización con IA, branding y sistemas digitales para negocios modernos.">
-    <script>
-  (() => {
-    const root = document.documentElement;
-    const storedTheme = (() => {
-      try {
-        const value = localStorage.getItem('theme');
-        return value === 'light' || value === 'dark' ? value : null;
-      } catch {
-        return null;
-      }
-    })();
-    const systemTheme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-    root.setAttribute('data-theme', storedTheme || systemTheme);
-  })();
-</script>
-  </script>
+  <meta name="twitter:title" content="by ˈHevən | Administración de Shopify y diseño web">
+  <meta name="twitter:description" content="Administración de Shopify, desarrollo web y automatizaciones a medida para tu negocio.">
+  <script>document.documentElement.setAttribute("data-theme", "dark");</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
   
   <style>
     :root {
@@ -1117,63 +1102,6 @@
     @media (max-width: 768px) { .footer-services-line { display: none; } }
 
 
-    /* Cursor personalizado Hevən */
-    .custom-cursor { display: none; }
-    html[data-theme="dark"] {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-dark-mode-white.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-dark-mode-white.png");
-    }
-    html[data-theme="light"] {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-light-mode-black.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-light-mode-black.png");
-    }
-    html[data-theme="dark"] .custom-cursor.is-over-footer {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-light-mode-black.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-light-mode-black.png");
-      filter: drop-shadow(0 6px 14px oklch(0% 0 0 / 0.22));
-    }
-    html[data-theme="light"] .custom-cursor.is-over-footer {
-      --cursor-heven-star: url("assets/cursor/mpy5ee4h-star-dark-mode-white.png");
-      --cursor-heven-e: url("assets/cursor/mpy5ee4h-e-dark-mode-white.png");
-      filter: drop-shadow(0 0 10px oklch(100% 0 0 / 0.14));
-    }
-    html[data-theme="dark"] .custom-cursor.is-over-footer .custom-cursor-label {
-      background: oklch(8% 0.005 260 / 0.86);
-      color: oklch(98% 0 0);
-      border-color: oklch(0% 0 0 / 0.14);
-    }
-    html[data-theme="light"] .custom-cursor.is-over-footer .custom-cursor-label {
-      background: oklch(98% 0 0 / 0.9);
-      color: oklch(8% 0 0);
-      border-color: oklch(100% 0 0 / 0.18);
-    }
-    @media (hover: hover) and (pointer: fine) {
-      body.custom-cursor-ready, body.custom-cursor-ready * { cursor: none !important; }
-      .custom-cursor { position: fixed; left: 0; top: 0; z-index: 2147483647; display: block; width: 30px; height: 30px; pointer-events: none; transform: translate3d(-80px, -80px, 0); opacity: 0; filter: drop-shadow(0 6px 14px oklch(0% 0 0 / 0.22)); transition: opacity 180ms ease, width 220ms var(--ease-out-expo), height 220ms var(--ease-out-expo); will-change: transform; }
-      [data-theme="dark"] .custom-cursor { filter: drop-shadow(0 0 10px oklch(100% 0 0 / 0.14)); }
-      .custom-cursor::before,
-      .custom-cursor::after { content: ''; position: absolute; inset: 0; background-position: center; background-repeat: no-repeat; background-size: contain; transition: opacity 180ms ease, transform 240ms var(--ease-out-expo); }
-      .custom-cursor::before { background-image: var(--cursor-heven-star); opacity: 1; transform: scale(1) rotate(-4deg); }
-      .custom-cursor::after { background-image: var(--cursor-heven-e); opacity: 0; transform: scale(0.76) rotate(8deg); }
-      .custom-cursor.is-visible { opacity: 1; }
-      .custom-cursor.is-hovering { width: 34px; height: 34px; }
-      .custom-cursor.is-hovering::before { opacity: 0; transform: scale(0.72) rotate(10deg); }
-      .custom-cursor.is-hovering::after { opacity: 1; transform: scale(1) rotate(0deg); }
-      .custom-cursor.is-down::before { transform: scale(0.84) rotate(-4deg); }
-      .custom-cursor.is-hovering.is-down::after { transform: scale(0.84) rotate(0deg); }
-      .custom-cursor-label { position: absolute; left: 42px; top: 50%; transform: translate3d(-8px, -50%, 0); padding: 6px 9px; border: 1px solid oklch(100% 0 0 / 0.18); background: oklch(8% 0.005 260 / 0.84); color: oklch(98% 0 0); backdrop-filter: blur(14px); font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; white-space: nowrap; opacity: 0; transition: opacity 180ms ease, transform 220ms var(--ease-out-expo); }
-      [data-theme="light"] .custom-cursor-label { background: oklch(98% 0 0 / 0.9); color: oklch(8% 0 0); border-color: oklch(0% 0 0 / 0.12); }
-      .custom-cursor.has-label .custom-cursor-label { opacity: 1; transform: translate3d(0, -50%, 0); }
-      .custom-cursor.is-label-left .custom-cursor-label { left: auto; right: 42px; transform: translate3d(8px, -50%, 0); }
-      .custom-cursor.is-label-left.has-label .custom-cursor-label { transform: translate3d(0, -50%, 0); }
-    }
-    @media (max-width: 767px) {
-      body.custom-cursor-ready,
-      body.custom-cursor-ready * { cursor: auto !important; }
-      .custom-cursor { display: none !important; }
-    }
-
-
     /* ==================== */
     /* FIX MOBILE CARDS + WORK LOOP */
     /* ==================== */
@@ -1429,7 +1357,7 @@
   "@id": "https://www.byheven.com/#organization",
   "name": "by ˈHevən",
   "url": "https://www.byheven.com/",
-  "description": "Estudio de sistemas digitales, diseño web premium, Shopify, automatización con IA, branding y contenido para negocios.",
+  "description": "Administración de Shopify, diseño y desarrollo web y automatización e IA para negocios. Contenido básico con IA como complemento.",
   "email": "contact@byheven.com",
   "telephone": "+528718876019",
   "areaServed": [
@@ -1452,12 +1380,10 @@
     "https://www.instagram.com/byheven.com_/"
   ],
   "knowsAbout": [
-    "Diseño web",
-    "Shopify",
-    "Automatización con IA",
-    "Branding",
-    "Contenido digital",
-    "Sistemas digitales"
+    "Administración de Shopify",
+    "Diseño y desarrollo web",
+    "Automatización e IA",
+    "Contenido básico con IA"
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
@@ -1465,675 +1391,205 @@
     "itemListElement": [
       {
         "@type": "Offer",
-        "name": "Diseño web premium"
+        "name": "Administración de Shopify"
       },
       {
         "@type": "Offer",
-        "name": "Tiendas Shopify"
+        "name": "Diseño y desarrollo web"
       },
       {
         "@type": "Offer",
-        "name": "Automatización con IA"
-      },
-      {
-        "@type": "Offer",
-        "name": "Branding e identidad digital"
-      },
-      {
-        "@type": "Offer",
-        "name": "Contenido digital"
+        "name": "Automatización e IA"
       }
     ]
   }
 }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shopify-hero.css">
+  <script src="assets/scroll-story.js" defer></script>
+  <script src="assets/chapter-arrivals.js" defer></script>
+  <script src="assets/shopify-hero.js" defer></script>
+  <link rel="stylesheet" href="assets/services.css">
+  <script src="assets/services.js" defer></script>
+  <link rel="stylesheet" href="assets/cases.css">
+  <script src="assets/cases.js" defer></script>
+  <link rel="stylesheet" href="assets/home-finish.css">
+  <script src="assets/home-finish.js" defer></script>
+  <script src="assets/contact-light.js" defer></script>
+  <script src="assets/faq-scroll.js" defer></script>
+  <script type="module" src="assets/phone/phone-scene.js"></script>
 </head>
-<body class="intro-active" id="inicio">
-  <div class="custom-cursor" aria-hidden="true"><span class="custom-cursor-label"></span></div>
-  <div class="site-intro" data-site-intro aria-label="Intro de by ˈHevən. Haz click para saltar.">
-    <video class="site-intro-video" data-site-intro-video autoplay muted playsinline preload="metadata">
-      <source src="assets/intro/mobile-intro.mov" media="(max-width: 767px)">
-      <source src="mpy809jo-copy_3344B0C8-37C1-47F6-87A0-5B593B29CECF.mov">
-    </video>
-    <span class="site-intro-status" aria-hidden="true"></span>
-  </div>
-  <nav class="nav" id="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a href="#inicio" class="nav-logo" aria-label="Ir al inicio"><span class="nav-logo-mark">'H</span> by ˈHevən.</a>
-        <ul class="nav-links">
-          <li><a href="#work">Proyectos</a></li>
-          <li><a href="#services">Servicios</a></li>
-          <li><a href="#process">Proceso</a></li>
-          <li><a href="#packages">Paquetes</a></li>
-          <li><a href="#contact">Contacto</a></li>
-        </ul>
-        <div class="nav-actions">
-          <button class="theme-toggle" aria-label="Cambiar tema">
-            <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-          <button class="mobile-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel">
-            <span></span><span></span><span></span>
-          </button>
-          <a href="#contact" class="btn btn-primary">Iniciar proyecto</a>
-        </div>
-      </div>
-    </div>
+<body id="inicio">
+  <a class="home-skip" href="#main-content">Saltar al contenido</a>
+  <nav class="cinema-nav" id="nav" aria-label="Navegación principal">
+    <button class="cinema-nav-mark" type="button" aria-label="Expandir navegación" aria-expanded="false" aria-controls="nav"><img src="/assets/brand/star-black.svg" width="64" height="64" alt="" decoding="async"></button>
+    <button class="mobile-menu-toggle cinema-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu-panel"><span></span><span></span></button>
+    <a class="cinema-nav-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos ↗</a>
   </nav>
-  <div class="mobile-menu-panel" id="mobile-menu-panel" aria-hidden="true">
-    <a href="#work">Proyectos</a>
+  <div class="mobile-menu-panel cinema-menu-panel" id="mobile-menu-panel" aria-label="Menú de by Heven" aria-hidden="true" inert>
+    <p>by ˈHevən</p>
+    <a href="#inicio">Inicio</a>
     <a href="#services">Servicios</a>
-    <a href="#process">Proceso</a>
-    <a href="#packages">Paquetes</a>
-    <a href="#contact">Contacto</a>
+    <a href="#work">Proyectos</a>
+    <a href="#faq">Preguntas frecuentes</a>
+    <a href="#contact">Hablemos</a>
   </div>
-  <a href="#contact" class="btn btn-primary mobile-floating-cta" aria-label="Iniciar proyecto">Iniciar</a>
 
-  <main class="main-content">
-    <!-- Héroe -->
-    <section class="hero">
-      <svg class="hero-spotlight" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3787 2842" fill="none">
-        <g filter="url(#sf)"><ellipse cx="1924.71" cy="273.501" rx="1924.71" ry="273.501" transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)" fill="white" fill-opacity="0.21"/></g>
-        <defs><filter id="sf" x="0.860352" y="0.838989" width="3785.16" height="2840.26" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="151" result="effect1_foregroundBlur"/></filter></defs>
-      </svg>
-      <div class="hero-inner">
-        <div class="hero-content">
-          <h1 class="display-hero hero-title">Tu negocio no necesita solo una web.</h1>
-          <p class="body-xl hero-subtitle">Necesita un sistema digital que venda, cotice, reserve, cobre y se vea como una marca grande.</p>
-          <div class="hero-ctas">
-            <a href="#contact" class="btn btn-primary btn-lg">Solicitar diagnóstico <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            <a href="#work" class="btn btn-secondary">Ver proyectos</a>
+  <main class="main-content commerce-world" id="main-content" tabindex="-1">
+    <div class="commerce-ambience flow-light" aria-hidden="true"></div>
+    <!-- Portada editorial: administración de Shopify -->
+    <div class="flow-story" id="shopify" data-flow-story>
+    <section class="flow-hero" aria-labelledby="flow-title" data-flow-scene>
+      <div class="flow-light" aria-hidden="true"></div>
+      <a class="flow-brand" href="#inicio" aria-label="by Heven, inicio">by ˈHevən.</a>
+      <div class="flow-slide is-active" data-phase="0">
+        <h1 class="flow-title" id="flow-title" aria-label="Tu Shopify bajo control"><span class="flow-title-line">Tu Shopify</span><span class="flow-title-line">baj<span class="flow-asterisk" aria-hidden="true"><img src="/assets/brand/star-white.svg" width="64" height="64" alt="" decoding="async"></span> control</span></h1>
+        <div class="flow-description">
+          <p class="flow-service-label">Administración de Shopify</p>
+          <p>Catálogo, promociones y pedidos.<br>Nos encargamos del día a día de tu tienda.</p>
+          <div class="flow-actions">
+            <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda</a>
           </div>
         </div>
-        <div class="hero-3d">
-          <div class="spline-container">
-            <div class="spline-fallback" aria-hidden="true"></div>
-            <div class="spline-loader" id="spline-loader"><div class="loader-spinner"></div><p class="label">Cargando 3D</p></div>
-            <spline-viewer url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
-            <div class="spline-watermark-cover" aria-hidden="true"></div>
-          </div>
+        <p class="flow-scroll-cue"><span>Scroll</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M12 4v16m-6-6 6 6 6-6"/></svg></p>
+      </div>
+      <div class="flow-slide" data-phase="1">
+        <h2 class="flow-feature-title">Tu tienda,<br>al día.</h2>
+        <div class="flow-feature-copy">
+          <p>Productos actualizados. Promociones listas.<br>Pedidos con seguimiento.</p>
+          <a class="flow-contact" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu operación</a>
         </div>
       </div>
-    </section>
-
-    <!-- Filosofía -->
-    <section class="philosophy">
-      <div class="philosophy-pin">
-        <div class="container">
-          <div class="philosophy-inner">
-            <div class="philosophy-visual">
-              <p class="label reveal">Filosofía</p>
-              <div class="philosophy-sequence reveal" aria-hidden="true">
-                <canvas id="philosophy-frame" width="1040" height="520"></canvas>
-              </div>
-            </div>
-            <div class="philosophy-content">
-              <h2 class="display-lg philosophy-statement reveal">No diseñamos páginas.<br>Diseñamos cómo tu negocio se presenta, vende y opera.</h2>
-              <div class="philosophy-line reveal"></div>
-              <p class="body-lg reveal">Sitios web, comercio electrónico, automatizaciones e identidad digital para negocios que quieren verse grandes, vender mejor y operar con más orden.</p>
+      <div class="flow-slide" data-phase="2">
+        <h2 class="flow-feature-title">Nosotros<br>operamos.<br>Tú decides.</h2>
+        <div class="flow-feature-copy">
+          <p>Reportes claros para saber qué pasa en tu tienda y decidir qué sigue.</p>
+          <a class="flow-proof-link" href="#work">Conoce nuestro trabajo ↗</a>
+        </div>
+      </div>
+      <div class="flow-scene" role="img" aria-label="Teléfono 3D que muestra PLIEGUE, una tienda ficticia de mobiliario usada como ejemplo de diseño ecommerce.">
+        <div class="flow-phone-position" aria-hidden="true">
+          <div class="flow-phone">
+            <div class="flow-screen">
+              <img class="flow-screen-image" src="assets/phone/screen-home.webp" width="864" height="1872" alt="" decoding="async" fetchpriority="high">
+              <div class="flow-island"></div>
+              <div class="flow-phone-home"></div>
             </div>
           </div>
         </div>
       </div>
     </section>
+    </div>
 
-    <!-- Servicios -->
-    <section id="services">
-      <div class="container">
-        <div class="services-header reveal">
-          <div><p class="label">Servicios</p><h2 class="display-md" style="margin-top:var(--space-md)">Lo que construimos</h2></div>
-          <p class="body-md" style="max-width:400px;text-align:right">Sistemas digitales completos. No solo páginas bonitas.</p>
-        </div>
-        <div class="services-stack reveal" data-services-stack>
-          <div class="services-stage" tabindex="0" aria-label="Servicios de by ˈHevən.">
-            <div class="services-spotlight" aria-hidden="true"></div>
-            <div class="services-card-track">
-              <article class="service-card" data-service-card style="--service-angle: 18deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/1.png" alt="" loading="eager" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 01</p>
-                        <h3 class="service-title">Sitios web premium</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Sitios de alto impacto para que tu negocio se vea grande, venda mejor y sea fácil de entender.</p>
-                      <ul class="service-points">
-                        <li>Página de aterrizaje</li>
-                       <li>SEO base</li>
-                        <li>Conversión</li>
-                      </ul>
-                      <a class="service-detail-link" href="/diseno-web-torreon/" aria-label="Ver página de diseño web en Torreón">Ver diseño web en Torreón</a>
-                    </div>
-                  </div>
-                </div>
-              </article>
-              <article class="service-card" data-service-card style="--service-angle: 64deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/2.png" alt="" loading="lazy" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 02</p>
-                        <h3 class="service-title">Comercio electrónico y Shopify</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Tiendas preparadas para catálogo, pagos, pedidos, operación diaria y crecimiento comercial.</p>
-                      <ul class="service-points">
-                        <li>Shopify</li>
-                        <li>Pago en línea</li>
-                        <li>Operación</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </article>
-              <article class="service-card" data-service-card style="--service-angle: 122deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/3.png" alt="" loading="lazy" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 03</p>
-                        <h3 class="service-title">Sistemas de negocio</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Paneles, flujos y bases operativas para ordenar ventas, clientes, tareas y seguimiento.</p>
-                      <ul class="service-points">
-                        <li>CRM</li>
-                        <li>Reportes</li>
-                        <li>Roles</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </article>
-              <article class="service-card" data-service-card style="--service-angle: 188deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/4.png" alt="" loading="lazy" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 04</p>
-                        <h3 class="service-title">Automatización e IA</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Automatizaciones y asistentes para reducir trabajo repetitivo, responder mejor y conectar herramientas.</p>
-                      <ul class="service-points">
-                        <li>Flujos</li>
-                        <li>IA</li>
-                        <li>Soporte</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </article>
-              <article class="service-card" data-service-card style="--service-angle: 244deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/5.png" alt="" loading="lazy" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 05</p>
-                        <h3 class="service-title">Marca e identidad</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Dirección visual, lenguaje y sistema de marca para comunicar valor con más claridad.</p>
-                      <ul class="service-points">
-                        <li>Identidad</li>
-                        <li>Kit de interfaz</li>
-                        <li>Dirección</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </article>
-              <article class="service-card" data-service-card style="--service-angle: 306deg;" tabindex="0">
-                <div class="service-card-shell">
-                  <div class="service-card-visual" aria-hidden="true"><img src="assets/package-card-backgrounds/6.png" alt="" loading="lazy" decoding="async"></div>
-                  <div class="service-card-shade" aria-hidden="true"></div>
-                  <div class="service-card-content">
-                    <div class="service-card-top">
-                      <div>
-                        <p class="service-kicker">Sistema 06</p>
-                        <h3 class="service-title">Contenido y crecimiento</h3>
-                      </div>
-                      <span class="service-open" aria-hidden="true">↗</span>
-                    </div>
-                    <div class="service-card-bottom">
-                      <p class="service-desc">Contenido, campañas y presencia digital para mantener a la marca visible y consistente.</p>
-                      <ul class="service-points">
-                        <li>Contenido</li>
-                        <li>Campañas</li>
-                        <li>Crecimiento</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </div>
-            <div class="services-controls" aria-label="Navegación de servicios">
-              <button class="services-arrow" type="button" data-services-prev aria-label="Servicio anterior">←</button>
-              <div class="services-dots" aria-label="Seleccionar servicio"></div>
-              <button class="services-arrow" type="button" data-services-next aria-label="Servicio siguiente">→</button>
-            </div>
+    <!-- Servicios: operación, desarrollo y automatización -->
+    <section id="services" class="commerce-services" data-commerce-services aria-labelledby="commerce-services-title">
+      <div class="commerce-services-inner">
+        <header class="commerce-services-head">
+          <div><h2 id="commerce-services-title" data-arrival-title aria-label="Tu operación, en buenas manos."><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>Tu operación,</span></span><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>en buenas manos.</span></span></h2></div>
+        </header>
+        <article class="commerce-service is-open" data-arrival-item>
+          <h3 class="commerce-service-heading"><button class="commerce-service-toggle" id="service-shopify-toggle" type="button" aria-expanded="true" aria-controls="service-shopify-panel"><span class="commerce-service-number" aria-hidden="true">01</span><span class="commerce-service-name"><span class="commerce-service-roll"><span class="commerce-service-label">Administración de Shopify</span><span class="commerce-service-copy" aria-hidden="true">Administración de Shopify</span></span></span><span class="commerce-service-mode" aria-hidden="true">(Mensual)</span><span class="commerce-service-symbol" aria-hidden="true">−</span></button></h3>
+          <div class="commerce-service-panel" id="service-shopify-panel" role="region" aria-labelledby="service-shopify-toggle" aria-hidden="false">
+            <div class="commerce-service-panel-inner"><div class="commerce-service-content">
+              <div class="commerce-service-description"><p>Nos encargamos del día a día de tu tienda, con un alcance definido según tu operación.</p><a class="commerce-service-link" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20la%20administraci%C3%B3n%20de%20mi%20tienda%20Shopify." target="_blank" rel="noopener noreferrer">Hablemos de tu tienda <span aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></div>
+              <ul class="commerce-service-includes"><li>Catálogo y productos al día</li><li>Promociones y actualizaciones</li><li>Seguimiento de pedidos</li><li>Reportes para entender tu operación</li></ul>
+            </div></div>
+          </div>
+        </article>
+        <article class="commerce-service" data-arrival-item>
+          <h3 class="commerce-service-heading"><button class="commerce-service-toggle" id="service-web-toggle" type="button" aria-expanded="false" aria-controls="service-web-panel"><span class="commerce-service-number" aria-hidden="true">02</span><span class="commerce-service-name"><span class="commerce-service-roll"><span class="commerce-service-label">Diseño y desarrollo web</span><span class="commerce-service-copy" aria-hidden="true">Diseño y desarrollo web</span></span></span><span class="commerce-service-mode" aria-hidden="true">(Proyecto)</span><span class="commerce-service-symbol" aria-hidden="true">+</span></button></h3>
+          <div class="commerce-service-panel" id="service-web-panel" role="region" aria-labelledby="service-web-toggle" aria-hidden="true" inert>
+            <div class="commerce-service-panel-inner"><div class="commerce-service-content">
+              <div class="commerce-service-description"><p>Sitios y tiendas que muestran tu marca y facilitan que te compren o contacten.</p><a class="commerce-service-link" href="/diseno-web-torreon/">Ver diseño web <span aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></div>
+              <ul class="commerce-service-includes"><li>Sitios web y landing pages</li><li>Tiendas en Shopify</li><li>Diseño adaptado a tu marca</li><li>Desarrollo y funciones a medida</li></ul>
+            </div></div>
+          </div>
+        </article>
+        <article class="commerce-service" data-arrival-item>
+          <h3 class="commerce-service-heading"><button class="commerce-service-toggle" id="service-automation-toggle" type="button" aria-expanded="false" aria-controls="service-automation-panel"><span class="commerce-service-number" aria-hidden="true">03</span><span class="commerce-service-name"><span class="commerce-service-roll"><span class="commerce-service-label">Automatización e IA</span><span class="commerce-service-copy" aria-hidden="true">Automatización e IA</span></span></span><span class="commerce-service-mode" aria-hidden="true">(A medida)</span><span class="commerce-service-symbol" aria-hidden="true">+</span></button></h3>
+          <div class="commerce-service-panel" id="service-automation-panel" role="region" aria-labelledby="service-automation-toggle" aria-hidden="true" inert>
+            <div class="commerce-service-panel-inner"><div class="commerce-service-content">
+              <div class="commerce-service-description"><p>Conectamos herramientas y desarrollamos soluciones para reducir trabajo repetitivo.</p><a class="commerce-service-link" href="https://wa.me/528718876019?text=Hola%2C%20me%20interesa%20automatizar%20procesos%20de%20mi%20negocio." target="_blank" rel="noopener noreferrer">Cuéntanos qué necesitas <span aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></div>
+              <ul class="commerce-service-includes"><li>Integraciones entre plataformas</li><li>Flujos y seguimiento automatizado</li><li>Herramientas con IA</li><li>Código y soluciones a medida</li></ul>
+            </div></div>
+          </div>
+        </article>
+        <div class="commerce-services-addon" data-arrival-item><span aria-hidden="true">+</span><h3>Contenido básico con IA</h3><p>Piezas visuales y textos básicos como complemento de tu paquete.</p></div>
+      </div>
+    </section>
+
+    <!-- Casos reales: galería editorial -->
+    <section id="work" class="case-home" aria-labelledby="case-work-title">
+      <header class="case-home-intro"><h2 class="case-home-title" id="case-work-title" data-arrival-title aria-label="Proyectos que ya están en marcha."><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>Proyectos que</span></span><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>ya están en marcha.</span></span></h2><div class="case-home-bottom" data-arrival-item><a class="case-text-link" href="/case-studies/">Todos los casos <span aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></div></header>
+      <div class="case-story" data-case-story><div class="case-viewport"><div class="case-track" aria-label="Proyectos de BY HEVËN"><a class="case-card case-card--emyasa" href="/case-studies/emyasa/" aria-label="Ver caso: EMYASA">
+  <img class="case-cover" src="/assets/cases/emyasa-cover.webp" width="1600" height="1280" alt="Detalle de trabajo en metal con chispas y luz azul para EMYASA" loading="lazy" decoding="async">
+  <div class="case-card-bottom"><div><h3>EMYASA</h3><p>Administración de Shopify</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
+  <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
+</a><a class="case-card case-card--stone-kuche" href="/case-studies/stone-kuche/" aria-label="Ver caso: Stone Küchë">
+  <img class="case-cover" src="/assets/cases/stone-kuche-cover.webp" width="1600" height="1280" alt="Interior contemporáneo con piedra natural, metal y luz cálida para Stone Küchë" loading="lazy" decoding="async">
+  <div class="case-card-bottom"><div><h3>Stone Küchë</h3><p>Diseño y desarrollo web</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
+  <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
+</a><a class="case-card case-card--parsomen" href="/case-studies/parsomen/" aria-label="Ver caso: Parsömen Cymbals">
+  <img class="case-cover" src="/assets/cases/parsomen-cover.webp" width="1600" height="1280" alt="Platillo Parsömen martillado a mano bajo luz cálida" loading="lazy" decoding="async">
+  <div class="case-card-bottom"><div><h3>Parsömen Cymbals</h3><p>Diseño web y producto</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
+  <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
+</a><a class="case-card case-card--dor" href="/case-studies/dor/" aria-label="Ver caso: D’OR Jewelry">
+  <img class="case-cover" src="/assets/cases/dor-cover.webp" width="1600" height="1280" alt="Collares, anillos y aretes dorados en la portada editorial de D’OR" loading="lazy" decoding="async">
+  <div class="case-card-bottom"><div><h3>D’OR Jewelry</h3><p>Ecommerce en Shopify</p></div><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div>
+  <div class="case-peek" aria-hidden="true"><span>Ver caso</span></div>
+</a><a class="case-card case-card--all" href="/case-studies/" aria-label="Ver todos los casos"><div class="case-all-content"><h3>Ver todos<br>los casos.</h3><span class="case-arrow" aria-hidden="true"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></div></a></div></div></div>
+    </section>
+
+    <section id="faq" class="home-chapter home-faq" aria-labelledby="home-faq-title">
+      <div class="home-inner faq-stage">
+        
+        <div class="home-faq-layout">
+          <header class="home-faq-intro"><h2 class="home-heading" id="home-faq-title" data-arrival-title aria-label="Las cosas, claras."><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>Las cosas,</span></span><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>claras.</span></span></h2><p class="home-copy" data-arrival-item>Lo que conviene saber antes de poner tu proyecto en marcha.</p></header>
+          <div class="chat-faq" data-arrival-item role="region" aria-label="Preguntas frecuentes de BY HEVËN">
+            <p class="chat-hint">Elige una pregunta para ver la respuesta.</p>
+            <div class="chat-window"><div class="chat-stream">
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-1" aria-controls="chat-reply-1">¿Pueden trabajar con mi Shopify actual?</summary><div class="chat-reply" id="chat-reply-1" role="region" aria-labelledby="chat-question-1" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Sí. Podemos partir de la tienda que ya tienes.</p><p class="chat-message">Revisamos cómo está organizada y qué necesitas mejorar. A partir de eso definimos el alcance.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-2" aria-controls="chat-reply-2">¿Qué incluye la administración de Shopify?</summary><div class="chat-reply" id="chat-reply-2" role="region" aria-labelledby="chat-question-2" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Catálogo, promociones, actualizaciones, seguimiento de pedidos y reportes.</p><p class="chat-message">Acordamos contigo las tareas y prioridades que necesita tu operación.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-3" aria-controls="chat-reply-3">¿Cómo se cotiza el trabajo?</summary><div class="chat-reply" id="chat-reply-3" role="region" aria-labelledby="chat-question-3" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">La administración de Shopify es un servicio mensual. Los sitios web y las automatizaciones se cotizan por proyecto.</p><p class="chat-message">Antes de empezar, acordamos el alcance, los tiempos y el costo.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-4" aria-controls="chat-reply-4">¿También pueden crear mi tienda desde cero?</summary><div class="chat-reply" id="chat-reply-4" role="region" aria-labelledby="chat-question-4" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Sí. Diseñamos y desarrollamos tiendas en Shopify y sitios web adaptados a tu marca.</p><p class="chat-message">Podemos empezar con una tienda nueva o mejorar una que ya esté funcionando.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-6" aria-controls="chat-reply-6">¿Qué necesitan para empezar?</summary><div class="chat-reply" id="chat-reply-6" role="region" aria-labelledby="chat-question-6" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Primero, conocer tu negocio, tu tienda y lo que quieres resolver.</p><p class="chat-message">Después definimos las prioridades, los materiales y los accesos necesarios para el alcance acordado.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-7" aria-controls="chat-reply-7">¿Cuánto tarda un proyecto?</summary><div class="chat-reply" id="chat-reply-7" role="region" aria-labelledby="chat-question-7" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Depende del alcance, las integraciones y los materiales disponibles.</p><p class="chat-message">Te proponemos un calendario antes de empezar y acordamos contigo las etapas de revisión.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-8" aria-controls="chat-reply-8">¿Cómo les doy acceso a mi tienda?</summary><div class="chat-reply" id="chat-reply-8" role="region" aria-labelledby="chat-question-8" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">En Shopify podemos trabajar con un acceso de colaborador y permisos específicos.</p><p class="chat-message">Te indicamos cuáles necesitamos para las tareas acordadas. Tú mantienes el control de tu cuenta.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-10" aria-controls="chat-reply-10">¿Cómo revisamos los avances?</summary><div class="chat-reply" id="chat-reply-10" role="region" aria-labelledby="chat-question-10" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Acordamos entregables y momentos de revisión antes de empezar.</p><p class="chat-message">Te mostramos los avances, recibimos tus comentarios y ajustamos lo acordado. En la administración mensual de Shopify, el seguimiento se define en la propuesta.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-11" aria-controls="chat-reply-11">¿Shopify, apps y dominio están incluidos?</summary><div class="chat-reply" id="chat-reply-11" role="region" aria-labelledby="chat-question-11" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">La propuesta detalla qué incluye nuestro servicio y qué herramientas se pagan por separado.</p><p class="chat-message">Revisamos contigo los costos de plataforma, apps, dominio e integraciones que necesite tu proyecto.</p></div></details>
+            <details class="chat-item" name="chat-faq"><summary class="chat-question" id="chat-question-12" aria-controls="chat-reply-12">¿Pueden seguir apoyándome después del lanzamiento?</summary><div class="chat-reply" id="chat-reply-12" role="region" aria-labelledby="chat-question-12" aria-live="polite" aria-atomic="true" aria-busy="false"><div class="chat-typing" aria-hidden="true" hidden><i></i><i></i><i></i></div><p class="chat-message">Sí. Podemos acordar la administración mensual de tu Shopify o un alcance de soporte para tu sitio.</p><p class="chat-message">Las tareas, la frecuencia y los canales de seguimiento quedan definidos en la propuesta.</p></div></details>
+            </div></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Proyectos -->
-    <section id="work" class="work-section">
-      <div class="container">
-        <div class="work-header reveal">
-          <div><p class="label">Proyectos</p><h2 class="display-md" style="margin-top:var(--space-md)">Trabajo comprobado</h2></div>
-          <span class="btn btn-secondary btn-disabled" aria-disabled="true">Ver todos</span>
-        </div>
-        <div class="work-sparkles reveal" data-work-sparkles aria-label="Introducción visual a proyectos comprobados">
-          <div class="work-sparkles-inner">
-            <h3 class="work-sparkles-title"><span>No promesas.</span><br>Sistemas que ya viven.</h3>
-            <div class="work-proof-row" aria-label="Proyectos y sistemas destacados">
-              <span class="work-proof-mark" aria-label="EMYASA">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/1.svg" alt="" aria-hidden="true">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/6.svg" alt="" aria-hidden="true">
-              </span>
-              <span class="work-proof-mark" aria-label="Stone K&uuml;ch&euml;">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/2.svg" alt="" aria-hidden="true">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/7.svg" alt="" aria-hidden="true">
-              </span>
-              <span class="work-proof-mark" aria-label="Pars&ouml;men">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/3.svg" alt="" aria-hidden="true">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/8.svg" alt="" aria-hidden="true">
-              </span>
-              <span class="work-proof-mark" aria-label="OEMPLUS">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/4.svg" alt="" aria-hidden="true">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/9.svg" alt="" aria-hidden="true">
-              </span>
-              <span class="work-proof-mark" aria-label="Hev&euml;n OS">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/5.svg" alt="" aria-hidden="true">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/10.svg" alt="" aria-hidden="true">
-              </span>
-              <span class="work-proof-mark is-clone" aria-hidden="true">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/1.svg" alt="">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/6.svg" alt="">
-              </span>
-              <span class="work-proof-mark is-clone" aria-hidden="true">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/2.svg" alt="">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/7.svg" alt="">
-              </span>
-              <span class="work-proof-mark is-clone" aria-hidden="true">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/3.svg" alt="">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/8.svg" alt="">
-              </span>
-              <span class="work-proof-mark is-clone" aria-hidden="true">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/4.svg" alt="">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/9.svg" alt="">
-              </span>
-              <span class="work-proof-mark is-clone" aria-hidden="true">
-                <img class="work-proof-logo is-dark" src="assets/proof-work-logos/dark/5.svg" alt="">
-                <img class="work-proof-logo is-light" src="assets/proof-work-logos/light/10.svg" alt="">
-              </span>
+    <section id="contact" class="home-chapter home-contact" aria-labelledby="home-contact-title">
+      <div class="home-inner">
+        
+        <h2 class="home-contact-title" id="home-contact-title" data-arrival-title aria-label="Tu negocio. Nuestro siguiente proyecto."><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>Tu negocio.</span></span><span class="arrival-mask" aria-hidden="true"><span data-arrival-line>Nuestro siguiente proyecto.</span></span></h2>
+        <div class="home-contact-layout">
+          <div data-arrival-item>
+            <p class="home-contact-lead">Cuéntanos qué quieres resolver.</p>
+            <a class="home-primary-link" href="https://wa.me/528718876019?text=Hola%20BY%20HEV%C3%8BN%2C%20me%20gustar%C3%ADa%20platicar%20sobre%20mi%20proyecto." target="_blank" rel="noopener noreferrer"><span class="home-cta-label">Platiquemos por WhatsApp</span><span class="home-cta-icon"><svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a>
+            <dl class="home-contact-meta">
+              <div><dt>Correo</dt><dd><a href="mailto:contact@byheven.com">contact@byheven.com</a></dd></div>
+              <div><dt>WhatsApp</dt><dd><a href="https://wa.me/528718876019" target="_blank" rel="noopener noreferrer">+52 871 887 6019</a></dd></div>
+              <div><dt>Desde</dt><dd>Torreón, Coahuila, México</dd></div>
+            </dl>
+          </div>
+          <form data-arrival-item class="home-contact-form" id="contact-form" action="https://wa.me/528718876019" method="get" aria-label="Cuéntanos sobre tu proyecto">
+            <div class="home-form-grid">
+              <div class="home-field"><label for="contact-name">Tu nombre</label><input id="contact-name" name="name" type="text" placeholder="¿Cómo te llamas?" autocomplete="name" maxlength="80" required></div>
+              <div class="home-field"><label for="contact-business">Negocio o sitio <span>(opcional)</span></label><input id="contact-business" name="business" type="text" placeholder="Tu marca o enlace" autocomplete="organization" maxlength="180"></div>
+              <div class="home-field home-field--full"><label for="contact-service">¿Qué necesitas?</label><select id="contact-service" name="service"><option value="Administración de Shopify">Administración de Shopify</option><option value="Diseño y desarrollo web">Diseño y desarrollo web</option><option value="Automatización e IA">Automatización e IA</option><option value="Quiero orientación">Aún no lo tengo claro</option></select></div>
+              <div class="home-field home-field--full"><label for="contact-message">Cuéntanos un poco</label><textarea id="contact-message" name="text" placeholder="Qué quieres resolver o qué te gustaría crear…" rows="4" maxlength="2000" required></textarea></div>
             </div>
-          </div>
-          <div class="work-sparkles-field" aria-hidden="true">
-            <canvas class="work-sparkles-canvas"></canvas>
-            <div class="work-sparkles-glow"></div>
-            <div class="work-sparkles-arc"></div>
-          </div>
-        </div>
-        <div class="work-layout">
-          <a class="work-card work-featured reveal" href="https://emyasa.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="Abrir proyecto EMYASA">
-            <div class="work-card-image has-preview">
-              <img class="work-card-screenshot" src="mpx5j07w-Captura-de-pantalla-2026-06-02-150203.png" alt="Vista del ecommerce industrial EMYASA" loading="lazy">
-            </div>
-            <div class="work-card-content">
-              <div class="work-card-meta"><span class="work-tag type">Proyecto real</span><span class="work-tag">Industrial</span><span class="work-tag">Comercio electrónico</span></div>
-              <h3 class="work-card-title">EMYASA</h3>
-              <p class="work-card-desc">Comercio electrónico industrial en Shopify con logística, roles, flujos de trabajo de pedidos, SEO y trazabilidad operativa.</p>
-              <span class="work-card-cta">Ver proyecto <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-            </div>
-          </a>
-          <div class="work-grid-secondary">
-            <a class="work-card reveal" href="https://www.xn--stonekch-01a1o.com/" target="_blank" rel="noopener noreferrer" aria-label="Abrir proyecto Stone Küchë">
-              <div class="work-card-image has-preview">
-                <img class="work-card-screenshot is-theme-preview is-dark-mode-preview" src="mpx5n8tp-Captura-de-pantalla-2026-06-02-150101.png" alt="Vista clara del sitio Stone Küchë" loading="lazy">
-                <img class="work-card-screenshot is-theme-preview is-light-mode-preview" src="mpx5n8s6-Captura-de-pantalla-2026-06-02-150107.png" alt="Vista oscura del sitio Stone Küchë" loading="lazy">
-              </div>
-              <div class="work-card-content">
-                <div class="work-card-meta"><span class="work-tag type">Proyecto real</span><span class="work-tag">Arquitectura</span></div>
-                <h3 class="work-card-title">Stone Küchë</h3>
-                <p class="work-card-desc">Sitio editorial premium para piedra natural y arquitectura de interiores.</p>
-                <span class="work-card-cta">Ver proyecto <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-              </div>
-            </a>
-            <a class="work-card reveal" href="https://www.parsomencymbals.com/home" target="_blank" rel="noopener noreferrer" aria-label="Abrir proyecto Parsömen Cymbals">
-              <div class="work-card-image has-preview">
-                <img class="work-card-screenshot" src="mpx5p7tj-Captura-de-pantalla-2026-06-02-150325.png" alt="Vista del sitio Parsömen Cymbals" loading="lazy">
-              </div>
-              <div class="work-card-content">
-                <div class="work-card-meta"><span class="work-tag type">Proyecto real</span><span class="work-tag">Música</span></div>
-                <h3 class="work-card-title">Parsömen Cymbals</h3>
-                <p class="work-card-desc">Sitio web y comercio electrónico para platillos artesanales B20 turcos.</p>
-                <span class="work-card-cta">Ver proyecto <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sectores -->
-    <section id="industries" class="industries" data-industries-waves>
-      <div class="industries-waves" aria-hidden="true"><canvas class="industries-waves-canvas"></canvas></div>
-      <div class="container">
-        <div class="industries-shell">
-          <div class="industries-header reveal">
-            <h2 class="display-md industries-heading">Sistemas adaptados a tu sector</h2>
-            <p class="industries-lede">Cada negocio necesita una presencia distinta. La lógica se diseña alrededor de cómo vende, atiende y opera.</p>
-          </div>
-          <div class="industries-grid" aria-label="Sectores que trabaja by ˈHevən.">
-            <article class="industry-item reveal" data-index="01">
-              <div>
-                <span class="industry-index">B2B</span>
-                <h3 class="industry-title">Industrial y B2B</h3>
-                <p class="industry-desc">Catálogo · cotizador · portal</p>
-              </div>
-            </article>
-            <article class="industry-item reveal" data-index="02">
-              <div>
-                <span class="industry-index">Obra</span>
-                <h3 class="industry-title">Construcción e interiores</h3>
-                <p class="industry-desc">Portafolio · levantamiento · WhatsApp</p>
-              </div>
-            </article>
-            <article class="industry-item reveal" data-index="03">
-              <div>
-                <span class="industry-index">Venta</span>
-                <h3 class="industry-title">Comercio electrónico y producto</h3>
-                <p class="industry-desc">Shopify · inventario · flujos</p>
-              </div>
-            </article>
-            <article class="industry-item reveal" data-index="04">
-              <div>
-                <span class="industry-index">Servicio</span>
-                <h3 class="industry-title">Servicios Premium</h3>
-                <p class="industry-desc">Agenda · pagos · CRM</p>
-              </div>
-            </article>
-            <article class="industry-item reveal" data-index="05">
-              <div>
-                <span class="industry-index">Nicho</span>
-                <h3 class="industry-title">Automotriz y nicho</h3>
-                <p class="industry-desc">Fichas · filtros · detalle</p>
-              </div>
-            </article>
-            <article class="industry-item reveal" data-index="06">
-              <div>
-                <span class="industry-index">Nuevos</span>
-                <h3 class="industry-title">Empresas emergentes y conceptos</h3>
-                <p class="industry-desc">MVP · página de aterrizaje · identidad</p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Proceso - línea de tiempo orbital radial -->
-    <section id="process" class="process-orbital">
-      <div class="container">
-        <div class="process-orbital-header">
-          <div class="process-orbital-header-inner reveal">
-            <div><p class="label">Proceso</p><h2 class="display-md" style="margin-top:var(--space-md)">Cómo trabajamos</h2></div>
-            <p class="body-md" style="max-width:500px">Un proceso claro para negocios que no quieren pelear con tecnología.</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="orbital-container" id="orbital-container">
-        <div class="orbital-wrapper">
-          <!-- Núcleo central -->
-          <div class="orbital-center">
-            <div class="orbital-center-inner"></div>
-          </div>
-          
-          <!-- Anillo orbital -->
-          <div class="orbital-ring"></div>
-          
-          <!-- Los nodos se generan con JS -->
-          <div id="orbital-nodes"></div>
-          
-          <!-- Tarjeta expandida -->
-          <div class="orbital-card" id="orbital-card">
-            <div class="orbital-card-header">
-              <span class="orbital-card-badge" id="card-badge">COMPLETADO</span>
-              <span class="orbital-card-date" id="card-date">Paso 1</span>
-            </div>
-            <h3 class="orbital-card-title" id="card-title">Diagnóstico</h3>
-            <p class="orbital-card-content" id="card-content">Entendemos tu negocio, clientes y problemas actuales.</p>
-            <div class="orbital-card-progress">
-              <div class="orbital-card-progress-header">
-                <span class="orbital-card-progress-label">Progreso</span>
-                <span class="orbital-card-progress-value" id="card-progress-value">100%</span>
-              </div>
-              <div class="orbital-card-progress-bar">
-                <div class="orbital-card-progress-fill" id="card-progress-fill" style="width: 100%"></div>
-              </div>
-            </div>
-            <div class="orbital-card-related" id="card-related">
-              <h4 class="orbital-card-related-title">Nodos conectados</h4>
-              <div class="orbital-card-related-links" id="card-related-links"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Paquetes -->
-    <section id="packages" class="packages">
-      <div class="container">
-        <div class="packages-header reveal"><p class="label">Paquetes</p><h2 class="display-md" style="margin-top:var(--space-md)">Soluciones claras</h2></div>
-        <div class="packages-grid">
-          <div class="package-item reveal" data-tilt-card data-package="presence">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/1.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">Presencia</p>
-                  <h3 class="package-title">Presencia digital</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">01</span>
-              </div>
-              <p class="package-price">$5,000+ <span>MXN</span></p>
-              <p class="package-desc">Sitio web profesional para que un negocio se vea serio, claro y listo para convertir desde el primer contacto.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>Diseño adaptable</li>
-                <li>Formulario de contacto</li>
-                <li>Optimización base</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-secondary">Solicitar</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="package-item featured reveal" data-tilt-card data-package="system">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/2.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">Recomendado</p>
-                  <h3 class="package-title">Sistema de negocio</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">02</span>
-              </div>
-              <p class="package-price">Cotización <span>personalizada</span></p>
-              <p class="package-desc">Sistema completo para vender, operar y dar seguimiento con más orden: sitio web, catálogo, flujos de trabajo, roles y reportes.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>Shopify o catálogo</li>
-                <li>CRM + reportes</li>
-                <li>Capacitación y soporte</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-primary">Solicitar diagnóstico</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="package-item reveal" data-tilt-card data-package="brand">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/3.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">Identidad</p>
-                  <h3 class="package-title">Marca + web</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">03</span>
-              </div>
-              <p class="package-price">$7,500+ <span>MXN</span></p>
-              <p class="package-desc">Identidad visual y sitio web coherentes para que la marca se vea más grande, más clara y más confiable.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>Logo y sistema visual</li>
-                <li>Paleta + tipografía</li>
-                <li>Material base de marca</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-secondary">Solicitar</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="package-item reveal" data-tilt-card data-package="ecommerce">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/4.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">Venta en línea</p>
-                  <h3 class="package-title">Tienda en línea</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">04</span>
-              </div>
-              <p class="package-price">$12,000+ <span>MXN</span></p>
-              <p class="package-desc">Tienda preparada para vender con estructura comercial, pagos, productos, envíos y capacitación operativa.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>Shopify completo</li>
-                <li>Pagos + envíos</li>
-                <li>Carga de productos</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-secondary">Solicitar</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="package-item reveal" data-tilt-card data-package="content">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/5.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">Crecimiento</p>
-                  <h3 class="package-title">Contenido</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">05</span>
-              </div>
-              <p class="package-price">$1,000+ <span>MXN/mes</span></p>
-              <p class="package-desc">Contenido mensual para mantener presencia, explicar valor y alimentar una marca que se vea activa y consistente.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>4-6 publicaciones o reels</li>
-                <li>Diseño + textos comerciales</li>
-                <li>Optimización orgánica</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-secondary">Solicitar</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="package-item reveal" data-tilt-card data-package="custom">
-            <div class="package-art" aria-hidden="true"><img src="assets/package-card-backgrounds/6.png" alt="" loading="lazy" decoding="async"></div>
-            <div class="package-content">
-              <div class="package-glass-header">
-                <div>
-                  <p class="label package-label">A medida</p>
-                  <h3 class="package-title">Proyecto a medida</h3>
-                </div>
-                <span class="package-brand-mark" aria-hidden="true">06</span>
-              </div>
-              <p class="package-price">Hablemos</p>
-              <p class="package-desc">Proyectos especiales, integraciones complejas y sistemas empresariales cuando el negocio necesita algo más específico.</p>
-              <ul class="package-points" aria-label="Incluye">
-                <li>Integraciones complejas</li>
-                <li>Sistemas internos</li>
-                <li>Ruta por etapas</li>
-              </ul>
-              <div class="package-card-footer">
-                <a href="#contact" class="btn btn-secondary">Contactar</a>
-                <div class="package-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Llamado a la acción -->
-    <section id="contact" class="cta-section">
-      <div class="container">
-        <div class="cta-header reveal"><p class="label">Contacto</p><h2 class="display-xl" style="margin-top:var(--space-md)">Tu negocio ya tiene valor.<br>Hagamos que se vea.</h2></div>
-        <div class="cta-form-container">
-          <div class="cta-form-info reveal">
-            <h3>¿Listo para empezar?</h3>
-            <p>Completa el diagnóstico y envíanos tu solicitud por WhatsApp con toda la información lista.</p>
-            <div class="cta-contact-line"><span class="label">Correo</span><a class="cta-contact-link" href="mailto:contact@byheven.com">contact@byheven.com</a></div>
-            <div class="cta-contact-line"><span class="label">WhatsApp</span><a class="cta-contact-link" href="https://wa.me/528718876019" target="_blank" rel="noreferrer">+52 871 887 6019</a></div>
-            <div class="cta-contact-line"><span class="label">Ubicación</span><span>Torreón, Coahuila, MX</span></div>
-          </div>
-          <form class="cta-form reveal" id="contact-form" novalidate>
-            <div class="form-grid">
-              <div class="form-group"><label class="form-label" for="name">Nombre</label><input class="form-input" type="text" id="name" name="name" placeholder="Tu nombre" autocomplete="name" required><p class="form-error" id="name-error"></p></div>
-              <div class="form-group"><label class="form-label" for="whatsapp">WhatsApp</label><input class="form-input" type="tel" id="whatsapp" name="whatsapp" placeholder="+52 871 123 4567" autocomplete="tel" required><p class="form-error" id="whatsapp-error"></p></div>
-              <div class="form-group"><label class="form-label" for="business">Negocio</label><input class="form-input" type="text" id="business" name="business" placeholder="Nombre de tu empresa" autocomplete="organization" required><p class="form-error" id="business-error"></p></div>
-              <div class="form-group"><label class="form-label" for="industry">Giro</label><select class="form-select" id="industry" name="industry" required><option value="">Selecciona</option><option value="industrial">Industrial / B2B</option><option value="construction">Construcción / interiores</option><option value="ecommerce">Comercio electrónico / producto</option><option value="services">Servicios</option><option value="startup">Empresa emergente</option><option value="other">Otro</option></select><p class="form-error" id="industry-error"></p></div>
-              <div class="form-group"><label class="form-label" for="need">¿Qué necesitas?</label><select class="form-select" id="need" name="need" required><option value="">Selecciona</option><option value="website">Sitio web</option><option value="ecommerce">Comercio electrónico</option><option value="branding">Marca e identidad</option><option value="automation">Automatización</option><option value="system">Sistema de negocio</option></select><p class="form-error" id="need-error"></p></div>
-              <div class="form-group"><label class="form-label" for="priority">Prioridad</label><select class="form-select" id="priority" name="priority" required><option value="">¿Lo más importante?</option><option value="clients">Más clientes</option><option value="sell">Vender en línea</option><option value="professional">Verme profesional</option><option value="operations">Ordenar operación</option></select><p class="form-error" id="priority-error"></p></div>
-              <div class="form-group full"><label class="form-label" for="message">Mensaje</label><textarea class="form-textarea" id="message" name="message" placeholder="Cuéntanos más sobre tu negocio..." required></textarea><p class="form-error" id="message-error"></p></div>
-              <div class="form-status" id="form-status" role="status" aria-live="polite">Validaremos tus datos y abriremos WhatsApp con tu mensaje prellenado.</div>
-              <div class="form-group full form-submit"><button type="submit" class="btn btn-primary btn-lg" style="width:100%">Enviar por WhatsApp <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
-            </div>
+            <button class="home-form-submit" type="submit">Continuar en WhatsApp <svg class="ui-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></button>
+            <p class="home-form-note">Se abrirá WhatsApp con tu mensaje preparado.</p>
+            <p class="home-form-status" id="home-form-status" role="status" aria-live="polite"></p>
           </form>
-        </div>
-      </div>
-    </section>
-
-    <section id="instagram" class="instagram-section" aria-labelledby="instagram-title">
-      <div class="instagram-shell reveal">
-        <div class="instagram-header">
-          <div>
-            <p class="instagram-kicker">BY ˈHEVƏN ON INSTAGRAM</p>
-            <h2 class="display-lg instagram-title" id="instagram-title">Más que una agencia, un lifestyle.</h2>
-          </div>
-        </div>
-        <div class="instagram-frame" aria-label="Feed de Instagram de BY ˈHEVƏN">
-          <div class="instagram-widget">
-            <div class="elfsight-app-0f4abe76-eba6-48fd-9533-0b53d63ac38e" data-elfsight-app-lazy></div>
-          </div>
         </div>
       </div>
     </section>
@@ -2149,8 +1605,8 @@
         <div class="footer-overlay"></div>
         <div class="footer-content">
           <div class="footer-nav-grid">
-            <div class="footer-nav-col" id="fc1"><h4 class="footer-nav-title">Estudio</h4><ul class="footer-nav-links"><li><a href="#work">Proyectos</a></li><li><a href="#services">Servicios</a></li><li><a href="#process">Proceso</a></li></ul></div>
-            <div class="footer-nav-col" id="fc4"><h4 class="footer-nav-title">Conectar</h4><ul class="footer-nav-links"><li><a href="#contact">Contacto</a></li><li><a href="https://wa.me/528718876019" target="_blank" rel="noreferrer">WhatsApp</a></li><li><a href="https://www.instagram.com/byheven.com_/" target="_blank" rel="noreferrer">Instagram</a></li><li><a href="https://www.facebook.com/profile.php?id=61590950150253" target="_blank" rel="noreferrer">Facebook</a></li></ul></div>
+            <div class="footer-nav-col" id="fc1"><h4 class="footer-nav-title">Estudio</h4><ul class="footer-nav-links"><li><a href="#work">Proyectos</a></li><li><a href="#services">Servicios</a></li></ul></div>
+            <div class="footer-nav-col" id="fc4"><h4 class="footer-nav-title">Conectar</h4><ul class="footer-nav-links"><li><a href="#contact">Contacto</a></li><li><a href="https://wa.me/528718876019" target="_blank" rel="noopener noreferrer">WhatsApp</a></li><li><a href="https://www.instagram.com/byheven.com_/" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://www.facebook.com/profile.php?id=61590950150253" target="_blank" rel="noopener noreferrer">Facebook</a></li></ul></div>
           </div>
           <div class="footer-bottom">
             <div class="footer-brand" id="footer-brand">
@@ -2159,9 +1615,9 @@
             <div class="footer-info" id="footer-info">
               <p class="footer-copyright">© 2026 by ˈHevən.</p>
               <div class="footer-social">
-                <a href="https://www.instagram.com/byheven.com_/" target="_blank" rel="noreferrer" class="social-link" aria-label="Instagram de by ˈHevən">IG</a>
-                <a href="https://www.facebook.com/profile.php?id=61590950150253" target="_blank" rel="noreferrer" class="social-link" aria-label="Facebook de by ˈHevən">FB</a>
-                <a href="https://wa.me/528718876019" target="_blank" rel="noreferrer" class="social-link" aria-label="WhatsApp de by ˈHevən">WA</a>
+                <a href="https://www.instagram.com/byheven.com_/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram de by ˈHevən">IG</a>
+                <a href="https://www.facebook.com/profile.php?id=61590950150253" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook de by ˈHevən">FB</a>
+                <a href="https://wa.me/528718876019" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="WhatsApp de by ˈHevən">WA</a>
               </div>
             </div>
           </div>
@@ -2169,1424 +1625,5 @@
       </footer>
     </div>
   </div>
-
-  <script>
-    // Cambio de tema
-    const themeToggle = document.querySelector('.theme-toggle');
-    const html = document.documentElement;
-    const themePreference = window.matchMedia?.('(prefers-color-scheme: light)');
-    const reducedMotionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    const readStoredTheme = () => {
-      try {
-        const value = localStorage.getItem('theme');
-        return value === 'light' || value === 'dark' ? value : null;
-      } catch {
-        return null;
-      }
-    };
-    const storeTheme = (theme) => {
-      try {
-        localStorage.setItem('theme', theme);
-      } catch {
-        // The visible theme still changes if storage is unavailable.
-      }
-    };
-    const systemTheme = () => themePreference?.matches ? 'light' : 'dark';
-    const applyTheme = (theme) => html.setAttribute('data-theme', theme);
-    const syncTheme = () => applyTheme(readStoredTheme() || systemTheme());
-
-    syncTheme();
-    themeToggle?.addEventListener('click', () => {
-      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      applyTheme(next);
-      storeTheme(next);
-    });
-    const handleSystemThemeChange = () => {
-      if (!readStoredTheme()) syncTheme();
-    };
-    if (themePreference?.addEventListener) {
-      themePreference.addEventListener('change', handleSystemThemeChange);
-    } else if (themePreference?.addListener) {
-      themePreference.addListener(handleSystemThemeChange);
-    }
-
-    // Intro cinematografico
-    const siteIntro = document.querySelector('[data-site-intro]');
-    const siteIntroVideo = document.querySelector('[data-site-intro-video]');
-    const introPreloadQueue = [
-      ...Array.from({ length: 2 }, (_, i) => `assets/package-card-backgrounds/${i + 1}.png`),
-      'mpx5j07w-Captura-de-pantalla-2026-06-02-150203.png',
-      'mpx5n8tp-Captura-de-pantalla-2026-06-02-150101.png',
-      'mpx5n8s6-Captura-de-pantalla-2026-06-02-150107.png',
-      'mpx5p7tj-Captura-de-pantalla-2026-06-02-150325.png'
-    ];
-
-    function warmVisualAssets() {
-      const loadNext = deadline => {
-        while (introPreloadQueue.length && (!deadline || deadline.timeRemaining() > 6)) {
-          const img = new Image();
-          img.decoding = 'async';
-          img.src = introPreloadQueue.shift();
-        }
-        if (!introPreloadQueue.length) return;
-        if ('requestIdleCallback' in window) requestIdleCallback(loadNext, { timeout: 700 });
-        else window.setTimeout(() => loadNext(), 80);
-      };
-      if ('requestIdleCallback' in window) requestIdleCallback(loadNext, { timeout: 500 });
-      else window.setTimeout(() => loadNext(), 80);
-    }
-
-    let introSafetyTimer = 0;
-    function closeSiteIntro() {
-      if (!siteIntro || siteIntro.classList.contains('is-leaving')) return;
-      window.clearTimeout(introSafetyTimer);
-      siteIntro.classList.add('is-leaving');
-      document.body.classList.remove('intro-active');
-      const introCursor = document.querySelector('.custom-cursor');
-      const introCursorLabel = introCursor?.querySelector('.custom-cursor-label');
-      introCursor?.classList.remove('has-label', 'is-hovering');
-      if (introCursorLabel) introCursorLabel.textContent = '';
-      if (siteIntroVideo instanceof HTMLVideoElement) {
-        siteIntroVideo.pause();
-        siteIntroVideo.removeAttribute('src');
-        siteIntroVideo.querySelectorAll('source').forEach(source => source.remove());
-        siteIntroVideo.load();
-      }
-      window.setTimeout(() => siteIntro.remove(), 760);
-    }
-
-    if (siteIntro && siteIntroVideo instanceof HTMLVideoElement) {
-      warmVisualAssets();
-      siteIntroVideo.muted = true;
-      siteIntroVideo.defaultMuted = true;
-      siteIntroVideo.playsInline = true;
-      siteIntroVideo.addEventListener('ended', closeSiteIntro, { once: true });
-      siteIntroVideo.addEventListener('error', () => window.setTimeout(closeSiteIntro, 450), { once: true });
-      siteIntroVideo.addEventListener('loadedmetadata', () => {
-        const duration = Number.isFinite(siteIntroVideo.duration) ? siteIntroVideo.duration : 0;
-        if (duration > 0 && duration < 20) {
-          window.clearTimeout(introSafetyTimer);
-          introSafetyTimer = window.setTimeout(closeSiteIntro, Math.min(9000, Math.max(3000, duration * 1000 + 900)));
-        }
-      }, { once: true });
-      siteIntro.addEventListener('click', closeSiteIntro);
-      siteIntro.addEventListener('keydown', event => {
-        if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') closeSiteIntro();
-      });
-      siteIntro.setAttribute('tabindex', '0');
-      introSafetyTimer = window.setTimeout(closeSiteIntro, 6500);
-      window.setTimeout(() => {
-        const attempt = siteIntroVideo.play();
-        if (attempt?.catch) {
-          attempt.catch(() => {
-            siteIntro.classList.add('needs-gesture');
-            window.setTimeout(closeSiteIntro, 2200);
-          });
-        }
-      }, 80);
-    } else {
-      document.body.classList.remove('intro-active');
-    }
-    
-
-
-    // Cursor personalizado Hevən
-    const customCursor = document.querySelector('.custom-cursor');
-    const customCursorLabel = customCursor?.querySelector('.custom-cursor-label');
-    const customCursorQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-    (() => {
-      if (!customCursor || !customCursorQuery.matches || reducedMotionPreference?.matches) return;
-      document.body.classList.add('custom-cursor-ready');
-      let cursorX = -80;
-      let cursorY = -80;
-      let targetX = -80;
-      let targetY = -80;
-      const interactiveSelector = 'a, button, input, textarea, select, [role="button"], [role="link"], .site-intro, .service-card, .package-item, .industry-item, .work-card, .orbital-node, .orbital-card-related-link';
-
-      function getContextLabel(event) {
-        const target = event.target;
-        if (!target?.closest) return '';
-
-        if (target.closest('.site-intro')) return 'SKIP';
-        if (target.closest('.orbital-node, .orbital-card-related-link')) return 'CLICK';
-        if (target.closest('.work-card')) return 'VER';
-        if (target.closest('[data-services-prev]')) return 'ANTERIOR';
-        if (target.closest('[data-services-next]')) return 'SIGUIENTE';
-
-        const servicesStage = target.closest('.services-stage');
-        if (servicesStage) {
-          const activeCard = servicesStage.querySelector('.service-card[aria-current="true"]');
-          const stageRect = servicesStage.getBoundingClientRect();
-          const activeRect = activeCard?.getBoundingClientRect();
-          const center = activeRect ? activeRect.left + activeRect.width / 2 : stageRect.left + stageRect.width / 2;
-          const deadZone = activeRect ? Math.min(190, activeRect.width * 0.34) : stageRect.width * 0.18;
-          if (event.clientX > center + deadZone) return 'SIGUIENTE';
-          if (event.clientX < center - deadZone) return 'ANTERIOR';
-          return '';
-        }
-
-        if (target.closest('.industries')) return 'MUEVE';
-        if (target.closest('.philosophy')) return 'SCROLL';
-        if (target.closest('.hero-3d, .spline-container, spline-viewer')) return 'SÍGUEME';
-        return '';
-      }
-
-      function updateContextLabel(label) {
-        if (customCursorLabel && customCursorLabel.textContent !== label) customCursorLabel.textContent = label;
-        customCursor.classList.toggle('has-label', Boolean(label));
-      }
-
-      function renderCursor() {
-        cursorX += (targetX - cursorX) * 0.32;
-        cursorY += (targetY - cursorY) * 0.32;
-        const cursorSize = customCursor.classList.contains('is-hovering') || customCursor.classList.contains('has-label') ? 34 : 30;
-        customCursor.style.transform = `translate3d(${cursorX - cursorSize / 2}px, ${cursorY - cursorSize / 2}px, 0)`;
-        requestAnimationFrame(renderCursor);
-      }
-
-      function isPointerOverFooter(event) {
-        const elementAtPointer = document.elementFromPoint(event.clientX, event.clientY);
-        return Boolean(elementAtPointer?.closest?.('#sticky-footer, .sticky-footer-wrapper'));
-      }
-
-      window.addEventListener('pointermove', event => {
-        targetX = event.clientX;
-        targetY = event.clientY;
-        customCursor.classList.add('is-visible');
-        customCursor.classList.toggle('is-label-left', event.clientX > window.innerWidth - 170);
-        const label = getContextLabel(event);
-        updateContextLabel(label);
-        const isOverFooter = isPointerOverFooter(event);
-        customCursor.classList.toggle('is-over-footer', isOverFooter);
-        const isInteractive = Boolean(event.target.closest?.(interactiveSelector)) || Boolean(label);
-        customCursor.classList.toggle('is-hovering', isInteractive);
-      }, { passive: true });
-
-      document.addEventListener('pointerdown', () => customCursor.classList.add('is-down'));
-      document.addEventListener('pointerup', () => customCursor.classList.remove('is-down'));
-      document.addEventListener('mouseleave', () => {
-        customCursor.classList.remove('is-visible');
-        updateContextLabel('');
-      });
-      renderCursor();
-    })();
-
-    // Scroll de navegación
-    const nav = document.getElementById('nav');
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
-    function updateNavOffset() {
-      const navHeight = nav?.offsetHeight || 80;
-      document.documentElement.style.setProperty('--nav-offset', `${navHeight + 20}px`);
-    }
-    function setMobileMenu(open) {
-      document.body.classList.toggle('mobile-menu-open', open);
-      mobileMenuToggle?.setAttribute('aria-expanded', String(open));
-      mobileMenuToggle?.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-      mobileMenuPanel?.setAttribute('aria-hidden', String(!open));
-    }
-    updateNavOffset();
-    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 100), { passive: true });
-    window.addEventListener('resize', updateNavOffset);
-    mobileMenuToggle?.addEventListener('click', () => setMobileMenu(!document.body.classList.contains('mobile-menu-open')));
-    mobileMenuPanel?.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => setMobileMenu(false)));
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open')) {
-        setMobileMenu(false);
-        mobileMenuToggle?.focus();
-      }
-    });
-    const mobileCtaQuery = window.matchMedia('(max-width: 767px)');
-    const footerCtaBoundary = document.querySelector('.sticky-footer-wrapper');
-    function updateMobileFooterCtaState() {
-      if (!footerCtaBoundary) return;
-      if (!mobileCtaQuery.matches) {
-        document.body.classList.remove('mobile-footer-active');
-        return;
-      }
-      const rect = footerCtaBoundary.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const footerIsEntering = rect.top < viewportHeight * 0.78 && rect.bottom > viewportHeight * 0.18;
-      document.body.classList.toggle('mobile-footer-active', footerIsEntering);
-    }
-    window.addEventListener('scroll', updateMobileFooterCtaState, { passive: true });
-    window.addEventListener('resize', updateMobileFooterCtaState);
-    if (mobileCtaQuery.addEventListener) {
-      mobileCtaQuery.addEventListener('change', updateMobileFooterCtaState);
-    }
-    updateMobileFooterCtaState();
-    
-    // Carga de Spline
-    (() => {
-      const splineContainer = document.querySelector('.spline-container');
-      const splineViewer = splineContainer?.querySelector('spline-viewer');
-      const splineLoader = document.getElementById('spline-loader');
-      let splineFinished = false;
-      const finishSpline = (useFallback = false) => {
-        splineFinished = true;
-        splineLoader?.classList.add('loaded');
-        splineContainer?.classList.toggle('has-fallback', Boolean(useFallback));
-      };
-      if (!splineContainer) return;
-      if (!splineViewer) {
-        finishSpline(true);
-        return;
-      }
-      splineViewer.addEventListener('load', () => finishSpline(false), { once: true });
-      splineViewer.addEventListener('error', () => finishSpline(true), { once: true });
-      // El robot 3D vive en el hero; no se elimina en mobile. Si Spline tarda, se quita el loader
-      // para que el sitio siga usable y solo se muestra fallback si el componente falla.
-      window.setTimeout(() => {
-        if (!splineFinished) splineLoader?.classList.add('loaded');
-      }, 4200);
-      window.setTimeout(() => {
-        if (!splineFinished) finishSpline(false);
-      }, 9000);
-    })();
-    
-    // Animaciones de aparición
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-    // Servicios: pila de tarjetas en abanico adaptada del patrón CardStack de 21st.dev
-    (() => {
-      const stack = document.querySelector('[data-services-stack]');
-      if (!stack) return;
-
-      const stage = stack.querySelector('.services-stage');
-      const cards = Array.from(stack.querySelectorAll('[data-service-card]'));
-      const dotsRoot = stack.querySelector('.services-dots');
-      const prevButton = stack.querySelector('[data-services-prev]');
-      const nextButton = stack.querySelector('[data-services-next]');
-      if (!stage || !dotsRoot || !cards.length) return;
-
-      const stackQuery = window.matchMedia('(min-width: 701px)');
-      const mobileServiceQuery = window.matchMedia('(max-width: 700px)');
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      let activeIndex = 0;
-      let pointerStartX = null;
-      let ignoreNextServiceClick = false;
-
-      function wrapServiceIndex(index) {
-        return ((index % cards.length) + cards.length) % cards.length;
-      }
-
-      function signedServiceOffset(index) {
-        const raw = index - activeIndex;
-        const alt = raw > 0 ? raw - cards.length : raw + cards.length;
-        return Math.abs(alt) < Math.abs(raw) ? alt : raw;
-      }
-
-      const dots = cards.map((card, index) => {
-        const title = card.querySelector('.service-title')?.textContent?.trim() || `Servicio ${index + 1}`;
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.className = 'service-dot';
-        dot.setAttribute('aria-label', `Ver ${title}`);
-        dot.addEventListener('click', () => setActiveService(index));
-        dotsRoot.appendChild(dot);
-        return dot;
-      });
-
-      function setActiveService(index) {
-        activeIndex = wrapServiceIndex(index);
-        layoutServices();
-      }
-
-      function isMobileServiceCarousel() {
-        return mobileServiceQuery.matches;
-      }
-
-      function isServiceControl(target) {
-        return Boolean(target.closest('.services-controls, .services-arrow, .service-dot'));
-      }
-
-      function navigateServiceFromPoint(clientX) {
-        if (!stackQuery.matches) return false;
-        const activeCard = cards[activeIndex];
-        if (!activeCard) return false;
-
-        const rect = activeCard.getBoundingClientRect();
-        const center = rect.left + rect.width / 2;
-        const deadZone = Math.min(190, rect.width * 0.34);
-        const delta = clientX - center;
-
-        if (Math.abs(delta) < deadZone) return false;
-        setActiveService(activeIndex + (delta > 0 ? 1 : -1));
-        return true;
-      }
-
-      function layoutServices() {
-        const isStack = stackQuery.matches;
-        const maxOffset = isStack ? 2 : 0;
-        const stageWidth = stage.getBoundingClientRect().width || window.innerWidth;
-        const activeCardWidth = cards[activeIndex]?.getBoundingClientRect().width || 520;
-        const spacing = Math.max(112, Math.min(activeCardWidth * 0.44, stageWidth / 6.2));
-        const stepDeg = stageWidth < 980 ? 12 : 16;
-        const depth = stageWidth < 980 ? 92 : 132;
-
-        cards.forEach((card, index) => {
-          const offset = signedServiceOffset(index);
-          const abs = Math.abs(offset);
-          const visible = abs <= maxOffset;
-          const isActive = offset === 0;
-
-          card.hidden = !visible;
-          card.setAttribute('aria-current', String(isActive));
-          card.setAttribute('aria-label', isActive ? 'Servicio activo' : (offset > 0 ? 'Ver siguiente servicio' : 'Ver servicio anterior'));
-          card.style.zIndex = String(100 - abs);
-
-          if (!isStack) {
-            card.style.visibility = isActive ? 'visible' : 'hidden';
-            card.style.pointerEvents = isActive ? 'auto' : 'none';
-            card.style.transform = `translateX(-50%) translateY(${isActive ? '0' : '12px'}) scale(${isActive ? '1' : '0.96'})`;
-            card.style.setProperty('--card-opacity', isActive ? '1' : '0');
-            return;
-          }
-
-          const x = offset * spacing;
-          const y = abs * 11 + (isActive ? -24 : 0);
-          const z = -abs * depth;
-          const rotateZ = offset * stepDeg;
-          const rotateX = isActive ? 0 : 10;
-          const scale = isActive ? 1.035 : 0.94;
-          const opacity = isActive ? 1 : Math.max(0.5, 0.82 - abs * 0.12);
-
-          card.style.visibility = visible ? 'visible' : 'hidden';
-          card.style.pointerEvents = visible ? 'auto' : 'none';
-          card.style.setProperty('--card-opacity', String(opacity));
-          card.style.transform =
-            `translateX(-50%) translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
-        });
-
-        dots.forEach((dot, index) => {
-          dot.setAttribute('aria-current', String(index === activeIndex));
-        });
-      }
-
-      cards.forEach((card, index) => {
-        card.addEventListener('click', event => {
-          if (ignoreNextServiceClick) return;
-          const offset = signedServiceOffset(index);
-          if (offset === 0) return;
-          event.preventDefault();
-          event.stopPropagation();
-          setActiveService(activeIndex + (offset > 0 ? 1 : -1));
-        });
-        card.addEventListener('keydown', event => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            const offset = signedServiceOffset(index);
-            setActiveService(offset === 0 ? activeIndex + 1 : activeIndex + (offset > 0 ? 1 : -1));
-          }
-        });
-      });
-
-      prevButton?.addEventListener('click', () => setActiveService(activeIndex - 1));
-      nextButton?.addEventListener('click', () => setActiveService(activeIndex + 1));
-
-      stage.addEventListener('keydown', event => {
-        if (event.key === 'ArrowLeft') setActiveService(activeIndex - 1);
-        if (event.key === 'ArrowRight') setActiveService(activeIndex + 1);
-      });
-
-      stage.addEventListener('pointerdown', event => {
-        if (reducedMotion.matches) return;
-        pointerStartX = event.clientX;
-      });
-
-      stage.addEventListener('pointerup', event => {
-        if (pointerStartX === null) return;
-        const travel = event.clientX - pointerStartX;
-        pointerStartX = null;
-        if (Math.abs(travel) < 64) return;
-        ignoreNextServiceClick = true;
-        window.setTimeout(() => { ignoreNextServiceClick = false; }, 0);
-        setActiveService(activeIndex + (travel < 0 ? 1 : -1));
-      });
-
-      stage.addEventListener('pointercancel', () => {
-        pointerStartX = null;
-      });
-
-      stage.addEventListener('click', event => {
-        if (ignoreNextServiceClick) {
-          ignoreNextServiceClick = false;
-          return;
-        }
-        if (isServiceControl(event.target)) return;
-        if (isMobileServiceCarousel()) {
-          setActiveService(activeIndex + 1);
-          return;
-        }
-        navigateServiceFromPoint(event.clientX);
-      });
-
-      stackQuery.addEventListener('change', layoutServices);
-      mobileServiceQuery.addEventListener('change', layoutServices);
-      window.addEventListener('resize', layoutServices);
-      layoutServices();
-    })();
-
-
-    // Logos de proyectos: loop infinito real en móvil. No toca las tarjetas de proyectos de abajo.
-    (() => {
-      const row = document.querySelector('.work-proof-row');
-      if (!row || row.dataset.logoLoopReady === 'true') return;
-
-      const originals = Array.from(row.querySelectorAll('.work-proof-mark:not(.is-clone)'));
-      if (!originals.length) return;
-
-      row.querySelectorAll('.work-proof-mark.is-clone').forEach(clone => clone.remove());
-
-      // 4 grupos iguales en total: 1 original + 3 clones. Al animar -50%, la primera mitad
-      // coincide con la segunda mitad y el loop no deja huecos visuales.
-      for (let set = 0; set < 3; set += 1) {
-        originals.forEach(mark => {
-          const clone = mark.cloneNode(true);
-          clone.classList.add('is-clone');
-          clone.setAttribute('aria-hidden', 'true');
-          clone.querySelectorAll('img').forEach(img => {
-            img.setAttribute('alt', '');
-            img.setAttribute('aria-hidden', 'true');
-          });
-          row.appendChild(clone);
-        });
-      }
-
-      row.dataset.logoLoopReady = 'true';
-    })();
-
-    // Destellos de proyectos comprobados: adaptación vanilla de la idea de partículas de 21st.dev
-    (() => {
-      const section = document.querySelector('[data-work-sparkles]');
-      const field = section?.querySelector('.work-sparkles-field');
-      const canvas = section?.querySelector('.work-sparkles-canvas');
-      if (!section || !field || !(canvas instanceof HTMLCanvasElement)) return;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      let width = 1;
-      let height = 1;
-      let time = 0;
-      let animationId = 0;
-      let isVisible = false;
-      let particles = [];
-
-      function readSparkleTheme() {
-        const isLight = html.getAttribute('data-theme') === 'light';
-        return {
-          fill: isLight ? '15, 15, 18' : '255, 255, 255',
-          halo: isLight ? '20, 20, 24' : '255, 255, 255',
-        };
-      }
-
-      let sparkleTheme = readSparkleTheme();
-
-      function createSparkleParticle() {
-        const lowerBias = Math.pow(Math.random(), 0.72);
-        return {
-          x: Math.random() * width,
-          y: height * (0.18 + lowerBias * 0.74),
-          r: 0.42 + Math.random() * 1.35,
-          speed: 0.04 + Math.random() * 0.18,
-          drift: -0.06 + Math.random() * 0.12,
-          opacity: 0.18 + Math.random() * 0.62,
-          phase: Math.random() * Math.PI * 2,
-        };
-      }
-
-      function rebuildSparkles() {
-        const density = reducedMotion.matches ? 120 : Math.round((width * height) / 950);
-        const minCount = width < 700 ? 150 : 280;
-        const maxCount = width < 700 ? 260 : 620;
-        const count = Math.max(minCount, Math.min(maxCount, density));
-        particles = Array.from({ length: count }, createSparkleParticle);
-      }
-
-      function resizeSparkles() {
-        const rect = field.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        width = Math.max(1, Math.round(rect.width));
-        height = Math.max(1, Math.round(rect.height));
-        canvas.width = Math.round(width * dpr);
-        canvas.height = Math.round(height * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        rebuildSparkles();
-        drawSparkles();
-      }
-
-      function drawSparkles() {
-        ctx.clearRect(0, 0, width, height);
-        particles.forEach(particle => {
-          const twinkle = 0.52 + Math.sin(time + particle.phase) * 0.36;
-          const alpha = Math.max(0.08, particle.opacity * twinkle);
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${sparkleTheme.fill}, ${alpha})`;
-          ctx.shadowColor = `rgba(${sparkleTheme.halo}, ${alpha * 0.5})`;
-          ctx.shadowBlur = particle.r * 6;
-          ctx.fill();
-        });
-        ctx.shadowBlur = 0;
-      }
-
-      function stepSparkles() {
-        if (!isVisible || reducedMotion.matches) {
-          animationId = 0;
-          drawSparkles();
-          return;
-        }
-
-        time += 0.035;
-        particles.forEach(particle => {
-          particle.y -= particle.speed;
-          particle.x += Math.sin(time + particle.phase) * particle.drift;
-          if (particle.y < -8 || particle.x < -16 || particle.x > width + 16) {
-            particle.x = Math.random() * width;
-            particle.y = height * (0.76 + Math.random() * 0.22);
-          }
-        });
-        drawSparkles();
-        animationId = requestAnimationFrame(stepSparkles);
-      }
-
-      function startSparkles() {
-        if (animationId || reducedMotion.matches || !isVisible) {
-          drawSparkles();
-          return;
-        }
-        animationId = requestAnimationFrame(stepSparkles);
-      }
-
-      resizeSparkles();
-      window.addEventListener('resize', resizeSparkles);
-      reducedMotion.addEventListener('change', () => {
-        if (animationId) cancelAnimationFrame(animationId);
-        animationId = 0;
-        rebuildSparkles();
-        startSparkles();
-      });
-
-      new ResizeObserver(resizeSparkles).observe(field);
-      new MutationObserver(() => {
-        sparkleTheme = readSparkleTheme();
-        drawSparkles();
-      }).observe(html, { attributes: true, attributeFilter: ['data-theme'] });
-
-      new IntersectionObserver(entries => {
-        isVisible = entries.some(entry => entry.isIntersecting);
-        if (isVisible) startSparkles();
-        else if (animationId) {
-          cancelAnimationFrame(animationId);
-          animationId = 0;
-        }
-      }, { rootMargin: '180px 0px' }).observe(section);
-    })();
-
-    // Tarjetas de paquetes: profundidad guiada por el cursor adaptada del patrón de tarjetas de 21st.dev
-    const packageMotionQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const packageReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const packageMobileMotionQuery = window.matchMedia('(max-width: 767px)');
-    document.querySelectorAll('[data-tilt-card]').forEach(card => {
-      const packageTitle = card.querySelector('.package-title')?.textContent?.trim() || 'paquete';
-      card.setAttribute('role', 'link');
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', `Solicitar ${packageTitle}`);
-
-      function goToContact() {
-        const contact = document.getElementById('contact');
-        if (!contact) return;
-        const nav = document.querySelector('.nav');
-        const offset = (nav?.offsetHeight || 0) + 16;
-        const top = contact.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({
-          top: Math.max(0, top),
-          behavior: packageReducedMotion.matches ? 'auto' : 'smooth'
-        });
-        if (window.location.hash !== '#contact') {
-          history.replaceState(null, '', '#contact');
-        }
-      }
-
-      function resetPackageTilt() {
-        card.classList.remove('is-tilting');
-        card.style.setProperty('--tilt-x', '0deg');
-        card.style.setProperty('--tilt-y', '0deg');
-        card.style.setProperty('--tilt-scale', '1');
-        card.style.setProperty('--pointer-x', '50%');
-        card.style.setProperty('--pointer-y', '50%');
-      }
-
-      card.addEventListener('pointermove', event => {
-        if (packageMobileMotionQuery.matches || !packageMotionQuery.matches || packageReducedMotion.matches) return;
-        const rect = card.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const pointerX = Math.max(0, Math.min(100, (x / rect.width) * 100));
-        const pointerY = Math.max(0, Math.min(100, (y / rect.height) * 100));
-        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -8;
-        const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 8;
-        card.classList.add('is-tilting');
-        card.style.setProperty('--pointer-x', `${pointerX.toFixed(1)}%`);
-        card.style.setProperty('--pointer-y', `${pointerY.toFixed(1)}%`);
-        card.style.setProperty('--tilt-x', `${rotateX.toFixed(2)}deg`);
-        card.style.setProperty('--tilt-y', `${rotateY.toFixed(2)}deg`);
-        card.style.setProperty('--tilt-scale', '1.05');
-      });
-
-      card.addEventListener('pointerleave', resetPackageTilt);
-      card.addEventListener('blur', resetPackageTilt, true);
-      card.addEventListener('click', event => {
-        if (event.target.closest('a')) return;
-        goToContact();
-      });
-      card.addEventListener('keydown', event => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        goToContact();
-      });
-    });
-
-    // Sectores: ondas monocromas luminosas adaptadas del patrón canvas de 21st.dev
-    (() => {
-      const section = document.querySelector('[data-industries-waves]');
-      const canvas = section?.querySelector('.industries-waves-canvas');
-      if (!section || !(canvas instanceof HTMLCanvasElement)) return;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const pointer = { x: 0, y: 0 };
-      const target = { x: 0, y: 0 };
-      let width = 1;
-      let height = 1;
-      let time = 0;
-      let animationId = 0;
-      let isVisible = false;
-
-      function readIndustryTheme() {
-        const isLight = html.getAttribute('data-theme') === 'light';
-        return {
-          top: isLight ? 'rgba(250, 250, 250, 0.94)' : 'rgba(5, 5, 7, 0.96)',
-          bottom: isLight ? 'rgba(238, 238, 240, 0.9)' : 'rgba(10, 10, 13, 0.92)',
-          waves: [
-            { offset: 0, amplitude: 68, frequency: 0.003, color: isLight ? 'rgba(15, 15, 18, 0.3)' : 'rgba(255, 255, 255, 0.54)', opacity: isLight ? 0.36 : 0.32 },
-            { offset: Math.PI / 2, amplitude: 88, frequency: 0.0024, color: isLight ? 'rgba(70, 70, 74, 0.24)' : 'rgba(180, 180, 188, 0.46)', opacity: isLight ? 0.32 : 0.27 },
-            { offset: Math.PI * 0.72, amplitude: 44, frequency: 0.0046, color: isLight ? 'rgba(0, 0, 0, 0.16)' : 'rgba(235, 235, 240, 0.34)', opacity: isLight ? 0.18 : 0.17 },
-            { offset: Math.PI, amplitude: 54, frequency: 0.0038, color: isLight ? 'rgba(0, 0, 0, 0.22)' : 'rgba(255, 255, 255, 0.32)', opacity: isLight ? 0.26 : 0.22 },
-            { offset: Math.PI * 1.5, amplitude: 74, frequency: 0.002, color: isLight ? 'rgba(96, 96, 100, 0.2)' : 'rgba(126, 126, 132, 0.32)', opacity: isLight ? 0.23 : 0.2 },
-            { offset: Math.PI * 2.18, amplitude: 102, frequency: 0.0018, color: isLight ? 'rgba(40, 40, 44, 0.14)' : 'rgba(210, 210, 218, 0.26)', opacity: isLight ? 0.16 : 0.14 },
-          ],
-        };
-      }
-
-      let industryTheme = readIndustryTheme();
-
-      function recenterIndustryPointer() {
-        pointer.x = target.x = width / 2;
-        pointer.y = target.y = height / 2;
-      }
-
-      function resizeIndustryCanvas() {
-        const rect = section.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        width = Math.max(1, Math.round(rect.width));
-        height = Math.max(1, Math.round(rect.height));
-        canvas.width = Math.round(width * dpr);
-        canvas.height = Math.round(height * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        recenterIndustryPointer();
-        drawIndustryScene();
-      }
-
-      function handleIndustryPointerMove(event) {
-        if (reducedMotion.matches) return;
-        const rect = section.getBoundingClientRect();
-        target.x = event.clientX - rect.left;
-        target.y = event.clientY - rect.top;
-      }
-
-      function drawIndustryWave(wave) {
-        const influenceRadius = reducedMotion.matches ? 140 : 340;
-        const influencePower = reducedMotion.matches ? 6 : 54;
-        ctx.save();
-        ctx.beginPath();
-
-        for (let x = -20; x <= width + 20; x += 4) {
-          const dx = x - pointer.x;
-          const dy = height * 0.48 - pointer.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const influence = Math.max(0, 1 - distance / influenceRadius);
-          const mouseLift = influence * influencePower * Math.sin(time * 0.018 + x * 0.012 + wave.offset);
-          const y =
-            height * 0.5 +
-            Math.sin(x * wave.frequency + time * 0.018 + wave.offset) * wave.amplitude +
-            Math.sin(x * wave.frequency * 0.38 + time * 0.027) * (wave.amplitude * 0.42) +
-            mouseLift;
-
-          if (x === -20) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-
-        ctx.lineWidth = 2.15;
-        ctx.strokeStyle = wave.color;
-        ctx.globalAlpha = wave.opacity;
-        ctx.shadowBlur = 30;
-        ctx.shadowColor = wave.color;
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      function drawIndustryScene() {
-        const gradient = ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, industryTheme.top);
-        gradient.addColorStop(1, industryTheme.bottom);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        ctx.globalAlpha = 1;
-        ctx.shadowBlur = 0;
-        industryTheme.waves.forEach(drawIndustryWave);
-      }
-
-      function animateIndustries() {
-        if (!isVisible || reducedMotion.matches) {
-          animationId = 0;
-          drawIndustryScene();
-          return;
-        }
-        time += 1;
-        pointer.x += (target.x - pointer.x) * 0.095;
-        pointer.y += (target.y - pointer.y) * 0.095;
-        drawIndustryScene();
-        animationId = requestAnimationFrame(animateIndustries);
-      }
-
-      function startIndustryWaves() {
-        if (animationId || reducedMotion.matches || !isVisible) {
-          drawIndustryScene();
-          return;
-        }
-        animationId = requestAnimationFrame(animateIndustries);
-      }
-
-      resizeIndustryCanvas();
-      section.addEventListener('pointermove', handleIndustryPointerMove);
-      section.addEventListener('pointerleave', recenterIndustryPointer);
-      window.addEventListener('resize', resizeIndustryCanvas);
-      reducedMotion.addEventListener('change', () => {
-        if (animationId) cancelAnimationFrame(animationId);
-        animationId = 0;
-        startIndustryWaves();
-      });
-
-      new ResizeObserver(resizeIndustryCanvas).observe(section);
-      new MutationObserver(() => {
-        industryTheme = readIndustryTheme();
-        drawIndustryScene();
-      }).observe(html, { attributes: true, attributeFilter: ['data-theme'] });
-
-      new IntersectionObserver(entries => {
-        isVisible = entries.some(entry => entry.isIntersecting);
-        if (isVisible) startIndustryWaves();
-        else if (animationId) {
-          cancelAnimationFrame(animationId);
-          animationId = 0;
-        }
-      }, { rootMargin: '220px 0px' }).observe(section);
-    })();
-
-    // Secuencia de imágenes de filosofía controlada por scroll
-    const philosophySection = document.querySelector('.philosophy');
-    const philosophyCanvas = document.getElementById('philosophy-frame');
-    if (philosophySection && philosophyCanvas instanceof HTMLCanvasElement && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const DESKTOP_PHILOSOPHY_FRAME_COUNT = 316;
-      // Cambia este valor cuando pegues una secuencia móvil con más o menos fotogramas.
-      const MOBILE_PHILOSOPHY_FRAME_COUNT = 370;
-      const philosophyMobileQuery = window.matchMedia('(max-width: 767px)');
-      const philosophyDesktopFrameSrc = index => {
-        const mode = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-        return `assets/philosophy-sequence/desktop/${mode}/frame_${String(index).padStart(6, '0')}.png`;
-      };
-      const philosophyMobileFrameSrc = index => {
-        const mode = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-        return `assets/philosophy-sequence/mobile/${mode}/frame_${String(index).padStart(6, '0')}.png`;
-      };
-      let useMobilePhilosophyFallback = false;
-      const isMobilePhilosophySequence = () => philosophyMobileQuery.matches && !useMobilePhilosophyFallback;
-      const getPhilosophyFrameCount = () => isMobilePhilosophySequence() ? MOBILE_PHILOSOPHY_FRAME_COUNT : DESKTOP_PHILOSOPHY_FRAME_COUNT;
-      const philosophyFrameSrc = index => isMobilePhilosophySequence() ? philosophyMobileFrameSrc(index) : philosophyDesktopFrameSrc(index);
-      let philosophyFrameCount = getPhilosophyFrameCount();
-      const philosophyPinQuery = window.matchMedia('(min-width: 1025px)');
-      const philosophyContext = philosophyCanvas.getContext('2d');
-      let philosophyFrames = new Array(philosophyFrameCount);
-      const loadingPhilosophyFrames = new Set();
-      const loadedPhilosophyFrames = new Set();
-      let visiblePhilosophyFrame = 0;
-      let targetPhilosophyFrame = 0;
-      let drawnPhilosophyFrame = -1;
-      let philosophyAnimationId = 0;
-      let philosophyScrollDirection = 1;
-      let philosophySourceKey = '';
-      let mobilePhilosophyWarmStarted = false;
-
-      function clampPhilosophyProgress(value) {
-        return Math.max(0, Math.min(1, value));
-      }
-
-      function getPhilosophySourceKey() {
-        const mode = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-        if (!isMobilePhilosophySequence()) return `desktop-${mode}-${DESKTOP_PHILOSOPHY_FRAME_COUNT}`;
-        return `mobile-${mode}-${MOBILE_PHILOSOPHY_FRAME_COUNT}`;
-      }
-
-      function resetPhilosophyFrameCache() {
-        philosophyFrameCount = getPhilosophyFrameCount();
-        philosophyFrames = new Array(philosophyFrameCount);
-        loadingPhilosophyFrames.clear();
-        loadedPhilosophyFrames.clear();
-        drawnPhilosophyFrame = -1;
-        mobilePhilosophyWarmStarted = false;
-        visiblePhilosophyFrame = Math.max(0, Math.min(philosophyFrameCount - 1, visiblePhilosophyFrame));
-        targetPhilosophyFrame = Math.max(0, Math.min(philosophyFrameCount - 1, targetPhilosophyFrame));
-      }
-
-      function syncPhilosophySource(force = false) {
-        const nextKey = getPhilosophySourceKey();
-        if (!force && nextKey === philosophySourceKey) return false;
-        philosophySourceKey = nextKey;
-        resetPhilosophyFrameCache();
-        return true;
-      }
-
-      function drawPhilosophyFrame(index) {
-        if (!philosophyContext) return false;
-        const safeIndex = Math.max(0, Math.min(philosophyFrameCount - 1, index));
-        const img = philosophyFrames[safeIndex];
-        if (!img || !img.complete || !img.naturalWidth) return false;
-
-        const width = philosophyCanvas.clientWidth || philosophyCanvas.width;
-        const height = philosophyCanvas.clientHeight || philosophyCanvas.height;
-        if (!width || !height) return false;
-
-        philosophyContext.clearRect(0, 0, width, height);
-
-        if (isMobilePhilosophySequence()) {
-          // Mobile frames are authored as final 9:16 compositions. Draw them as-is.
-          const scale = Math.min(width / img.naturalWidth, height / img.naturalHeight);
-          const outputWidth = img.naturalWidth * scale;
-          const outputHeight = img.naturalHeight * scale;
-          const outputX = (width - outputWidth) / 2;
-          const outputY = (height - outputHeight) / 2;
-          philosophyContext.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, outputX, outputY, outputWidth, outputHeight);
-        } else {
-          const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight);
-          const sourceWidth = Math.min(img.naturalWidth, width / scale);
-          const sourceHeight = Math.min(img.naturalHeight, height / scale);
-          const sourceX = Math.max(0, (img.naturalWidth - sourceWidth) / 2);
-          const sourceY = Math.max(0, (img.naturalHeight - sourceHeight) * 0.3);
-          philosophyContext.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, width, height);
-        }
-
-        drawnPhilosophyFrame = safeIndex;
-        return true;
-      }
-
-      function drawNearestLoadedPhilosophyFrame(index) {
-        const safeIndex = Math.max(0, Math.min(philosophyFrameCount - 1, index));
-        if (drawPhilosophyFrame(safeIndex)) return;
-
-        for (let offset = 1; offset <= 18; offset += 1) {
-          const forward = safeIndex + offset;
-          const backward = safeIndex - offset;
-          if (philosophyScrollDirection >= 0 && forward < philosophyFrameCount && drawPhilosophyFrame(forward)) return;
-          if (backward >= 0 && drawPhilosophyFrame(backward)) return;
-          if (philosophyScrollDirection < 0 && forward < philosophyFrameCount && drawPhilosophyFrame(forward)) return;
-        }
-
-        if (drawnPhilosophyFrame >= 0) drawPhilosophyFrame(drawnPhilosophyFrame);
-      }
-
-      function resizePhilosophyCanvas() {
-        if (!philosophyContext) return;
-        const rect = philosophyCanvas.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        philosophyCanvas.width = Math.max(1, Math.round(rect.width * dpr));
-        philosophyCanvas.height = Math.max(1, Math.round(rect.height * dpr));
-        philosophyContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-        drawNearestLoadedPhilosophyFrame(Math.round(visiblePhilosophyFrame));
-      }
-
-      function loadPhilosophyFrame(index, priority = false) {
-        const safeIndex = Math.max(0, Math.min(philosophyFrameCount - 1, index));
-        if (loadedPhilosophyFrames.has(safeIndex) || loadingPhilosophyFrames.has(safeIndex)) return;
-
-        loadingPhilosophyFrames.add(safeIndex);
-        const img = new Image();
-        img.decoding = 'async';
-        img.fetchPriority = priority ? 'high' : 'low';
-        img.onload = () => {
-          loadingPhilosophyFrames.delete(safeIndex);
-          loadedPhilosophyFrames.add(safeIndex);
-          if (safeIndex === 0 || Math.abs(safeIndex - Math.round(visiblePhilosophyFrame)) <= 2) {
-            drawNearestLoadedPhilosophyFrame(Math.round(visiblePhilosophyFrame));
-          }
-        };
-        img.onerror = () => {
-          loadingPhilosophyFrames.delete(safeIndex);
-          if (isMobilePhilosophySequence() && safeIndex === 0) {
-            useMobilePhilosophyFallback = true;
-            syncPhilosophySource(true);
-            bootstrapPhilosophyFrames();
-            resizePhilosophyCanvas();
-            updatePhilosophyFrame();
-          }
-        };
-        img.src = philosophyFrameSrc(safeIndex);
-        philosophyFrames[safeIndex] = img;
-      }
-
-      function preloadNearbyPhilosophyFrames(index) {
-        const safeIndex = Math.round(Math.max(0, Math.min(philosophyFrameCount - 1, index)));
-        const lead = philosophyScrollDirection >= 0 ? 72 : -72;
-        for (let offset = -8; offset <= 8; offset += 1) loadPhilosophyFrame(safeIndex + offset);
-        if (isMobilePhilosophySequence()) {
-          const visibleIndex = Math.round(Math.max(0, Math.min(philosophyFrameCount - 1, visiblePhilosophyFrame)));
-          for (let offset = -18; offset <= 18; offset += 1) loadPhilosophyFrame(visibleIndex + offset);
-          trimMobilePhilosophyFrameCache(safeIndex);
-        }
-        for (let offset = 1; offset <= Math.abs(lead); offset += 1) {
-          loadPhilosophyFrame(safeIndex + (philosophyScrollDirection >= 0 ? offset : -offset));
-        }
-      }
-
-      function trimMobilePhilosophyFrameCache(centerIndex) {
-        if (!isMobilePhilosophySequence()) return;
-        const keepDistance = 120;
-        for (let index = 0; index < philosophyFrames.length; index += 1) {
-          const isAnchor = index === 0 || index === philosophyFrameCount - 1 || index % 40 === 0;
-          if (isAnchor || Math.abs(index - centerIndex) <= keepDistance) continue;
-          if (loadedPhilosophyFrames.has(index) && !loadingPhilosophyFrames.has(index)) {
-            philosophyFrames[index] = undefined;
-            loadedPhilosophyFrames.delete(index);
-          }
-        }
-      }
-
-      function warmPhilosophyFrames(start, end) {
-        let cursor = start;
-        const step = () => {
-          const batchEnd = Math.min(end, cursor + 8);
-          for (; cursor <= batchEnd; cursor += 1) loadPhilosophyFrame(cursor);
-          if (cursor <= end) {
-            if ('requestIdleCallback' in window) window.requestIdleCallback(step, { timeout: 600 });
-            else window.setTimeout(step, 80);
-          }
-        };
-        step();
-      }
-
-      function updatePhilosophyFrame() {
-        const rect = philosophySection.getBoundingClientRect();
-        let progress;
-        const usePinnedProgress = philosophyPinQuery.matches || isMobilePhilosophySequence();
-
-        if (usePinnedProgress) {
-          const sectionStart = rect.top + window.scrollY;
-          const pinDistance = Math.max(1, philosophySection.offsetHeight - window.innerHeight);
-          progress = clampPhilosophyProgress((window.scrollY - sectionStart) / pinDistance);
-        } else {
-          const start = window.innerHeight * 0.82;
-          const end = -rect.height + window.innerHeight * 0.18;
-          progress = clampPhilosophyProgress((start - rect.top) / (start - end || 1));
-        }
-
-        const nextTargetFrame = progress * (philosophyFrameCount - 1);
-        philosophyScrollDirection = nextTargetFrame >= targetPhilosophyFrame ? 1 : -1;
-        targetPhilosophyFrame = nextTargetFrame;
-        preloadNearbyPhilosophyFrames(targetPhilosophyFrame);
-        requestPhilosophyAnimation();
-      }
-
-      function animatePhilosophyFrame() {
-        const remaining = targetPhilosophyFrame - visiblePhilosophyFrame;
-        const mobileSequence = isMobilePhilosophySequence();
-        const maxStep = mobileSequence ? 18 : (philosophyPinQuery.matches ? 5 : 9);
-        const easedStep = remaining * (mobileSequence ? 0.34 : 0.16);
-        const clampedStep = Math.max(-maxStep, Math.min(maxStep, easedStep));
-
-        if (Math.abs(remaining) <= 0.05) {
-          visiblePhilosophyFrame = targetPhilosophyFrame;
-          drawNearestLoadedPhilosophyFrame(Math.round(visiblePhilosophyFrame));
-          philosophyAnimationId = 0;
-          return;
-        }
-
-        visiblePhilosophyFrame += clampedStep || Math.sign(remaining) * 0.05;
-        drawNearestLoadedPhilosophyFrame(Math.round(visiblePhilosophyFrame));
-        philosophyAnimationId = requestAnimationFrame(animatePhilosophyFrame);
-      }
-
-      function requestPhilosophyAnimation() {
-        if (philosophyAnimationId) return;
-        philosophyAnimationId = requestAnimationFrame(animatePhilosophyFrame);
-      }
-
-      function bootstrapPhilosophyFrames() {
-        syncPhilosophySource();
-        loadPhilosophyFrame(0, true);
-
-        if (isMobilePhilosophySequence()) {
-          loadPhilosophyFrame(1, true);
-          loadPhilosophyFrame(2, true);
-          [4, 8, 16, 32, 64, 96, 128, 160, 200, 240, 280, 320, 369].forEach(index => loadPhilosophyFrame(index, index <= 16));
-          warmPhilosophyFrames(0, 48);
-          return;
-        }
-
-        [1, 2, 3, 4, 8, 16, 32, 40, 80, 120, 160, 200, 240, 280, 315].forEach(index => loadPhilosophyFrame(index, index <= 4));
-        warmPhilosophyFrames(0, 90);
-        window.setTimeout(() => warmPhilosophyFrames(91, DESKTOP_PHILOSOPHY_FRAME_COUNT - 1), 900);
-      }
-
-      function handlePhilosophySourceChange() {
-        useMobilePhilosophyFallback = false;
-        syncPhilosophySource(true);
-        bootstrapPhilosophyFrames();
-        resizePhilosophyCanvas();
-        updatePhilosophyFrame();
-      }
-
-      let philosophyBootstrapped = false;
-      function initPhilosophySequence() {
-        if (philosophyBootstrapped) return;
-        philosophyBootstrapped = true;
-        bootstrapPhilosophyFrames();
-        resizePhilosophyCanvas();
-        updatePhilosophyFrame();
-        window.addEventListener('scroll', updatePhilosophyFrame, { passive: true });
-        window.addEventListener('resize', () => {
-          if (syncPhilosophySource()) bootstrapPhilosophyFrames();
-          resizePhilosophyCanvas();
-          updatePhilosophyFrame();
-        });
-        if (philosophyMobileQuery.addEventListener) {
-          philosophyMobileQuery.addEventListener('change', handlePhilosophySourceChange);
-        } else if (philosophyMobileQuery.addListener) {
-          philosophyMobileQuery.addListener(handlePhilosophySourceChange);
-        }
-        new MutationObserver(handlePhilosophySourceChange).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-      }
-      new IntersectionObserver(entries => {
-        if (entries.some(entry => entry.isIntersecting)) initPhilosophySequence();
-      }, { rootMargin: '360px 0px' }).observe(philosophySection);
-    }
-    
-    // Animaciones del footer
-    const footerObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          document.querySelectorAll('.footer-nav-col').forEach(c => c.classList.add('visible'));
-          document.getElementById('footer-brand').classList.add('visible');
-          document.getElementById('footer-info').classList.add('visible');
-        }
-      });
-    }, { threshold: 0.3 });
-    footerObserver.observe(document.getElementById('sticky-footer'));
-    
-    // Scroll suave
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (!href || href === '#') return;
-        let target = null;
-        try { target = document.querySelector(href); } catch { target = null; }
-        if (!target) return;
-        e.preventDefault();
-        setMobileMenu(false);
-        const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-offset')) || 96;
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: Math.max(0, top), behavior: reducedMotionPreference?.matches ? 'auto' : 'smooth' });
-      });
-    });
-    
-    // Formulario
-    const contactForm = document.getElementById('contact-form');
-    const formStatus = document.getElementById('form-status');
-    const byHevenWhatsapp = '528718876019';
-    const requiredContactFields = [
-      { name: 'name', label: 'Nombre' },
-      { name: 'whatsapp', label: 'WhatsApp' },
-      { name: 'business', label: 'Negocio' },
-      { name: 'industry', label: 'Giro' },
-      { name: 'need', label: 'Qué necesitas' },
-      { name: 'priority', label: 'Prioridad' },
-      { name: 'message', label: 'Mensaje' }
-    ];
-
-    function fieldValue(form, fieldName) {
-      return form.elements[fieldName]?.value?.trim() || '';
-    }
-
-    function selectedOptionLabel(form, fieldName) {
-      const field = form.elements[fieldName];
-      return field?.options?.[field.selectedIndex]?.textContent?.trim() || fieldValue(form, fieldName);
-    }
-
-    function setFieldError(form, fieldName, message) {
-      const field = form.elements[fieldName];
-      const error = document.getElementById(`${fieldName}-error`);
-      field?.classList.toggle('is-invalid', Boolean(message));
-      field?.setAttribute('aria-invalid', String(Boolean(message)));
-      if (error) {
-        error.textContent = message;
-        if (field) field.setAttribute('aria-describedby', error.id);
-      }
-    }
-
-    function setFormStatus(message, type = '') {
-      if (!formStatus) return;
-      formStatus.textContent = message;
-      formStatus.classList.toggle('is-error', type === 'error');
-      formStatus.classList.toggle('is-success', type === 'success');
-    }
-
-    function validateContactForm(form) {
-      const errors = [];
-      requiredContactFields.forEach(({ name, label }) => {
-        const message = fieldValue(form, name) ? '' : `${label} es obligatorio.`;
-        setFieldError(form, name, message);
-        if (message) errors.push({ name, message });
-      });
-
-      const phoneDigits = fieldValue(form, 'whatsapp').replace(/\D/g, '');
-      if (fieldValue(form, 'whatsapp') && phoneDigits.length < 10) {
-        const message = 'Ingresa un WhatsApp válido con lada.';
-        setFieldError(form, 'whatsapp', message);
-        errors.push({ name: 'whatsapp', message });
-      }
-      return errors;
-    }
-
-    contactForm?.addEventListener('input', event => {
-      const name = event.target?.name;
-      if (name) setFieldError(contactForm, name, '');
-      setFormStatus('Validaremos tus datos y abriremos WhatsApp con tu mensaje prellenado.');
-    });
-
-    contactForm?.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const errors = validateContactForm(contactForm);
-      if (errors.length) {
-        setFormStatus('Revisa los campos marcados antes de abrir WhatsApp.', 'error');
-        contactForm.elements[errors[0].name]?.focus();
-        return;
-      }
-
-      const payload = {
-        name: fieldValue(contactForm, 'name'),
-        whatsapp: fieldValue(contactForm, 'whatsapp'),
-        business: fieldValue(contactForm, 'business'),
-        industry: selectedOptionLabel(contactForm, 'industry'),
-        need: selectedOptionLabel(contactForm, 'need'),
-        priority: selectedOptionLabel(contactForm, 'priority'),
-        message: fieldValue(contactForm, 'message')
-      };
-
-      const whatsappMessage = [
-        'Hola by ˈHevən., quiero solicitar un diagnóstico para mi negocio.',
-        '',
-        'Información del contacto:',
-        `Nombre: ${payload.name}`,
-        `WhatsApp: ${payload.whatsapp}`,
-        `Negocio: ${payload.business}`,
-        `Giro: ${payload.industry}`,
-        `Necesidad: ${payload.need}`,
-        `Prioridad: ${payload.priority}`,
-        '',
-        'Mensaje:',
-        payload.message,
-        '',
-        'Enviado desde el formulario web de by ˈHevən.'
-      ].join('\n');
-
-      setFormStatus('Solicitud validada. Se abrirá WhatsApp con el mensaje listo para enviarlo a by ˈHevən.', 'success');
-      window.open(`https://wa.me/${byHevenWhatsapp}?text=${encodeURIComponent(whatsappMessage)}`, '_blank', 'noopener,noreferrer');
-      contactForm.reset();
-    });
-    
-    // ==================== LÍNEA DE TIEMPO ORBITAL RADIAL ====================
-    const processData = [
-      { id: 1, title: 'Diagnóstico', step: 'Paso 1', content: 'Entendemos tu negocio, clientes y problemas actuales. Analizamos tu presencia digital existente.', status: 'completed', energy: 100, relatedIds: [2] },
-      { id: 2, title: 'Estrategia', step: 'Paso 2', content: 'Definimos qué sistemas necesitas y en qué orden implementarlos para máximo impacto.', status: 'completed', energy: 90, relatedIds: [1, 3] },
-      { id: 3, title: 'Diseño', step: 'Paso 3', content: 'Creamos la dirección visual y arquitectura de información de tu sistema digital.', status: 'completed', energy: 80, relatedIds: [2, 4] },
-      { id: 4, title: 'Desarrollo', step: 'Paso 4', content: 'Construimos tu sistema con revisiones y aprobaciones en cada etapa del proceso.', status: 'in-progress', energy: 60, relatedIds: [3, 5] },
-      { id: 5, title: 'Lanzamiento', step: 'Paso 5', content: 'Publicamos y verificamos que todo funcione correctamente en producción.', status: 'pending', energy: 40, relatedIds: [4, 6] },
-      { id: 6, title: 'Capacitación', step: 'Paso 6', content: 'Te enseñamos a usar, actualizar y sacar provecho de tu nuevo sistema.', status: 'pending', energy: 30, relatedIds: [5, 7] },
-      { id: 7, title: 'Soporte', step: 'Paso 7', content: 'Optimizamos basados en datos reales y nuevas necesidades del negocio.', status: 'pending', energy: 20, relatedIds: [6, 8] },
-      { id: 8, title: 'Crecimiento', step: '∞', content: 'Escalamos juntos conforme crece tu negocio. Mejora continua sin fin.', status: 'pending', energy: 10, relatedIds: [7, 1] }
-    ];
-    
-    let rotationAngle = 0;
-    let autoRotate = !reducedMotionPreference?.matches;
-    let activeNodeId = null;
-    let orbitalRadius = getOrbitalRadius();
-    
-    const nodesContainer = document.getElementById('orbital-nodes');
-    const card = document.getElementById('orbital-card');
-    const orbitalContainer = document.getElementById('orbital-container');
-
-    function getOrbitalRadius() {
-      return window.innerWidth < 768 ? 138 : 196;
-    }
-    
-    // Crear nodos
-    processData.forEach((item, index) => {
-      const node = document.createElement('button');
-      node.type = 'button';
-      node.className = `orbital-node ${item.status}`;
-      node.setAttribute('aria-label', `Ver ${item.step}: ${item.title}`);
-      node.setAttribute('aria-pressed', 'false');
-      node.dataset.id = item.id;
-      node.innerHTML = `
-        <div class="orbital-node-glow" style="width:${item.energy * 0.5 + 50}px;height:${item.energy * 0.5 + 50}px;left:-${(item.energy * 0.5 + 50 - 48) / 2}px;top:-${(item.energy * 0.5 + 50 - 48) / 2}px;"></div>
-        <div class="orbital-node-circle">${item.step === '∞' ? '∞' : String(index + 1).padStart(2, '0')}</div>
-        <div class="orbital-node-label">${item.title}</div>
-      `;
-      node.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleNode(item.id);
-      });
-      nodesContainer.appendChild(node);
-    });
-    
-    function updateNodePositions() {
-      const nodes = document.querySelectorAll('.orbital-node');
-      nodes.forEach((node, index) => {
-        const angle = ((index / processData.length) * 360 + rotationAngle) % 360;
-        const radian = (angle * Math.PI) / 180;
-        const x = orbitalRadius * Math.cos(radian);
-        const y = orbitalRadius * Math.sin(radian);
-        const opacity = Math.max(0.5, Math.min(1, 0.5 + 0.5 * ((1 + Math.sin(radian)) / 2)));
-        const zIndex = Math.round(50 + 25 * Math.cos(radian));
-        
-        node.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-        node.style.opacity = node.classList.contains('active') ? 1 : opacity;
-        node.style.zIndex = node.classList.contains('active') ? 200 : zIndex;
-      });
-    }
-    
-    function toggleNode(id) {
-      const item = processData.find(p => p.id === id);
-      if (!item) return;
-      
-      if (activeNodeId === id) {
-        activeNodeId = null;
-        autoRotate = !reducedMotionPreference?.matches;
-        card.classList.remove('visible');
-        document.querySelectorAll('.orbital-node').forEach(n => {
-          n.classList.remove('active', 'related');
-          n.setAttribute('aria-pressed', 'false');
-        });
-      } else {
-        activeNodeId = id;
-        autoRotate = false;
-        
-        // Actualizar contenido de tarjeta
-        document.getElementById('card-badge').textContent = item.status === 'completed' ? 'COMPLETADO' : item.status === 'in-progress' ? 'EN PROGRESO' : 'PENDIENTE';
-        document.getElementById('card-badge').className = `orbital-card-badge ${item.status}`;
-        document.getElementById('card-date').textContent = item.step;
-        document.getElementById('card-title').textContent = item.title;
-        document.getElementById('card-content').textContent = item.content;
-        document.getElementById('card-progress-value').textContent = `${item.energy}%`;
-        document.getElementById('card-progress-fill').style.width = `${item.energy}%`;
-        
-        // Enlaces relacionados
-        const relatedContainer = document.getElementById('card-related-links');
-        relatedContainer.innerHTML = '';
-        item.relatedIds.forEach(relId => {
-          const relItem = processData.find(p => p.id === relId);
-          if (relItem) {
-            const link = document.createElement('button');
-            link.type = 'button';
-            link.className = 'orbital-card-related-link';
-            link.setAttribute('aria-label', `Ver nodo conectado ${relItem.title}`);
-            link.textContent = relItem.title;
-            link.addEventListener('click', (e) => {
-              e.stopPropagation();
-              toggleNode(relId);
-            });
-            relatedContainer.appendChild(link);
-          }
-        });
-        
-        card.classList.add('visible');
-        
-        // Actualizar estados de nodos
-        document.querySelectorAll('.orbital-node').forEach(n => {
-          const nodeId = parseInt(n.dataset.id);
-          n.classList.remove('active', 'related');
-          n.setAttribute('aria-pressed', 'false');
-          if (nodeId === id) {
-            n.classList.add('active');
-            n.setAttribute('aria-pressed', 'true');
-          } else if (item.relatedIds.includes(nodeId)) {
-            n.classList.add('related');
-          }
-        });
-        
-        // Centrar en nodo
-        const nodeIndex = processData.findIndex(p => p.id === id);
-        const targetAngle = (nodeIndex / processData.length) * 360;
-        rotationAngle = 270 - targetAngle;
-        updateNodePositions();
-      }
-    }
-    
-    // Clic fuera para cerrar
-    orbitalContainer.addEventListener('click', (e) => {
-      if (e.target === orbitalContainer || e.target.closest('.orbital-wrapper') === e.target.closest('.orbital-container > .orbital-wrapper')) {
-        if (activeNodeId !== null) {
-          activeNodeId = null;
-          autoRotate = !reducedMotionPreference?.matches;
-          card.classList.remove('visible');
-          document.querySelectorAll('.orbital-node').forEach(n => {
-            n.classList.remove('active', 'related');
-            n.setAttribute('aria-pressed', 'false');
-          });
-        }
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      orbitalRadius = getOrbitalRadius();
-      updateNodePositions();
-    });
-    
-    // Bucle de animación
-    function animate() {
-      if (autoRotate && !reducedMotionPreference?.matches) {
-        rotationAngle = (rotationAngle + 0.2) % 360;
-        updateNodePositions();
-      }
-      requestAnimationFrame(animate);
-    }
-    updateNodePositions();
-    if (!reducedMotionPreference?.matches) requestAnimationFrame(animate);
-    reducedMotionPreference?.addEventListener?.('change', event => {
-      autoRotate = !event.matches && activeNodeId === null;
-      updateNodePositions();
-      if (!event.matches) requestAnimationFrame(animate);
-    });
-  </script>
-  <script src="https://elfsightcdn.com/platform.js" async></script>
 </body>
 </html>
-
-
-
