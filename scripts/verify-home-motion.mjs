@@ -25,7 +25,7 @@ target=0;f.clock.wake();f.step();assert(f.queue.size);f.document.hidden=true;f.l
 target=1;f.media.matches=true;f.listeners.motion();f.flush();assert.equal(value,1,'reduced motion has no damping');
 f.media.matches=false;target=0;f.window.scrollY=4000;f.listeners.scroll();f.step();assert.equal(value,0,'long anchor jumps synchronize immediately');assert.equal(f.queue.size,0);
 dispose();f.clock.wake();const count=log.length;f.flush();assert.equal(log.length,count,'unsubscribe releases the client');
-assert(!listenersForInput(f.listeners),'native wheel, touch and keyboard remain unclaimed');
+assert(!('touchmove' in f.listeners),'touch momentum remains native');
 function listenersForInput(listeners){return ['wheel','touchmove','keydown'].some(key=>key in listeners);}
 for(const name of ['shopify-hero','cases','faq-scroll','services','home-finish','contact-light','chapter-arrivals'])transformSync(readFileSync(new URL(`../assets/${name}.js`,import.meta.url),'utf8'),{loader:'js'});
 for(const name of ['shopify-hero','cases','home-finish','services'])transformSync(readFileSync(new URL(`../assets/${name}.css`,import.meta.url),'utf8'),{loader:'css'});
@@ -110,3 +110,24 @@ v.media.matches=true;v.listeners.motion();v.flush();assert(!serviceSection.class
 assert(!/class="(?:home-overline|case-overline|commerce-services-label)"/.test(html),'no section labels or their dividing rules remain in home markup');
 assert.equal((html.match(/class="chat-item"/g)||[]).length,10,'FAQ keeps ten distinct useful questions');
 console.log('PASS: scroll-led masked arrivals, no exit fade, focus and reduced-motion fallbacks, stable cached triggers, modest responsive reading hold, accordion interaction and ten audited FAQs.');
+
+// Exercise real wheel input and document movement, not only animation consumers.
+function wheelFixture() {
+ const w=fixture();w.document.documentElement={scrollHeight:10000};w.document.body={};
+ w.window.scrollTo=({top})=>{w.window.scrollY=top;};
+ w.clock.invalidate();w.flush();
+ w.wheel=(delta,extra={})=>{let blocked=false;w.listeners.wheel({deltaY:delta,deltaX:0,deltaMode:0,cancelable:true,composedPath:()=>[],preventDefault(){blocked=true;},...extra});return blocked;};
+ return w;
+}
+const wheel=wheelFixture();assert(wheel.wheel(100));assert.equal(wheel.window.scrollY,0,'wheel input accumulates without an instant jump');
+wheel.step();assert(wheel.window.scrollY>0&&wheel.window.scrollY<68);wheel.flush();assert.equal(wheel.window.scrollY,68,'wheel travel is 68% of input and settles exactly');
+wheel.wheel(200);wheel.step();const reverseStart=wheel.window.scrollY;wheel.wheel(-100);wheel.step();assert(wheel.window.scrollY<reverseStart,'reversal responds on the next frame');wheel.flush();
+wheel.wheel(100);wheel.step();wheel.listeners.keydown({key:'PageDown'});const stopped=wheel.window.scrollY;wheel.flush();assert.equal(wheel.window.scrollY,stopped,'keyboard cancels residual momentum');
+assert(!wheel.wheel(100,{ctrlKey:true}),'pinch/zoom stays native');assert(!wheel.wheel(100,{deltaX:200}),'horizontal gestures stay native');
+wheel.media.matches=true;assert(!wheel.wheel(100),'reduced motion stays native');wheel.media.matches=false;
+assert(!wheel.wheel(100,{composedPath:()=>[{nodeType:1,matches:()=>true}]}),'form input stays native');
+wheel.window.scrollY=9090;wheel.clock.reset();wheel.flush();wheel.wheel(1000);wheel.flush();assert.equal(wheel.window.scrollY,9100,'no overshoot at page bottom');
+const hz60=wheelFixture(),hz120=wheelFixture();hz60.wheel(600);hz120.wheel(600);hz60.step();hz120.step();for(let i=0;i<6;i++)hz60.step(16.6666);for(let i=0;i<12;i++)hz120.step(8.3333);assert(Math.abs(hz60.window.scrollY-hz120.window.scrollY)<.01,'document easing is refresh-rate independent');
+console.log('PASS: slower wheel travel, continuous document easing, immediate reversal, finite settling, boundaries, 60/120Hz equivalence and native input escape paths.');
+const rounded=wheelFixture();rounded.window.scrollTo=({top})=>{rounded.window.scrollY=Math.round(top);};rounded.wheel(100);rounded.flush();assert.equal(rounded.window.scrollY,68,'integer scroll positions cannot stall the animation');
+const external=wheelFixture();external.wheel(500);external.step();external.window.scrollY=2000;external.listeners.scroll();external.flush();assert.equal(external.window.scrollY,2000,'external scroll commands take ownership');
