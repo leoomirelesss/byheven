@@ -21,15 +21,16 @@ const element = () => ({
 });
 const labels = ['Tu negocio', 'Ruta clara', 'En marcha', 'Seguimiento'];
 const fixtures = [
-  {name: 'desktop', width: 1920, height: 1000, scene: 720, card: 350, bottom: 152, enabled: true},
-  {name: 'zoomed laptop below the old 470px cutoff', width: 1353, height: 707, scene: 462, card: 324, bottom: 130, enabled: true},
-  {name: 'compact viewport', width: 1280, height: 640, scene: 450, card: 310, bottom: 130, enabled: true},
-  {name: 'mobile portrait', width: 390, height: 844, scene: 620, card: 300, bottom: 152, enabled: true},
-  {name: 'one pixel short of card clearance', width: 1280, height: 620, scene: 437, card: 300, bottom: 130, enabled: false},
+  {name: 'desktop', width: 1920, height: 1000, scene: 720, card: 270, enabled: true},
+  {name: 'zoomed laptop below the old 470px cutoff', width: 1353, height: 707, scene: 462, card: 250, enabled: true},
+  {name: 'compact viewport', width: 1280, height: 640, scene: 450, card: 250, enabled: true},
+  {name: 'mobile portrait', width: 390, height: 844, scene: 620, card: 280, enabled: true},
+  {name: 'insufficient curved-track clearance', width: 1280, height: 620, scene: 437, card: 300, bottom: 130, enabled: false},
   {name: 'tall card above the former cutoff still cannot fit', width: 1920, height: 700, scene: 500, card: 350, bottom: 152, enabled: false},
   {name: 'short landscape', width: 844, height: 390, scene: 300, card: 300, bottom: 130, enabled: false},
   {name: 'reduced motion', width: 1440, height: 900, scene: 650, card: 350, bottom: 152, reduced: true, enabled: false},
   {name: 'no ResizeObserver', width: 1440, height: 900, scene: 650, card: 350, bottom: 152, noRO: true, enabled: false},
+  {name: 'no SVG path geometry API', width: 1440, height: 900, scene: 650, card: 270, noPath: true, enabled: false},
 ];
 for (const fixture of fixtures) {
   const events = new Map(), frames = new Map(), observers = [];
@@ -39,14 +40,23 @@ for (const fixture of fixtures) {
     addEventListener(name, fn) { events.set('motion', fn); },
     removeEventListener(name, fn) { if (events.get('motion') === fn) events.delete('motion'); },
   };
-  const summary = {hidden: true}, number = {}, label = {};
+  const summary = {hidden: true}, number = {}, label = {}, reveal = element();
   const stage = {offsetHeight: fixture.height};
+  const compact = fixture.height <= 760;
+  const axisHeight = compact ? 76 : 100;
+  const axisBottom = compact ? 64 : 88;
+  const stemLength = compact ? 32 : 36;
+  const axisTop = fixture.scene - axisHeight - axisBottom;
+  const path = fixture.noPath ? {} : {
+    getTotalLength: () => 1000,
+    getPointAtLength: distance => ({x: distance, y: 80 + 20 * Math.sin(distance / 1000 * Math.PI * 2)}),
+  };
   const scene = Object.assign(element(), {
     clientHeight: fixture.scene,
-    getBoundingClientRect: () => ({left: 24, width: fixture.width - 48}),
+    getBoundingClientRect: () => ({top: 0, left: 24, width: fixture.width - 48, height: fixture.scene}),
   });
   const axis = Object.assign(element(), {
-    getBoundingClientRect: () => ({left: 38, width: fixture.width - 76}),
+    getBoundingClientRect: () => ({top: axisTop, left: 38, width: fixture.width - 76, height: axisHeight}),
   });
   const stations = labels.map(() => element());
   const cards = labels.map(stepTitle => Object.assign(element(), {
@@ -56,7 +66,7 @@ for (const fixture of fixtures) {
   const section = Object.assign(element(), {
     dataset: {}, getBoundingClientRect: () => ({top: 1600 - scroll}),
     querySelector: selector => ({
-      '.process-story-stage': stage, '.process-story-scene': scene, '.process-story-axis': axis,
+      '.process-story-stage': stage, '.process-story-scene': scene, '.process-story-axis': axis, '[data-process-path]': path, '[data-process-reveal]': reveal,
       '.process-story-summary': summary, '[data-process-number]': number, '[data-process-label]': label,
     })[selector],
     querySelectorAll: selector => selector === '[data-process-card]' ? cards : stations,
@@ -73,7 +83,10 @@ for (const fixture of fixtures) {
   if (!fixture.noRO) window.ResizeObserver = ResizeObserver;
   const context = {
     window, document: {querySelector: () => section}, ResizeObserver,
-    getComputedStyle: () => ({bottom: `${fixture.bottom}px`}), performance: {now: () => clock},
+    getComputedStyle: target => target === scene
+      ? {getPropertyValue: key => key === '--process-stem-length' ? `${stemLength}px` : ''}
+      : {bottom: target.style.getPropertyValue('--process-card-bottom')},
+    performance: {now: () => clock},
     requestAnimationFrame(fn) { frames.set(++frameId, fn); return frameId; },
     cancelAnimationFrame(id) { frames.delete(id); },
   };
@@ -92,23 +105,40 @@ for (const fixture of fixtures) {
     const travel = (parseFloat(section.style.getPropertyValue('--process-story-height')) - fixture.height) / 4;
     const at = progress => { scroll = 1600 + travel * progress; events.get('scroll')(); flush(); };
     for (let i = 0; i < 4; i++) {
+      at(i + .05); assert.equal(section.dataset.processPhase, 'opening');
+      const opening = Number(cards[i].style.getPropertyValue('--process-card-open'));
+      assert(opening > 0 && opening < 1);
       at(i + .3);
       assert.equal(section.dataset.processStep, String(i + 1));
       assert.equal(section.dataset.processPhase, 'reading');
       assert.equal(label.textContent, labels[i]);
       assert.equal(cards.filter(card => card.classList.contains('is-current')).length, 1);
       assert(!cards[i].inert);
+      const point = path.getPointAtLength(i / 3 * 1000);
+      const markerX = Number.parseFloat(axis.style.getPropertyValue('--process-marker-x'));
+      const markerY = Number.parseFloat(axis.style.getPropertyValue('--process-marker-y'));
+      assert(Math.abs(markerX - point.x * (fixture.width - 76) / 1000) < .001, 'marker follows path x');
+      assert(Math.abs(markerY - point.y * axisHeight / 160) < .001, 'marker follows path y');
+      assert(Math.abs(Number(reveal.attributes.get('width')) - point.x - 10) < .001, 'white progress ends at the marker');
+      assert.equal(stations[i].style.getPropertyValue('left'), `${markerX}px`);
+      assert.equal(stations[i].style.getPropertyValue('top'), `${markerY}px`);
+      const cardBottom = Number.parseFloat(cards[i].style.getPropertyValue('--process-card-bottom'));
+      assert(Math.abs(fixture.scene - cardBottom + stemLength - (axisTop + markerY)) < .001, 'card stem meets its curved milestone');
       const x = parseFloat(cards[i].style.getPropertyValue('--process-card-x'));
       assert(x - cards[i].offsetWidth / 2 >= 0);
       assert(x + cards[i].offsetWidth / 2 <= fixture.width - 48);
       at(i + .65); assert.equal(section.dataset.processPhase, 'closing');
       at(i + .9); assert.equal(section.dataset.processPhase, 'moving');
+      const progress = Number(axis.style.getPropertyValue('--process-axis-progress'));
+      if(i < 3) assert(progress > i / 3 && progress < (i + 1) / 3, 'continuous progress between milestones');
     }
     at(1.3); assert.equal(label.textContent, labels[1], 'reverse scroll');
     motion.matches = true; events.get('motion')(); flush();
     assert(!section.classList.contains('is-process-story'));
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
     assert(cards.every(card => !card.style.getPropertyValue('--process-card-content')));
+    assert(stations.every(station => !station.style.getPropertyValue('left') && !station.style.getPropertyValue('top')), 'static milestones reset their responsive positions');
+    assert.equal(reveal.attributes.get('width'), '0');
   } else {
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
     assert(summary.hidden);
@@ -118,4 +148,4 @@ for (const fixture of fixtures) {
   assert(observers.every(observer => observer.disconnected));
   assert.equal(events.size, 0);
 }
-console.log(`PASS: ${fixtures.length} process fixtures; fitted cards below the old cutoff, actual vertical clearance, scroll/reverse, static fallbacks and cleanup.`);
+console.log(`PASS: ${fixtures.length} process fixtures; fitted cards below the old cutoff, curved marker/card alignment, all-stage clearance, scroll/reverse, static fallbacks and cleanup.`);

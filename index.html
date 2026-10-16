@@ -1557,8 +1557,16 @@
         <div class="process-story-scene">
           <div class="process-story-cards" data-process-cards><!-- process-cards:start --><!-- process-cards:end --></div>
           <div class="process-story-axis" aria-hidden="true">
-            <div class="process-story-ticks"></div>
-            <div class="process-story-axis-fill"></div>
+            <svg class="process-story-curve" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="process-curve-tone" x1="0" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#8a739e"/><stop offset=".48" stop-color="#d7cbdf"/><stop offset="1" stop-color="#9478a9"/></linearGradient>
+                <filter id="process-curve-softness" x="-5%" y="-100%" width="110%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>
+                <clipPath id="process-curve-progress" clipPathUnits="userSpaceOnUse"><rect data-process-reveal="" x="-10" y="-160" width="0" height="480"/></clipPath>
+              </defs>
+              <path class="process-story-curve-glow" d="M0 80 C160 10 270 10 430 80 S760 150 1000 70"/>
+              <path class="process-story-curve-track" data-process-path="" d="M0 80 C160 10 270 10 430 80 S760 150 1000 70"/>
+              <path class="process-story-axis-fill" d="M0 80 C160 10 270 10 430 80 S760 150 1000 70"/>
+            </svg>
             <div class="process-story-stations"><i data-step-label="01 · Tu negocio"></i><i data-step-label="02 · Ruta clara"></i><i data-step-label="03 · En marcha"></i><i data-step-label="04 · Seguimiento"></i></div>
             <span class="process-story-ball"></span>
             <span class="process-story-current"><span data-process-number>01</span><span data-process-label>Tu negocio</span></span>

@@ -3,11 +3,13 @@ export function initProcessStory() {
   const stage = section?.querySelector('.process-story-stage');
   const scene = section?.querySelector('.process-story-scene');
   const axis = section?.querySelector('.process-story-axis');
+  const path = section?.querySelector('[data-process-path]');
+  const reveal = section?.querySelector('[data-process-reveal]');
   const cards = [...(section?.querySelectorAll('[data-process-card]') || [])];
   const number = section?.querySelector('[data-process-number]');
   const label = section?.querySelector('[data-process-label]');
   const summary = section?.querySelector('.process-story-summary');
-  if (!stage || !scene || !axis || cards.length !== 4 || !('ResizeObserver' in window)) return;
+  if (!stage || !scene || !axis || !reveal || !path?.getTotalLength || !path?.getPointAtLength || cards.length !== 4 || !('ResizeObserver' in window)) return;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   const ease = value => { const t = clamp(value, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); };
@@ -24,6 +26,12 @@ export function initProcessStory() {
   let displayed = null;
   let lastTime = 0;
   let disposed = false;
+  let pathLength = 0;
+  let axisSize = {width: 0, height: 0};
+  const curvePoint = position => {
+    const point = path.getPointAtLength(pathLength * clamp(position, 0, 1));
+    return {x: point.x * axisSize.width / 1000, y: point.y * axisSize.height / 160, unitX: point.x};
+  };
 
   const fallback = () => {
     enabled = false;
@@ -34,6 +42,12 @@ export function initProcessStory() {
     section.style.removeProperty('--process-story-height');
     scene.removeAttribute('aria-hidden');
     if (summary) summary.hidden = true;
+    reveal.setAttribute('width', '0');
+    stations.forEach(station => {
+      station.classList.remove('is-complete');
+      station.style.removeProperty('left');
+      station.style.removeProperty('top');
+    });
     cards.forEach(card => {
       card.classList.remove('is-current');
       card.removeAttribute('aria-hidden');
@@ -44,25 +58,33 @@ export function initProcessStory() {
   const measure = () => {
     if (motion.matches || window.innerHeight < 600) { fallback(); return; }
     section.classList.add('is-process-story');
-    const cardBottom = parseFloat(getComputedStyle(cards[0]).bottom);
-    const requiredHeight = cards[0].offsetHeight + cardBottom + 8;
+    const sceneRect = scene.getBoundingClientRect();
+    const axisRect = axis.getBoundingClientRect();
+    pathLength = path.getTotalLength();
+    axisSize = {width: axisRect.width, height: axisRect.height};
+    if (!Number.isFinite(pathLength) || !pathLength || !axisRect.width || !axisRect.height) { fallback(); return; }
+    const stemLength = parseFloat(getComputedStyle(scene).getPropertyValue('--process-stem-length')) || 36;
+    geometry = cards.map((card, index) => {
+      const point = curvePoint(index / (cards.length - 1));
+      const marker = axisRect.left - sceneRect.left + point.x;
+      const markerY = axisRect.top - sceneRect.top + point.y;
+      const half = card.offsetWidth / 2;
+      const center = clamp(marker, half + 4, sceneRect.width - half - 4);
+      const origin = marker - center + half;
+      card.style.setProperty('--process-card-x', `${center}px`);
+      card.style.setProperty('--process-card-origin', `${origin}px`);
+      card.style.setProperty('--process-card-bottom', `${scene.clientHeight - markerY + stemLength}px`);
+      stations[index]?.style.setProperty('left', `${point.x}px`);
+      stations[index]?.style.setProperty('top', `${point.y}px`);
+      return {marker, y: point.y, label: clamp(point.x, 64, axisRect.width - 64)};
+    });
+    const requiredHeight = Math.max(...cards.map(card => card.offsetHeight + parseFloat(getComputedStyle(card).bottom) + 8));
     if (!Number.isFinite(requiredHeight) || scene.clientHeight < requiredHeight) { fallback(); return; }
     enabled = true;
     scene.setAttribute('aria-hidden', 'true');
     if (summary) summary.hidden = false;
     stepTravel = stage.offsetHeight * .94;
     section.style.setProperty('--process-story-height', `${stage.offsetHeight + stepTravel * cards.length}px`);
-    const sceneRect = scene.getBoundingClientRect();
-    const axisRect = axis.getBoundingClientRect();
-    geometry = cards.map((card, index) => {
-      const marker = axisRect.left - sceneRect.left + axisRect.width * index / (cards.length - 1);
-      const half = card.offsetWidth / 2;
-      const center = clamp(marker, half + 4, sceneRect.width - half - 4);
-      const origin = marker - center + half;
-      card.style.setProperty('--process-card-x', `${center}px`);
-      card.style.setProperty('--process-card-origin', `${origin}px`);
-      return {marker, label: clamp(marker - (axisRect.left - sceneRect.left), 64, axisRect.width - 64)};
-    });
   };
   const render = timestamp => {
     frame = 0;
@@ -87,13 +109,17 @@ export function initProcessStory() {
     const content = ease((open - .45) / .55);
     const move = index === cards.length - 1 ? 0 : ease((local - travelStart) / (1 - travelStart));
     const position = (index + move) / (cards.length - 1);
-    axis.style.setProperty('--process-axis-position', `${position * 100}%`);
+    const marker = curvePoint(position);
+    axis.style.setProperty('--process-marker-x', `${marker.x}px`);
+    axis.style.setProperty('--process-marker-y', `${marker.y}px`);
+    reveal.setAttribute('width', String(marker.unitX + 10));
     axis.style.setProperty('--process-axis-progress', String(position));
     axis.style.setProperty('--process-label-x', `${geometry[index].label}px`);
+    axis.style.setProperty('--process-label-y', `${geometry[index].y}px`);
     axis.style.setProperty('--process-card-open', String(open));
     cards[index].style.setProperty('--process-card-open', String(open));
-    cards[index].style.setProperty('--process-card-scale-x', String(.16 + open * .84));
-    cards[index].style.setProperty('--process-card-scale-y', String(.10 + open * .90));
+    cards[index].style.setProperty('--process-card-scale-x', String(.94 + open * .06));
+    cards[index].style.setProperty('--process-card-scale-y', String(.90 + open * .10));
     cards[index].style.setProperty('--process-card-content', String(content));
     cards[index].style.setProperty('--process-content-y', `${(1 - content) * 8}px`);
     if (index !== active) {

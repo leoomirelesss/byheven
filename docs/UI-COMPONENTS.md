@@ -28,12 +28,12 @@ npm run build
 
 `dist/` es la salida estática que publica Vercel. El build conserva `assets`, `case-studies`, `diseno-web-torreon`, los documentos HTML y los archivos públicos de la raíz. No publica dependencias ni código de desarrollo.
 
-La línea de tiempo usa el alto real de la tarjeta y su distancia al eje para decidir si cabe. En ventanas de hasta 760 px de alto, compacta el encabezado y el espacio vertical. En movimiento reducido, ventanas muy bajas o sin la mejora de scroll, conserva una línea con sus cuatro etapas sobre las tarjetas estáticas. `test:process` comprueba los casos de altura, scroll de ida y vuelta y limpieza del controlador; también se ejecuta durante el build.
+La línea de tiempo usa una curva SVG continua. La bolita y las cuatro etapas se colocan con la geometría real del trazo; cada tarjeta queda conectada a su punto mediante una guía vertical. El alto real de todas las tarjetas y su distancia a la curva determinan si cabe el recorrido. En ventanas de hasta 760 px de alto, compacta el encabezado y el espacio vertical. En movimiento reducido, ventanas muy bajas o sin la mejora de scroll, conserva una línea con sus cuatro etapas sobre las tarjetas estáticas. `test:process` comprueba los casos de altura, scroll de ida y vuelta y limpieza del controlador; también se ejecuta durante el build.
 
 React, React DOM, Framer Motion, Lucide, CVA, clsx y tailwind-merge están instalados y fijados en `package-lock.json`. TypeScript y Tailwind CLI son dependencias de desarrollo. La configuración manual de shadcn ya está creada; no hace falta ejecutar `init` sobre este sitio.
 
 Para crear un proyecto React nuevo con shadcn desde cero, la alternativa oficial es `npx shadcn@latest init` y elegir un proyecto React/TypeScript. Para añadir después componentes a este repositorio, usar `npx shadcn@latest add <nombre>` y revisar los cambios de CSS antes de compilar. No es necesario para las tarjetas integradas.
 
-Tailwind importa el tema y las utilidades sin Preflight para conservar el reset, las fuentes y el aspecto del home existente. Solo se escanean `components/` para generar utilidades. La tarjeta mantiene las cuatro variantes de color del ejemplo y sus enlaces opcionales; el proceso del home usa una sola familia lavanda y no añade botones repetidos entre etapas.
+Tailwind importa el tema y las utilidades sin Preflight para conservar el reset, las fuentes y el aspecto del home existente. Solo se escanean `components/` para generar utilidades. La tarjeta mantiene las cuatro variantes de color del ejemplo y sus enlaces opcionales; el proceso del home usa superficies oscuras ligeras y un trazo violeta con progreso blanco y no añade botones repetidos entre etapas.
 
 Referencias oficiales: https://ui.shadcn.com/docs/installation/manual · https://ui.shadcn.com/docs/components-json · https://tailwindcss.com/docs/preflight
