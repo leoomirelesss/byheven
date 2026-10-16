@@ -51,20 +51,22 @@ const element = () => ({
 });
 const labels = ['Tu negocio', 'Ruta clara', 'En marcha', 'Seguimiento'];
 const fixtures = [
-  {name: 'desktop', width: 1920, height: 1000, card: 270, enabled: true},
+  {name: 'desktop', width: 1920, height: 1000, card: 264, enabled: true},
   {name: 'zoomed laptop', width: 1353, height: 707, card: 250, enabled: true},
   {name: 'compact viewport', width: 1280, height: 640, card: 250, enabled: true},
-  {name: 'mobile portrait', width: 390, height: 844, card: 300, enabled: true},
-  {name: 'small mobile', width: 320, height: 640, card: 290, enabled: true},
+  {name: 'mobile portrait', width: 390, height: 844, card: 310, enabled: true},
+  {name: 'small mobile', width: 320, height: 640, card: 280, enabled: true},
   {name: 'large card cannot fit', width: 1280, height: 620, card: 500, enabled: false},
   {name: 'fourth card cannot fit', width: 1920, height: 700, card: 250, lastCard: 600, enabled: false},
-  {name: 'short landscape', width: 844, height: 390, card: 270, enabled: false},
-  {name: 'reduced motion', width: 1440, height: 900, card: 270, reduced: true, enabled: false},
-  {name: 'no ResizeObserver', width: 1440, height: 900, card: 270, noRO: true, enabled: false},
-  {name: 'no SVG geometry API', width: 1440, height: 900, card: 270, noPath: true, enabled: false},
-  {name: 'empty SVG geometry', width: 1440, height: 900, card: 270, zeroPath: true, enabled: false},
-  {name: 'zero-width track', width: 1440, height: 900, card: 270, zeroAxis: true, enabled: false},
+  {name: 'short landscape', width: 844, height: 390, card: 264, enabled: false},
+  {name: 'reduced motion', width: 1440, height: 900, card: 264, reduced: true, enabled: false},
+  {name: 'no ResizeObserver', width: 1440, height: 900, card: 264, noRO: true, enabled: false},
+  {name: 'no SVG geometry API', width: 1440, height: 900, card: 264, noPath: true, enabled: false},
+  {name: 'empty SVG geometry', width: 1440, height: 900, card: 264, zeroPath: true, enabled: false},
+  {name: 'zero-width track', width: 1440, height: 900, card: 264, zeroAxis: true, enabled: false},
 ];
+assert(samples.every(point => point.y >= 0 && point.y <= 2600), 'curve ends inside its SVG instead of being cut off');
+assert.equal(samples.at(-1).y, 2600);
 for (const fixture of fixtures) {
   const events = new Map(), frames = new Map(), observers = [];
   let clock = 100, frameId = 0, scroll = 0;
@@ -73,21 +75,22 @@ for (const fixture of fixtures) {
     addEventListener(name, fn) { events.set('motion', fn); },
     removeEventListener(name, fn) { if (events.get('motion') === fn) events.delete('motion'); },
   };
-  const summary = {hidden: true}, number = {}, label = {}, reveal = element(), world = element();
-  const stage = {offsetHeight: fixture.height};
-  const axisWidth = fixture.zeroAxis ? 0 : fixture.width - 48;
-  const axisHeight = fixture.height * 3.6;
-  const stemLength = fixture.width <= 700 ? 20 : 32;
+  const summary = {hidden: true}, number = {}, label = {}, reveal = element();
+  const world = Object.assign(element(), {getBoundingClientRect: () => ({top: 1600 - scroll})});
+  const stage = element();
+  const axisWidth = fixture.zeroAxis ? 0 : fixture.width - (fixture.width <= 360 ? 32 : 48);
+  const axisHeight = Math.max(1900, fixture.height * 3.4);
+  const stemLength = fixture.width <= 360 ? 12 : fixture.width <= 700 ? 18 : 28;
   const path = fixture.noPath ? {} : {getTotalLength: () => fixture.zeroPath ? 0 : total, getPointAtLength: pointAtLength};
   const scene = element();
   const axis = Object.assign(element(), {getBoundingClientRect: () => ({width: axisWidth, height: axisHeight})});
   const stations = labels.map((_, i) => Object.assign(element(), {dataset: {stepY: String(stops[i])}}));
   const cards = labels.map((stepTitle, i) => Object.assign(element(), {
     dataset: {stepTitle}, offsetHeight: i === 3 && fixture.lastCard || fixture.card,
-    offsetWidth: fixture.width <= 700 ? (fixture.width - 48) * .78 : Math.min(500, (fixture.width - 48) * .44),
+    offsetWidth: fixture.width <= 700 ? axisWidth * .67 : Math.min(480, axisWidth * .4),
   }));
   const section = Object.assign(element(), {
-    dataset: {}, getBoundingClientRect: () => ({top: 1600 - scroll}),
+    dataset: {},
     querySelector: selector => ({
       '.process-story-stage': stage, '.process-story-world': world, '.process-story-scene': scene, '.process-story-axis': axis, '[data-process-path]': path, '[data-process-reveal]': reveal,
       '.process-story-summary': summary, '[data-process-number]': number, '[data-process-label]': label,
@@ -115,7 +118,7 @@ for (const fixture of fixtures) {
   const flush = () => {
     let count = 0;
     while (frames.size) {
-      assert(++count < 1000, `${fixture.name}: animation must settle`);
+      assert(++count < 300, `${fixture.name}: animation must settle promptly`);
       const [id, fn] = frames.entries().next().value;
       frames.delete(id); clock += 1000 / 60; fn(clock);
     }
@@ -123,58 +126,73 @@ for (const fixture of fixtures) {
   flush();
   assert.equal(section.classList.contains('is-process-story'), fixture.enabled, fixture.name);
   if (fixture.enabled) {
-    const travel = (parseFloat(section.style.getPropertyValue('--process-story-height')) - fixture.height) / 4;
+    const travel = (stops[1] - stops[0]) * axisHeight / 2600;
+    const intro = Math.max(fixture.height * .24, stops[0] * axisHeight / 2600 - fixture.height * .62) / travel;
     const at = progress => { scroll = 1600 + travel * progress; events.get('scroll')(); flush(); };
-    let previousCamera = 1;
+    at(0);
+    assert.equal(section.dataset.processPhase, 'intro');
+    assert.equal(section.dataset.processStep, '0');
+    assert.equal(reveal.attributes.get('height'), '0', 'no pre-illuminated segment');
+    assert.equal(Number(axis.style.getPropertyValue('--process-axis-progress')), 0);
+    assert(cards.every(card => !card.classList.contains('is-current') && card.inert), 'no card before the first arrival');
+    const origin = pointAtLength(0);
+    assert(Math.abs(parseFloat(axis.style.getPropertyValue('--process-marker-y')) - origin.y * axisHeight / 2600) < .001, 'ball starts at the path origin');
+    at(intro / 2);
+    const introY = parseFloat(axis.style.getPropertyValue('--process-marker-y')) / axisHeight * 2600;
+    assert(introY > origin.y && introY < stops[0], 'approach illuminates toward the first step');
     for (let i = 0; i < 4; i++) {
-      at(i + .05); assert.equal(section.dataset.processPhase, 'opening');
+      at(intro + i + .05); assert.equal(section.dataset.processPhase, 'opening');
       const opening = Number(cards[i].style.getPropertyValue('--process-card-open'));
       assert(opening > 0 && opening < 1);
-      at(i + .3);
+      at(intro + i + .3);
       assert.equal(section.dataset.processStep, String(i + 1));
       assert.equal(section.dataset.processPhase, 'reading');
       assert.equal(label.textContent, labels[i]);
       assert.equal(cards.filter(card => card.classList.contains('is-current')).length, 1);
       assert(!cards[i].inert);
-      assert(summary.hidden === false && scene.attributes.get('aria-hidden') === 'true', 'accessible summary replaces moving copy');
+      assert(summary.hidden === false && scene.attributes.get('aria-hidden') === 'true');
       const markerX = Number.parseFloat(axis.style.getPropertyValue('--process-marker-x'));
       const markerY = Number.parseFloat(axis.style.getPropertyValue('--process-marker-y'));
-      assert(Math.abs(markerY - stops[i] * axisHeight / 2600) < .001, 'marker follows actual path y');
-      assert(Math.abs(markerX - [900,160,870,180][i] * axisWidth / 1000) < .001, 'milestones sit on alternating turns');
-      assert(Math.abs(Number(reveal.attributes.get('height')) - stops[i] - 160) < .001, 'vertical white progress ends at marker');
+      assert(Math.abs(markerY - stops[i] * axisHeight / 2600) < .001);
+      assert(Math.abs(markerX - [860,180,830,200][i] * axisWidth / 1000) < .001);
+      assert(Math.abs(Number(reveal.attributes.get('height')) - stops[i] - 160) < .001);
       assert.equal(stations[i].style.getPropertyValue('left'), `${markerX}px`);
       assert.equal(stations[i].style.getPropertyValue('top'), `${markerY}px`);
-      const cardTop = Number.parseFloat(cards[i].style.getPropertyValue('--process-card-top'));
-      assert(Math.abs(cardTop - markerY) < .001);
-      const left = Number.parseFloat(cards[i].style.getPropertyValue('--process-card-left'));
-      assert(left >= 0 && left + cards[i].offsetWidth <= axisWidth, 'card fits horizontally');
-      const stemLeft = Number.parseFloat(cards[i].style.getPropertyValue('--process-stem-left'));
-      const stemWidth = Number.parseFloat(cards[i].style.getPropertyValue('--process-stem-width'));
-      assert(Math.abs(left + stemLeft + (i % 2 ? 0 : stemWidth) - markerX) < .001, 'connector meets its curve point');
-      assert(stemWidth >= 0);
-      const camera = Number.parseFloat(world.style.getPropertyValue('--process-camera-y'));
-      assert(camera < previousCamera, 'the shared plane rises between stages'); previousCamera = camera;
-      assert(markerY + camera - fixture.card / 2 > 16 && markerY + camera + fixture.card / 2 < fixture.height - 16, 'active card stays in view');
-      if(i === 0) assert.equal(camera, 0, 'initial title starts in place');
-      else assert(-camera > fixture.height * .9, 'title has risen out with the curve');
-      at(i + .65); assert.equal(section.dataset.processPhase, 'closing');
-      at(i + .9); assert.equal(section.dataset.processPhase, 'moving');
-      if(i < 3) {
-        const y = Number.parseFloat(axis.style.getPropertyValue('--process-marker-y')) / axisHeight * 2600;
-        assert(y > stops[i] && y < stops[i + 1], 'dot travels down the S between stops');
-      }
+      const left = parseFloat(cards[i].style.getPropertyValue('--process-card-left'));
+      const width = parseFloat(cards[i].style.getPropertyValue('--process-card-width'));
+      assert(left >= 0 && left + width <= axisWidth, 'card fits horizontally');
+      const topY = (markerY - fixture.card / 2) / axisHeight * 2600;
+      const bottomY = (markerY + fixture.card / 2) / axisHeight * 2600;
+      const near = samples.filter(point => point.y >= topY && point.y <= bottomY);
+      const curveEdge = i % 2 ? Math.max(...near.map(point => point.x * axisWidth / 1000)) : Math.min(...near.map(point => point.x * axisWidth / 1000));
+      assert(i % 2 ? left >= curveEdge + stemLength - .1 : left + width <= curveEdge - stemLength + .1, 'whole card clears the curve, including corners');
+      const stemLeft = parseFloat(cards[i].style.getPropertyValue('--process-stem-left'));
+      const stemWidth = parseFloat(cards[i].style.getPropertyValue('--process-stem-width'));
+      assert(Math.abs(left + stemLeft + (i % 2 ? 0 : stemWidth) - markerX) < .001);
+      const screenY = markerY + world.getBoundingClientRect().top;
+      assert(screenY - fixture.card / 2 > 12 && screenY + fixture.card / 2 < fixture.height - 12, 'reading card fits the natural viewport');
+      assert.equal(world.style.getPropertyValue('--process-camera-y'), '', 'no fake camera transform');
+      assert.equal(section.style.getPropertyValue('--process-story-height'), '', 'no added pinned scrolling distance');
+      if(i < 3) assert((stops[i+1] - stops[i]) * axisHeight / 2600 > fixture.card + 48, 'neighboring cards have a clear physical gap');
+      at(intro + i + .6); assert.equal(section.dataset.processPhase, 'closing');
+      at(intro + i + .85); assert.equal(section.dataset.processPhase, 'moving');
+      const y = parseFloat(axis.style.getPropertyValue('--process-marker-y')) / axisHeight * 2600;
+      assert(y > stops[i] && y < (stops[i+1] || 2600), 'dot continues down the S, including the exit tail');
     }
-    at(4); assert.equal(cards[3].inert, true, 'last card closes before leaving');
-    at(1.3); assert.equal(label.textContent, labels[1], 'reverse scroll');
-    at(.3); assert.equal(Number.parseFloat(world.style.getPropertyValue('--process-camera-y')), 0, 'title returns on reverse scroll');
-    events.get('resize')(); flush(); assert.equal(label.textContent, labels[0], 'resize preserves the active step');
+    at(intro + 4);
+    assert.equal(section.dataset.processPhase, 'complete');
+    assert.equal(cards[3].inert, true);
+    assert(Math.abs(parseFloat(axis.style.getPropertyValue('--process-marker-y')) - axisHeight) < .001);
+    assert.equal(axis.style.getPropertyValue('--process-marker-opacity'), '0', 'dot fades into the outgoing section');
+    at(intro + 1.3); assert.equal(label.textContent, labels[1], 'reverse scroll');
+    at(0); assert.equal(reveal.attributes.get('height'), '0', 'reverse returns to unlit origin');
+    events.get('resize')(); flush(); assert.equal(section.dataset.processStep, '0');
     motion.matches = true; events.get('motion')(); flush();
     assert(!section.classList.contains('is-process-story'));
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
-    assert(cards.every(card => !card.style.getPropertyValue('--process-card-content')));
+    assert(cards.every(card => !card.style.getPropertyValue('--process-card-content') && !card.style.getPropertyValue('--process-card-width')));
     assert(stations.every(station => !station.style.getPropertyValue('left') && !station.style.getPropertyValue('top')));
     assert.equal(reveal.attributes.get('height'), '0');
-    assert.equal(world.style.getPropertyValue('--process-camera-y'), '');
   } else {
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
     assert(summary.hidden);
@@ -184,4 +202,4 @@ for (const fixture of fixtures) {
   assert(observers.every(observer => observer.disconnected));
   assert.equal(events.size, 0);
 }
-console.log(`PASS: ${fixtures.length} process fixtures; actual vertical S, alternating stops, camera/card/connector alignment, all four phases, reverse scroll, responsive guards and static fallbacks.`);
+console.log(`PASS: ${fixtures.length} process fixtures; zero-lit origin/approach, actual SVG bounds, whole-card clearance, compact native flow, four phases, outgoing tail, reverse scroll and fallbacks.`);
