@@ -5,11 +5,10 @@ import { execFileSync } from "node:child_process";
 import { build } from "esbuild";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
-import { ProcessCards, processSteps } from "../components/process-cards";
+import { ProcessCards } from "../components/process-cards";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const out = resolve(root, "dist");
-await Promise.all(processSteps.map(step => readFile(resolve(root, `assets/process/${step.id}-3d.webp`))));
 await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
 const folders = new Set(["assets", "case-studies", "diseno-web-torreon"]);

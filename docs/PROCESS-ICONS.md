@@ -1,4 +1,6 @@
-# Iconos de «Cómo trabajamos»
+# Iconos anteriores de «Cómo trabajamos»
+
+Estos recursos se conservan, pero ya no se muestran ni se solicitan en el proceso editorial del home.
 
 Cuatro imágenes nuevas generadas con la herramienta integrada de generación de imágenes. La captura de EMYASA proporcionada por Leonardo se usó como referencia de estilo, sin reutilizar sus fondos ni textos.
 

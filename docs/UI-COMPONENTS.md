@@ -1,43 +1,41 @@
-# Proceso editorial con Zoom Slider
+# Proceso editorial ligado al scroll
 
-El home conserva su HTML y sus rutas. «Cómo trabajamos» es una isla React pre-renderizada: las cuatro etapas ya existen en el HTML de producción y después se hidratan sin reemplazarlo.
+El home conserva sus rutas y su fondo continuo. «Cómo trabajamos» es una isla React pre-renderizada: las cuatro etapas están en el HTML de producción y después se hidratan sin reemplazarlas.
 
-## Rutas y estructura
+## Estructura
 
-- Zoom Slider adaptado: `components/ui/zoom-slider.tsx`.
-- Demo independiente: `components/ui/zoom-slider-demo.tsx`.
+- Componente: `components/ui/process-story.tsx`.
 - Datos del home: `components/process-cards.tsx`.
-- Ciclo de animación: `lib/zoom-slider-motion.ts`.
+- Controlador: `lib/process-story-motion.ts`.
 - Estilos: `assets/process-story.css`.
-- Entrada de hidratación: `src/process-cards.tsx`.
-- Tailwind: `styles/components.css`.
-- `cn`: `lib/utils.ts`.
+- Hidratación: `src/process-cards.tsx`.
+- Tailwind: `styles/components.css`; `cn`: `lib/utils.ts`.
 
-`components/ui` es el destino configurado para shadcn; mantiene estables las importaciones `@/components/ui/...`. `components.json` y `tsconfig.json` resuelven `@/` hacia la raíz. React, TypeScript y Tailwind ya están instalados: no hace falta ejecutar `init` sobre este proyecto. Para un proyecto nuevo, `npx shadcn@latest init` permite crear la base React/TypeScript; aquí, `npx shadcn@latest add <nombre>` añade componentes al destino existente. Revisar los cambios de CSS antes de compilar.
+`components/ui` es el destino configurado para shadcn. `components.json` y `tsconfig.json` resuelven `@/` hacia la raíz. React, TypeScript y Tailwind ya están instalados; no ejecutar `init` de nuevo. En un proyecto nuevo, empezar con `npx shadcn@latest init`; aquí se pueden añadir componentes con `npx shadcn@latest add <nombre>`, revisando los cambios de CSS antes de compilar. Tailwind importa tema/utilidades sin Preflight para respetar el home.
 
-## Diseño y movimiento
+## Composición y movimiento
 
-La nueva composición combina las filas editoriales de la grabación de Moyra con el crecimiento progresivo de imágenes del Zoom Slider adjunto. Sustituye la curva en S por cuatro filas: visual a la izquierda, número/título/explicación al centro y un desglose breve a la derecha. En tablet, los detalles bajan junto al texto; en móvil se apila el contenido. El fondo general del home permanece continuo. Los cuatro visuales reutilizan los iconos propios sobre una composición editorial, sin imágenes externas ni base64 de la referencia.
+Sin iconos, imágenes ni tarjetas. A la izquierda, título e índice vertical con un trazo fino; a la derecha, una etapa cada vez, con título grande en dos líneas, descripción y tres detalles breves. El fondo general sigue visible. No se añade otra superficie de color ni se modifica el resto del home.
 
-El componente suministrado se adaptó al flujo vertical de este one-page. No crea un carrusel infinito, una pantalla negra separada ni un controlador global de rueda/arrastre. GSAP 3.15.0, ScrollTrigger y SplitText vinculan el zoom al scroll nativo de cada fila. El marco crece desde su esquina inferior; el visual interior acompaña el movimiento y el título aparece por líneas enmascaradas. Los párrafos y detalles conservan visibilidad durante la transición.
+Una sola secuencia GSAP/ScrollTrigger sigue el scroll nativo con `scrub: .45`. Cada título asciende por máscaras de línea, se detiene para lectura y vuelve a subir antes de entrar el siguiente. El contenido acompaña la transición; la etapa anterior desaparece antes de la siguiente. Al regresar con scroll, la secuencia se recorre hacia atrás. El índice arranca vacío y avanza con el mismo recorrido.
 
-El componente espera a que las fuentes estén listas antes de dividir los títulos. `autoSplit` vuelve a calcular líneas al cambiar su ancho, y la animación devuelta por `onSplit` conserva la limpieza y sincronización. `aria: auto` mantiene el nombre accesible de cada título. `gsap.matchMedia` limita los efectos al propio componente y los revierte cuando cambian las condiciones o se desmonta. Movimiento reducido, ventanas muy bajas y APIs no disponibles muestran la composición estática completa. El contenido no depende de hover.
+La escena usa CSS sticky, sin pin de GSAP, captura global de rueda/touch, autoavance ni bucle permanente. Dura 320svh en escritorio y 300svh en móvil, incluyendo la pantalla visible: el recorrido efectivo es de 220/200svh. La última etapa permanece legible antes de liberar la escena hacia el FAQ. Se espera a las fuentes antes de medir y se refrescan los triggers después de activar la altura de la escena.
 
-La antigua lógica de la línea de tiempo se retiró de `assets/process-story.js`. `GradientCard` y su demo original siguen disponibles; no se usan en este nuevo proceso.
+Las líneas se componen de forma explícita y cada título conserva su nombre completo en `aria-label`. No hace falta SplitText ni división de texto en ejecución. `gsap.matchMedia` limita los efectos al componente y revierte estilos y triggers en resize, cambio de preferencias o desmontaje. Movimiento reducido, ventanas de menos de 650px de alto y falta de matchMedia usan una lista normal, sin contenido enmascarado ni sección fijada. Sin JavaScript, el HTML pre-renderizado también presenta las cuatro etapas.
 
-## Instalar y verificar
+Los anteriores archivos Zoom Slider y su controlador se retiraron. `GradientCard` y su demo original siguen disponibles de manera independiente. Los iconos anteriores se conservan como recursos, pero este proceso no los importa ni solicita.
+
+## Verificación
 
 Con Node 22 o superior:
 
 ```bash
 npm ci
-npm run typecheck
-npm run test:process
 npm run build
 ```
 
-GSAP está fijado en `package.json` y `package-lock.json`; no se carga desde un CDN. El build genera `dist/` para Vercel y preserva assets, páginas y rutas existentes. Tailwind importa tema/utilidades sin Preflight para conservar la base visual del home.
+El build ejecuta TypeScript estricto y doce fixtures del controlador real con dobles de GSAP: secuencia única vinculada al scroll, entradas y salidas ordenadas, pausa de lectura, índice vacío al inicio, última etapa persistente, cambios de ancho/preferencia, SSR y limpieza. El build publica `dist/` conservando las rutas y los recursos existentes.
 
-`test:process` ejecuta fixtures del controlador real compilado con dobles de GSAP: alcance local de triggers, zoom reversible, párrafos legibles, cambio de breakpoint y movimiento reducido, SSR, desmontaje antes de cargar fuentes y limpieza de títulos/triggers. La integración DOM adicional comprueba el HTML pre-renderizado, los cuatro bloques, IDs/ARIA, recursos y la hidratación.
+Se comprobó además la hidratación con React y GSAP/ScrollTrigger reales en un DOM: cuatro estados de lectura, entrada progresiva, salida hacia arriba, regreso, índice desde cero, fallbacks estáticos, ausencia de imágenes/iconos y conservación exacta de los bloques vecinos. Estas verificaciones no sustituyen una revisión visual en navegador; el preview requiere iniciar sesión en Vercel en la sesión disponible.
 
-Referencias: https://moyra.co/ · https://gsap.com/docs/v3/Plugins/ScrollTrigger/ · https://gsap.com/docs/v3/Plugins/SplitText/ · https://gsap.com/docs/v3/GSAP/gsap.matchMedia/
+Referencias de API: https://gsap.com/docs/v3/Plugins/ScrollTrigger/ · https://gsap.com/docs/v3/GSAP/gsap.matchMedia/
