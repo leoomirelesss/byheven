@@ -58,7 +58,7 @@
     story.toggleAttribute('data-scroll-ready', !motion.matches);
     start = story.getBoundingClientRect().top + window.scrollY;
     height = scene.offsetHeight; width = scene.clientWidth;
-    step = Math.max(1, height * 1.52);
+    step = Math.max(1, height * 1.32);
     keys = width <= 700 ? [
       {left:42, top:32, ry:-24, rz:14, rx:0, scale:1},
       {left:28, top:32, ry:360, rz:0, rx:0, scale:1},

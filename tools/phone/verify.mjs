@@ -42,7 +42,7 @@ const image={src:''},device={style:style()};
 let layoutReads=0;
 const scene={clientWidth:1363,get offsetHeight(){layoutReads++;return 936;},dataset:{},style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
 const win={scrollY:0,innerHeight:936,innerWidth:1363,matchMedia:query=>query.includes('reduced')?motion:{matches:true},addEventListener:(type,fn)=>listeners[type]=fn,dispatchEvent:event=>{events.push(event.detail);listeners[event.type]?.(event);}};
-const story={offsetHeight:936*4.50,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
+const story={offsetHeight:936*4.04,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
 const doc={querySelector:selector=>selector==='[data-flow-story]'?story:null,getElementById:()=>null,addEventListener:(type,fn)=>listeners[type]=fn};
 const context=vm.createContext({window:win,document:doc,Image:class{decode(){return Promise.resolve();}},requestAnimationFrame:fn=>{queued.set(++rafId,fn);return rafId;},cancelAnimationFrame:id=>queued.delete(id),CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});
 vm.runInContext(await readFile(new URL('../../assets/scroll-story.js',import.meta.url),'utf8'),context);
@@ -51,7 +51,7 @@ const flush=()=>{let count=0;while(queued.size&&count++<150){time+=1000/60;const
 const at=y=>{win.scrollY=y;listeners.scroll();flush();return events.at(-1);};
 flush();
 assert.equal(events.at(-1).index,0);assert(image.src.endsWith('screen-home.webp'));
-const step=936*1.52;
+const step=936*1.32;
 const middle=at(step);assert.equal(middle.index,1);assert.equal(middle.ry,360);assert.equal(middle.rx,0);assert(image.src.endsWith('screen-collection.webp'));
 const end=at(step*2);assert.equal(end.index,2);assert.equal(end.ry,720);assert.equal(end.rx,0);assert(image.src.endsWith('screen-product.webp'));
 assert.deepEqual(at(step),middle,'Scroll must reverse to the identical pose');

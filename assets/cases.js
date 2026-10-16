@@ -33,7 +33,7 @@
       if (enabled) track.scrollLeft = 0;
     }
     if (enabled) {
-      travel = Math.max(maxX, viewport.offsetHeight * .75) * 1.45;
+      travel = Math.max(maxX, viewport.offsetHeight * .75) * 1.25;
       story.style.height = `${viewport.offsetHeight + travel}px`;
       start = story.getBoundingClientRect().top + window.scrollY;
       force = true;

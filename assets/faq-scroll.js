@@ -12,7 +12,7 @@
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const narrow = window.matchMedia('(max-width: 700px)');
-  const pace = 1.55;
+  const pace = 1.35;
   const clamp = (value, max) => Math.min(Math.max(value, 0), max);
   let enabled = false;
   let distance = 0;
