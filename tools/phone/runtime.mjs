@@ -46,10 +46,15 @@ async function init() {
     return loader.loadAsync(new URL(`screen-${names[index]}.webp`,base).href).then(texture=> {
       texture.colorSpace=T.SRGBColorSpace; texture.flipY=false;
       texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-      textures[index]=texture; return texture;
+      textures[index]=texture;
+      renderer.initTexture(texture);
+      return texture;
     });
   }
-  const [gltf]=await Promise.all([new GLTFLoader().loadAsync(new URL('iphone-17-pro.glb',base).href),loadScreen(0)]);
+  const [gltf]=await Promise.all([
+    new GLTFLoader().loadAsync(new URL('iphone-17-pro.glb',base).href),
+    loadScreen(0), Promise.allSettled([loadScreen(1),loadScreen(2)]),
+  ]);
   const phone=gltf.scene; scene.add(phone);
   let display;
   phone.traverse(mesh=>{if(mesh.isMesh && mesh.material?.name==='PLIEGUE Display') display=mesh;});
@@ -79,12 +84,24 @@ async function init() {
     host.dataset.phoneAngle=pose.ry.toFixed(2);
   }
   function resize() {
-    const rect=host.getBoundingClientRect(); width=Math.max(1,rect.width); height=Math.max(1,rect.height);
-    phonePixelWidth=sceneElement?.querySelector('.flow-phone-position')?.offsetWidth || 280;
+    const rect=host.getBoundingClientRect(), nextWidth=Math.max(1,rect.width), nextHeight=Math.max(1,rect.height);
+    const nextPhoneWidth=sceneElement?.querySelector('.flow-phone-position')?.offsetWidth || 280;
+    if(width===nextWidth && height===nextHeight && phonePixelWidth===nextPhoneWidth) return;
+    width=nextWidth; height=nextHeight; phonePixelWidth=nextPhoneWidth;
     renderer.setSize(width,height,false); camera.aspect=width/height; camera.updateProjectionMatrix(); schedule();
   }
-  function onPose(event) { if(!viewer) { pose={...pose,...event.detail}; schedule(); } }
-  function onVisibility() { if(!document.hidden) schedule(); }
+  function onPose(event) {
+    if(viewer) return;
+    pose={...pose,...event.detail};
+    if(visible && !document.hidden && !contextLost && !disposed) {
+      cancelAnimationFrame(frame); frame=0;
+      draw();
+    }
+  }
+  function onVisibility() {
+    if(document.hidden) { cancelAnimationFrame(frame); frame=0; }
+    else schedule();
+  }
   canvas.addEventListener('webglcontextlost',event=> {
     event.preventDefault(); contextLost=true; host.classList.remove('has-phone-3d'); host.dataset.phoneState='fallback';
   });
@@ -109,7 +126,6 @@ async function init() {
     const status=document.querySelector('[data-viewer-status]'); if(status) status.textContent='Arrastra para girar el teléfono.';
   } else window.dispatchEvent(new Event('flow:ready'));
   draw(); host.classList.add('has-phone-3d'); host.dataset.phoneState='ready';
-  Promise.allSettled([loadScreen(1),loadScreen(2)]).then(schedule);
   window.addEventListener('pagehide',event=> {
     if(event.persisted) return;
     disposed=true; cancelAnimationFrame(frame); observer.disconnect(); intersection.disconnect();

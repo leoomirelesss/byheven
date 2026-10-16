@@ -1,41 +1,41 @@
-# Proceso editorial ligado al scroll
+# Home y componentes
 
-El home conserva sus rutas y su fondo continuo. «Cómo trabajamos» es una isla React pre-renderizada: las cuatro etapas están en el HTML de producción y después se hidratan sin reemplazarlas.
+El home es estático: teléfono → servicios → proyectos → FAQ → contacto → footer. La sección «Cómo trabajamos» se retiró del contenido y de la navegación. Sus componentes React y sus recursos anteriores permanecen disponibles en el repositorio, pero el home ya no los importa ni hidrata.
 
-## Estructura
+## Rutas
 
-- Componente: `components/ui/process-story.tsx`.
-- Datos del home: `components/process-cards.tsx`.
-- Controlador: `lib/process-story-motion.ts`.
-- Estilos: `assets/process-story.css`.
-- Hidratación: `src/process-cards.tsx`.
-- Tailwind: `styles/components.css`; `cn`: `lib/utils.ts`.
+- Reloj de animación compartido: `assets/scroll-story.js`.
+- Teléfono/textos: `assets/shopify-hero.js`; escena WebGL: `tools/phone/runtime.mjs`.
+- Galería: `assets/cases.js`; FAQ: `assets/faq-scroll.js`.
+- Servicios, navegación, contacto y respuestas: sus controladores existentes en `assets/`.
+- Componentes reutilizables shadcn: `components/ui/`; datos archivados del proceso: `components/process-cards.tsx`.
+- TypeScript y alias `@/`: `tsconfig.json`. Tailwind: `styles/components.css`; `cn`: `lib/utils.ts`.
 
-`components/ui` es el destino configurado para shadcn. `components.json` y `tsconfig.json` resuelven `@/` hacia la raíz. React, TypeScript y Tailwind ya están instalados; no ejecutar `init` de nuevo. En un proyecto nuevo, empezar con `npx shadcn@latest init`; aquí se pueden añadir componentes con `npx shadcn@latest add <nombre>`, revisando los cambios de CSS antes de compilar. Tailwind importa tema/utilidades sin Preflight para respetar el home.
+React, TypeScript y Tailwind están instalados. `components/ui` mantiene las importaciones de shadcn estables. No hace falta reiniciar la configuración. En otro proyecto, comenzar con `npx shadcn@latest init`; aquí se pueden añadir componentes mediante `npx shadcn@latest add <nombre>`. El home ya no solicita el bundle React/GSAP de proceso ni sus hojas CSS. No se cambia el fondo continuo ni se añaden efectos visuales.
 
-## Composición y movimiento
+## Movimiento
 
-Sin iconos, imágenes ni tarjetas. A la izquierda, título e índice vertical con un trazo fino; a la derecha, una etapa cada vez, con título grande en dos líneas, descripción y tres detalles breves. El fondo general sigue visible. No se añade otra superficie de color ni se modifica el resto del home.
+Teléfono, galería y FAQ usan un solo requestAnimationFrame bajo demanda. Los eventos de scroll se agrupan; la geometría se mide al inicializar o invalidar el layout, no en cada actualización de scroll. ResizeObserver, fuentes, resize y cambios de preferencias invalidan las medidas. El avance usa amortiguación temporal de 70ms, consistente a 60/120Hz. Las entradas/salidas de escenas y saltos largos se sincronizan con la posición nativa para liberar sticky en su punto correcto. No se interceptan rueda, touch ni teclado; no hay scroll virtual global.
 
-Una sola secuencia GSAP/ScrollTrigger sigue el scroll nativo con `scrub: .45`. Cada título asciende por máscaras de línea, se detiene para lectura y vuelve a subir antes de entrar el siguiente. El contenido acompaña la transición; la etapa anterior desaparece antes de la siguiente. Al regresar con scroll, la secuencia se recorre hacia atrás. El índice arranca vacío y avanza con el mismo recorrido.
+Los textos del teléfono ocupan pantallas contiguas: el factor de lectura 1.32 controla el ritmo, sin dejar huecos de 32vh entre capítulos. El fallback CSS se mueve con transformaciones, no con left/top animados. El modelo WebGL recibe la pose y dibuja en ese mismo frame, evitando un RAF adicional de retraso. Las tres texturas se cargan y preparan antes de revelar el modelo; tamaños iguales no reinician el canvas. El render se limita a la escena visible y pausa con la pestaña oculta.
 
-La escena usa CSS sticky, sin pin de GSAP, captura global de rueda/touch, autoavance ni bucle permanente. Dura 320svh en escritorio y 300svh en móvil, incluyendo la pantalla visible: el recorrido efectivo es de 220/200svh. La última etapa permanece legible antes de liberar la escena hacia el FAQ. Se espera a las fuentes antes de medir y se refrescan los triggers después de activar la altura de la escena.
+La galería calcula su recorrido con el ancho visible y conserva acceso nativo en móvil, movimiento reducido y pantallas bajas. Las flechas del teclado enfocan sin desplazar lateralmente el documento y sincronizan la tarjeta con el recorrido. El FAQ conserva mensajes, desvanecidos y respuestas; su desplazamiento se escribe solo en el track y la navegación por teclado revela preguntas recortadas. El scroll anchoring se desactiva únicamente en estas escenas móviles para evitar reajustes automáticos al cambiar el contenido.
 
-Las líneas se componen de forma explícita y cada título conserva su nombre completo en `aria-label`. No hace falta SplitText ni división de texto en ejecución. `gsap.matchMedia` limita los efectos al componente y revierte estilos y triggers en resize, cambio de preferencias o desmontaje. Movimiento reducido, ventanas de menos de 650px de alto y falta de matchMedia usan una lista normal, sin contenido enmascarado ni sección fijada. Sin JavaScript, el HTML pre-renderizado también presenta las cuatro etapas.
-
-Los anteriores archivos Zoom Slider y su controlador se retiraron. `GradientCard` y su demo original siguen disponibles de manera independiente. Los iconos anteriores se conservan como recursos, pero este proceso no los importa ni solicita.
-
-## Verificación
-
-Con Node 22 o superior:
+## Compilación y verificación
 
 ```bash
 npm ci
 npm run build
 ```
 
-El build ejecuta TypeScript estricto y doce fixtures del controlador real con dobles de GSAP: secuencia única vinculada al scroll, entradas y salidas ordenadas, pausa de lectura, índice vacío al inicio, última etapa persistente, cambios de ancho/preferencia, SSR y limpieza. El build publica `dist/` conservando las rutas y los recursos existentes.
+El build ejecuta TypeScript y `scripts/verify-home-motion.mjs`, y copia el sitio a `dist/`. Las pruebas cubren agrupación de frames, reposo, amortiguación 60/120Hz, pausa/retorno de pestaña, movimiento reducido, saltos, limpieza, geometría en caché, galería/FAQ hacia delante/atrás, extremos, teclado y layout variable.
 
-Se comprobó además la hidratación con React y GSAP/ScrollTrigger reales en un DOM: cuatro estados de lectura, entrada progresiva, salida hacia arriba, regreso, índice desde cero, fallbacks estáticos, ausencia de imágenes/iconos y conservación exacta de los bloques vecinos. Estas verificaciones no sustituyen una revisión visual en navegador; el preview requiere iniciar sesión en Vercel en la sesión disponible.
+Para modificar el render 3D:
 
-Referencias de API: https://gsap.com/docs/v3/Plugins/ScrollTrigger/ · https://gsap.com/docs/v3/GSAP/gsap.matchMedia/
+```bash
+npm ci --prefix tools/phone
+node tools/phone/build.mjs
+node tools/phone/verify.mjs
+```
+
+La prueba del teléfono comprueba geometría, UVs, cambio de pantalla por detrás, 201 poses reversibles, móvil, accesibilidad estática y ausencia de lecturas de layout durante el scroll. Las verificaciones de controlador no certifican FPS ni sustituyen una revisión visual en navegador. El preview sigue protegido por el acceso de Vercel en la sesión del agente.

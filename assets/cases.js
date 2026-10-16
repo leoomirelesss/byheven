@@ -5,50 +5,62 @@
   const story = document.querySelector('[data-case-story]');
   const viewport = story?.querySelector('.case-viewport');
   const track = viewport?.querySelector('.case-track');
-  let frame = 0, start = 0, travel = 1, maxX = 0;
+  const clock = window.HevenMotion;
+  let start = 0, travel = 1, maxX = 0, progress = 0, lastProgress = -1;
+  let enabled = false, force = true;
   const clamp = value => Math.max(0, Math.min(1, value));
-  const render = () => {
-    frame = 0;
-    if (!story?.classList.contains('is-pinned')) return;
-    start = story.getBoundingClientRect().top + window.scrollY;
-    const progress = clamp((window.scrollY - start) / travel);
-    track.style.transform = `translate3d(${-maxX * progress}px,0,0)`;
-    story.dataset.caseProgress = progress.toFixed(4);
+  const render = state => {
+    if (!enabled) return false;
+    const target = clamp((state.y - start) / travel);
+    progress = clock.approach(progress, target, state.dt, state.immediate || state.y <= start || state.y >= start + travel);
+    if (force || progress !== lastProgress) {
+      track.style.transform = `translate3d(${-maxX * progress}px,0,0)`;
+      story.dataset.caseProgress = progress.toFixed(4);
+      lastProgress = progress; force = false;
+    }
+    return progress !== target;
   };
-  const schedule = () => { if (!frame) frame = requestAnimationFrame(render); };
   const measure = () => {
     if (!story || !track) return;
-    story.classList.remove('is-pinned'); story.style.height = ''; track.style.transform = '';
-    maxX = Math.max(0, track.scrollWidth - track.clientWidth);
-    if (wide.matches && !reduced.matches && maxX > 0) {
-      track.scrollLeft = 0;
-      story.classList.add('is-pinned');
+    const padding = getComputedStyle(viewport);
+    const available = viewport.clientWidth - (parseFloat(padding.paddingLeft) || 0) - (parseFloat(padding.paddingRight) || 0);
+    maxX = Math.max(0, track.scrollWidth - available);
+    const next = wide.matches && !reduced.matches && window.innerHeight >= 640 && maxX > 0;
+    if (enabled !== next) {
+      enabled = next;
+      story.classList.toggle('is-pinned', enabled);
+      track.style.transform = '';
+      if (enabled) track.scrollLeft = 0;
+    }
+    if (enabled) {
       travel = Math.max(maxX, viewport.offsetHeight * .75) * 1.25;
       story.style.height = `${viewport.offsetHeight + travel}px`;
       start = story.getBoundingClientRect().top + window.scrollY;
-      schedule();
+      force = true;
+    } else {
+      story.style.height = ''; track.style.transform = ''; progress = 0;
     }
   };
-  if (story && track) {
+  if (story && track && clock) {
     const cards = [...track.querySelectorAll('.case-card')];
     track.addEventListener('focusin', event => {
       const card = event.target.closest('.case-card');
-      if (!card || !story.classList.contains('is-pinned')) return;
-      start = story.getBoundingClientRect().top + window.scrollY;
+      if (!card || !enabled) return;
       const target = clamp((card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2) / Math.max(1, maxX));
-      window.scrollTo({top: start + travel * target, behavior: 'auto'});
+      window.scrollTo({top: start + travel * target, behavior: 'instant'});
+      clock.reset();
     });
     track.addEventListener('keydown', event => {
       if (!['ArrowRight', 'ArrowLeft'].includes(event.key)) return;
       const index = cards.indexOf(event.target.closest('.case-card'));
       if (index < 0) return;
       event.preventDefault();
-      cards[Math.max(0, Math.min(cards.length - 1, index + (event.key === 'ArrowRight' ? 1 : -1)))].focus();
+      const next = cards[Math.max(0, Math.min(cards.length - 1, index + (event.key === 'ArrowRight' ? 1 : -1)))];
+      if (enabled) next.focus({preventScroll: true});
+      else { next.focus(); next.scrollIntoView({block: 'nearest', inline: 'nearest', behavior: 'auto'}); }
     });
-    window.addEventListener('scroll', schedule, {passive: true});
-    window.addEventListener('resize', measure, {passive: true});
-    reduced.addEventListener('change', measure); wide.addEventListener('change', measure);
-    document.fonts?.ready.then(measure); measure();
+    reduced.addEventListener('change', clock.reset); wide.addEventListener('change', clock.reset);
+    clock.subscribe({measure, render});
   }
   document.querySelectorAll('.case-card').forEach(card => {
     const peek = card.querySelector('.case-peek');

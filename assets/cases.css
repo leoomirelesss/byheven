@@ -40,6 +40,8 @@
 .case-card:focus-visible .case-arrow .ui-arrow, .case-text-link:focus-visible .ui-arrow { transform: translate(2px,-2px); }
 .case-story.is-pinned .case-viewport { position: sticky; top: 0; height: 100svh; min-height: 640px; display: flex; align-items: center; overflow: clip; }
 .case-story.is-pinned .case-track { width: max-content; overflow: visible; scroll-snap-type: none; will-change: transform; }
+.case-story.is-pinned .case-card { flex: 0 0 auto; width: calc(46vw - 12px); }
+.case-story { overflow-anchor: none; }
 .case-card:focus-visible { outline: 3px solid #ceced7; outline-offset: -5px; }
 .case-text-link:focus-visible, .case-page-chrome a:focus-visible { outline: 2px solid #a89cc2; outline-offset: 5px; }
 @media (hover: hover) and (pointer: fine) {

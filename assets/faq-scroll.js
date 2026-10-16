@@ -7,7 +7,8 @@
   const viewport = section?.querySelector('.chat-window');
   const track = section?.querySelector('.chat-stream');
   const items = [...(section?.querySelectorAll('.chat-item') || [])];
-  if (!stage || !viewport || !track || !items.length || !('ResizeObserver' in window)) return;
+  const clock = window.HevenMotion;
+  if (!stage || !viewport || !track || !items.length || !clock || !('ResizeObserver' in window)) return;
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const narrow = window.matchMedia('(max-width: 700px)');
@@ -15,18 +16,19 @@
   const clamp = (value, max) => Math.min(Math.max(value, 0), max);
   let enabled = false;
   let distance = 0;
-  let frame = 0;
-  let measureNext = true;
+  let sectionTop = 0, sectionHeight = 0, value = 0, lastValue = -1;
+  let force = true;
   let revealNext = null;
 
-  const start = () => window.scrollY + section.getBoundingClientRect().top;
-  const offset = () => clamp((window.scrollY - start()) / pace, distance);
+  const offset = () => clamp((window.scrollY - sectionTop) / pace, distance);
   const measure = () => {
     enabled = !motion.matches && window.innerHeight >= 600;
     section.classList.toggle('is-scroll-story', enabled);
     if (!enabled) {
       section.classList.remove('is-in-view');
       ['--faq-story-height', '--faq-window-height', '--faq-offset'].forEach(name => section.style.removeProperty(name));
+      track.style.removeProperty('--faq-offset');
+      value = 0; force = true;
       return;
     }
     // Five closed messages on desktop. Smaller screens show only what fits.
@@ -36,7 +38,10 @@
     const height = Math.max(160, Math.min(fiveRows, available));
     section.style.setProperty('--faq-window-height', `${height}px`);
     distance = Math.max(0, track.scrollHeight - height);
-    section.style.setProperty('--faq-story-height', `${stage.offsetHeight + distance * pace}px`);
+    sectionHeight = stage.offsetHeight + distance * pace;
+    section.style.setProperty('--faq-story-height', `${sectionHeight}px`);
+    sectionTop = window.scrollY + section.getBoundingClientRect().top;
+    force = true;
   };
   const reveal = target => {
     if (!enabled) return;
@@ -50,26 +55,28 @@
       next = target.offsetHeight > height - inset * 2 ? top - inset : top + target.offsetHeight - height + inset;
     }
     next = clamp(next, distance);
-    if (Math.abs(next - current) > 1) window.scrollTo({top: start() + next * pace, behavior: 'instant'});
+    if (Math.abs(next - current) > 1) {
+      window.scrollTo({top: sectionTop + next * pace, behavior: 'instant'});
+      value = next; clock.reset();
+    }
   };
-  const render = () => {
-    frame = 0;
-    if (measureNext) { measureNext = false; measure(); }
-    if (!enabled) { revealNext = null; return; }
+  const render = state => {
+    if (!enabled) { revealNext = null; return false; }
     if (revealNext) { reveal(revealNext); revealNext = null; }
-    const rect = section.getBoundingClientRect();
-    section.classList.toggle('is-in-view', rect.top < window.innerHeight && rect.bottom > 0);
-    section.style.setProperty('--faq-offset', `${-offset()}px`);
+    const y = window.scrollY;
+    const target = clamp((y - sectionTop) / pace, distance);
+    value = clock.approach(value, target, state.dt, state.immediate || y <= sectionTop || y >= sectionTop + distance * pace, .05);
+    section.classList.toggle('is-in-view', y + state.height > sectionTop && y < sectionTop + sectionHeight);
+    if (force || value !== lastValue) {
+      track.style.setProperty('--faq-offset', `${-value}px`);
+      lastValue = value; force = false;
+    }
+    return value !== target;
   };
-  const schedule = (measureAgain = false) => {
-    measureNext ||= measureAgain;
-    if (!frame) frame = requestAnimationFrame(render);
-  };
-
-  window.addEventListener('scroll', () => schedule(), {passive: true});
-  window.addEventListener('resize', () => schedule(true), {passive: true});
-  motion.addEventListener('change', () => schedule(true));
-  narrow.addEventListener('change', () => schedule(true));
+  const schedule = () => clock.invalidate();
+  clock.subscribe({measure, render});
+  motion.addEventListener('change', clock.reset);
+  narrow.addEventListener('change', clock.reset);
   const observer = new ResizeObserver(() => schedule(true));
   [stage, layout, intro, track].forEach(element => observer.observe(element));
   items.forEach(item => {
@@ -78,6 +85,7 @@
       schedule(true);
     });
     item.querySelector('summary').addEventListener('focus', event => {
+      if (!event.target.matches(':focus-visible')) return;
       revealNext = event.target;
       schedule(true);
     });

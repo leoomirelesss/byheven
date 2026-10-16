@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run typecheck && npm run test:process && node --import tsx scripts/build.ts",
+    "build": "npm run typecheck && npm run test:motion && node --import tsx scripts/build.ts",
     "typecheck": "tsc --noEmit",
-    "test:process": "node scripts/verify-process.mjs"
+    "test:process": "node scripts/verify-process.mjs",
+    "test:motion": "node scripts/verify-home-motion.mjs"
   },
   "engines": {
     "node": ">=22"
