@@ -1,5 +1,3 @@
-import { GradientCard } from "@/components/ui/gradient-card";
-
 export const processSteps = [
   {
     id: "review", label: "Tu negocio", title: "Primero, lo que necesitas.",
@@ -21,15 +19,11 @@ export const processSteps = [
 
 export function ProcessCards() {
   return processSteps.map((step, index) => (
-    <figure className="process-story-card" key={step.id} data-process-card data-step-title={step.label}>
-      <GradientCard
-        gradient="purple"
-        badgeText={`0${index + 1} / 04 · ${step.label}`}
-        badgeColor="#806493"
-        title={step.title}
-        description={step.description}
-        imageUrl={`/assets/process/${step.id}-3d.webp`}
-      />
-    </figure>
+    <article className="process-story-card" key={step.id} data-process-card data-step-title={step.label}>
+      <p className="process-step-kicker"><span>{String(index + 1).padStart(2, "0")}</span>{step.label}</p>
+      <h3>{step.title}</h3>
+      <p className="process-step-description">{step.description}</p>
+      <img className="process-step-icon" src={`/assets/process/${step.id}-3d.webp`} width={128} height={128} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} />
+    </article>
   ));
 }

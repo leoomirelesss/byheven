@@ -51,11 +51,11 @@ const element = () => ({
 });
 const labels = ['Tu negocio', 'Ruta clara', 'En marcha', 'Seguimiento'];
 const fixtures = [
-  {name: 'desktop', width: 1920, height: 1000, card: 264, enabled: true},
-  {name: 'zoomed laptop', width: 1353, height: 707, card: 250, enabled: true},
-  {name: 'compact viewport', width: 1280, height: 640, card: 250, enabled: true},
-  {name: 'mobile portrait', width: 390, height: 844, card: 310, enabled: true},
-  {name: 'small mobile', width: 320, height: 640, card: 280, enabled: true},
+  {name: 'desktop', width: 1920, height: 1000, card: 210, enabled: true},
+  {name: 'zoomed laptop', width: 1353, height: 707, card: 200, enabled: true},
+  {name: 'compact viewport', width: 1280, height: 640, card: 200, enabled: true},
+  {name: 'mobile portrait', width: 390, height: 844, card: 240, enabled: true},
+  {name: 'small mobile', width: 320, height: 640, card: 230, enabled: true},
   {name: 'large card cannot fit', width: 1280, height: 620, card: 500, enabled: false},
   {name: 'fourth card cannot fit', width: 1920, height: 700, card: 250, lastCard: 600, enabled: false},
   {name: 'short landscape', width: 844, height: 390, card: 264, enabled: false},
@@ -75,25 +75,24 @@ for (const fixture of fixtures) {
     addEventListener(name, fn) { events.set('motion', fn); },
     removeEventListener(name, fn) { if (events.get('motion') === fn) events.delete('motion'); },
   };
-  const summary = {hidden: true}, number = {}, label = {}, reveal = element();
+  const reveal = element();
   const world = Object.assign(element(), {getBoundingClientRect: () => ({top: 1600 - scroll})});
   const stage = element();
   const axisWidth = fixture.zeroAxis ? 0 : fixture.width - (fixture.width <= 360 ? 32 : 48);
-  const axisHeight = Math.max(1900, fixture.height * 3.4);
-  const stemLength = fixture.width <= 360 ? 12 : fixture.width <= 700 ? 18 : 28;
+  const axisHeight = Math.max(1700, fixture.height * 3);
+  const stemLength = fixture.width <= 360 ? 12 : fixture.width <= 900 ? 18 : 28;
   const path = fixture.noPath ? {} : {getTotalLength: () => fixture.zeroPath ? 0 : total, getPointAtLength: pointAtLength};
   const scene = element();
   const axis = Object.assign(element(), {getBoundingClientRect: () => ({width: axisWidth, height: axisHeight})});
   const stations = labels.map((_, i) => Object.assign(element(), {dataset: {stepY: String(stops[i])}}));
   const cards = labels.map((stepTitle, i) => Object.assign(element(), {
     dataset: {stepTitle}, offsetHeight: i === 3 && fixture.lastCard || fixture.card,
-    offsetWidth: fixture.width <= 700 ? axisWidth * .67 : Math.min(480, axisWidth * .4),
+    offsetWidth: fixture.width <= 900 ? Math.min(360, axisWidth * .70) : Math.min(440, axisWidth * .42),
   }));
   const section = Object.assign(element(), {
     dataset: {},
     querySelector: selector => ({
       '.process-story-stage': stage, '.process-story-world': world, '.process-story-scene': scene, '.process-story-axis': axis, '[data-process-path]': path, '[data-process-reveal]': reveal,
-      '.process-story-summary': summary, '[data-process-number]': number, '[data-process-label]': label,
     })[selector],
     querySelectorAll: selector => selector === '[data-process-card]' ? cards : stations,
   });
@@ -134,27 +133,29 @@ for (const fixture of fixtures) {
     assert.equal(section.dataset.processStep, '0');
     assert.equal(reveal.attributes.get('height'), '0', 'no pre-illuminated segment');
     assert.equal(Number(axis.style.getPropertyValue('--process-axis-progress')), 0);
-    assert(cards.every(card => !card.classList.contains('is-current') && card.inert), 'no card before the first arrival');
+    assert(cards.every(card => !card.classList.contains('is-current') && card.style.getPropertyValue('--process-step-reveal') === '0'), 'content begins visually unrevealed');
+    assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')), 'all editorial text remains accessible before scrolling');
     const origin = pointAtLength(0);
     assert(Math.abs(parseFloat(axis.style.getPropertyValue('--process-marker-y')) - origin.y * axisHeight / 2600) < .001, 'ball starts at the path origin');
     at(intro / 2);
     const introY = parseFloat(axis.style.getPropertyValue('--process-marker-y')) / axisHeight * 2600;
     assert(introY > origin.y && introY < stops[0], 'approach illuminates toward the first step');
+    at(intro * .75);
+    const approaching = Number(cards[0].style.getPropertyValue('--process-step-reveal'));
+    assert(approaching > 0 && approaching < 1, 'first milestone reveals gently as the dot approaches');
     for (let i = 0; i < 4; i++) {
-      at(intro + i + .05); assert.equal(section.dataset.processPhase, 'opening');
-      const opening = Number(cards[i].style.getPropertyValue('--process-card-open'));
-      assert(opening > 0 && opening < 1);
-      at(intro + i + .3);
+      at(intro + i + .1);
       assert.equal(section.dataset.processStep, String(i + 1));
       assert.equal(section.dataset.processPhase, 'reading');
-      assert.equal(label.textContent, labels[i]);
       assert.equal(cards.filter(card => card.classList.contains('is-current')).length, 1);
-      assert(!cards[i].inert);
-      assert(summary.hidden === false && scene.attributes.get('aria-hidden') === 'true');
+      assert.equal(cards[i].style.getPropertyValue('--process-step-reveal'), '1');
+      assert(cards.slice(0,i+1).every(card => card.style.getPropertyValue('--process-step-reveal') === '1'), 'previous milestones stay in the native page');
+      assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')), 'visual reveal never removes editorial text from accessibility');
+      assert(!scene.attributes.has('aria-hidden'));
       const markerX = Number.parseFloat(axis.style.getPropertyValue('--process-marker-x'));
       const markerY = Number.parseFloat(axis.style.getPropertyValue('--process-marker-y'));
       assert(Math.abs(markerY - stops[i] * axisHeight / 2600) < .001);
-      assert(Math.abs(markerX - [860,180,830,200][i] * axisWidth / 1000) < .001);
+      assert(Math.abs(markerX - [800,220,780,240][i] * axisWidth / 1000) < .001);
       assert(Math.abs(Number(reveal.attributes.get('height')) - stops[i] - 160) < .001);
       assert.equal(stations[i].style.getPropertyValue('left'), `${markerX}px`);
       assert.equal(stations[i].style.getPropertyValue('top'), `${markerY}px`);
@@ -166,40 +167,37 @@ for (const fixture of fixtures) {
       const near = samples.filter(point => point.y >= topY && point.y <= bottomY);
       const curveEdge = i % 2 ? Math.max(...near.map(point => point.x * axisWidth / 1000)) : Math.min(...near.map(point => point.x * axisWidth / 1000));
       assert(i % 2 ? left >= curveEdge + stemLength - .1 : left + width <= curveEdge - stemLength + .1, 'whole card clears the curve, including corners');
-      const stemLeft = parseFloat(cards[i].style.getPropertyValue('--process-stem-left'));
-      const stemWidth = parseFloat(cards[i].style.getPropertyValue('--process-stem-width'));
-      assert(Math.abs(left + stemLeft + (i % 2 ? 0 : stemWidth) - markerX) < .001);
       const screenY = markerY + world.getBoundingClientRect().top;
       assert(screenY - fixture.card / 2 > 12 && screenY + fixture.card / 2 < fixture.height - 12, 'reading card fits the natural viewport');
       assert.equal(world.style.getPropertyValue('--process-camera-y'), '', 'no fake camera transform');
       assert.equal(section.style.getPropertyValue('--process-story-height'), '', 'no added pinned scrolling distance');
       if(i < 3) assert((stops[i+1] - stops[i]) * axisHeight / 2600 > fixture.card + 48, 'neighboring cards have a clear physical gap');
-      at(intro + i + .6); assert.equal(section.dataset.processPhase, 'closing');
-      at(intro + i + .85); assert.equal(section.dataset.processPhase, 'moving');
+      at(intro + i + .6); assert.equal(section.dataset.processPhase, 'moving');
+      assert.equal(cards[i].style.getPropertyValue('--process-step-reveal'), '1', 'milestones do not close or shrink after reading');
       const y = parseFloat(axis.style.getPropertyValue('--process-marker-y')) / axisHeight * 2600;
       assert(y > stops[i] && y < (stops[i+1] || 2600), 'dot continues down the S, including the exit tail');
     }
     at(intro + 4);
     assert.equal(section.dataset.processPhase, 'complete');
-    assert.equal(cards[3].inert, true);
+    assert(cards.every(card => card.style.getPropertyValue('--process-step-reveal') === '1'), 'all content remains on the page after the final stop');
     assert(Math.abs(parseFloat(axis.style.getPropertyValue('--process-marker-y')) - axisHeight) < .001);
     assert.equal(axis.style.getPropertyValue('--process-marker-opacity'), '0', 'dot fades into the outgoing section');
-    at(intro + 1.3); assert.equal(label.textContent, labels[1], 'reverse scroll');
+    at(intro + 1.1); assert.equal(section.dataset.processStep, '2', 'reverse scroll');
     at(0); assert.equal(reveal.attributes.get('height'), '0', 'reverse returns to unlit origin');
+    assert(cards.every(card => card.style.getPropertyValue('--process-step-reveal') === '0'), 'reverse restores each reveal without closing panels');
     events.get('resize')(); flush(); assert.equal(section.dataset.processStep, '0');
     motion.matches = true; events.get('motion')(); flush();
     assert(!section.classList.contains('is-process-story'));
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
-    assert(cards.every(card => !card.style.getPropertyValue('--process-card-content') && !card.style.getPropertyValue('--process-card-width')));
+    assert(cards.every(card => !card.style.getPropertyValue('--process-step-reveal') && !card.style.getPropertyValue('--process-card-width')));
     assert(stations.every(station => !station.style.getPropertyValue('left') && !station.style.getPropertyValue('top')));
     assert.equal(reveal.attributes.get('height'), '0');
   } else {
     assert(cards.every(card => !card.inert && !card.attributes.has('aria-hidden')));
-    assert(summary.hidden);
   }
   context.dispose?.();
   assert.equal(frames.size, 0);
   assert(observers.every(observer => observer.disconnected));
   assert.equal(events.size, 0);
 }
-console.log(`PASS: ${fixtures.length} process fixtures; zero-lit origin/approach, actual SVG bounds, whole-card clearance, compact native flow, four phases, outgoing tail, reverse scroll and fallbacks.`);
+console.log(`PASS: ${fixtures.length} process fixtures; zero-lit origin, gentle/persistent editorial reveals, accessible articles, actual curve clearance, compact native flow, outgoing tail, reverse scroll and fallbacks.`);
