@@ -1,23 +1,33 @@
-# Hitos editoriales de proceso
+# Proceso editorial con Zoom Slider
 
-El sitio conserva su HTML, sus rutas y los controladores existentes. Solo los cuatro hitos de «Cómo trabajamos» se renderizan como una isla React. El build incluye su HTML antes de cargar JavaScript; después se hidrata la misma estructura y arranca la línea de tiempo.
+El home conserva su HTML y sus rutas. «Cómo trabajamos» es una isla React pre-renderizada: las cuatro etapas ya existen en el HTML de producción y después se hidratan sin reemplazarlo.
 
-## Rutas
+## Rutas y estructura
 
-- Tarjeta genérica reutilizable: `components/ui/gradient-card.tsx` (se conserva para la demo; el home usa artículos editoriales simples).
-- Demo con enlaces: `components/ui/demo.tsx`.
-- Datos y artículos del home: `components/process-cards.tsx`.
-- Entrada de cliente: `src/process-cards.tsx`.
-- Tailwind y variables del componente: `styles/components.css`.
-- Adaptación visual y geometría del home: `assets/process-story.css`.
-- Controlador de scroll: `assets/process-story.js`.
-- Utilidad `cn`: `lib/utils.ts`.
+- Zoom Slider adaptado: `components/ui/zoom-slider.tsx`.
+- Demo independiente: `components/ui/zoom-slider-demo.tsx`.
+- Datos del home: `components/process-cards.tsx`.
+- Ciclo de animación: `lib/zoom-slider-motion.ts`.
+- Estilos: `assets/process-story.css`.
+- Entrada de hidratación: `src/process-cards.tsx`.
+- Tailwind: `styles/components.css`.
+- `cn`: `lib/utils.ts`.
 
-Se creó `components/ui` porque el repositorio original no tenía una carpeta de componentes. Es el destino configurado para los componentes de shadcn y mantiene estables las importaciones `@/components/ui/...`. `components.json` y `tsconfig.json` usan el mismo alias `@/` hacia la raíz del proyecto.
+`components/ui` es el destino configurado para shadcn; mantiene estables las importaciones `@/components/ui/...`. `components.json` y `tsconfig.json` resuelven `@/` hacia la raíz. React, TypeScript y Tailwind ya están instalados: no hace falta ejecutar `init` sobre este proyecto. Para un proyecto nuevo, `npx shadcn@latest init` permite crear la base React/TypeScript; aquí, `npx shadcn@latest add <nombre>` añade componentes al destino existente. Revisar los cambios de CSS antes de compilar.
 
-## Instalar y compilar
+## Diseño y movimiento
 
-Con Node 22 o superior, desde la raíz del repositorio:
+La nueva composición combina las filas editoriales de la grabación de Moyra con el crecimiento progresivo de imágenes del Zoom Slider adjunto. Sustituye la curva en S por cuatro filas: visual a la izquierda, número/título/explicación al centro y un desglose breve a la derecha. En tablet, los detalles bajan junto al texto; en móvil se apila el contenido. El fondo general del home permanece continuo. Los cuatro visuales reutilizan los iconos propios sobre una composición editorial, sin imágenes externas ni base64 de la referencia.
+
+El componente suministrado se adaptó al flujo vertical de este one-page. No crea un carrusel infinito, una pantalla negra separada ni un controlador global de rueda/arrastre. GSAP 3.15.0, ScrollTrigger y SplitText vinculan el zoom al scroll nativo de cada fila. El marco crece desde su esquina inferior; el visual interior acompaña el movimiento y el título aparece por líneas enmascaradas. Los párrafos y detalles conservan visibilidad durante la transición.
+
+El componente espera a que las fuentes estén listas antes de dividir los títulos. `autoSplit` vuelve a calcular líneas al cambiar su ancho, y la animación devuelta por `onSplit` conserva la limpieza y sincronización. `aria: auto` mantiene el nombre accesible de cada título. `gsap.matchMedia` limita los efectos al propio componente y los revierte cuando cambian las condiciones o se desmonta. Movimiento reducido, ventanas muy bajas y APIs no disponibles muestran la composición estática completa. El contenido no depende de hover.
+
+La antigua lógica de la línea de tiempo se retiró de `assets/process-story.js`. `GradientCard` y su demo original siguen disponibles; no se usan en este nuevo proceso.
+
+## Instalar y verificar
+
+Con Node 22 o superior:
 
 ```bash
 npm ci
@@ -26,20 +36,8 @@ npm run test:process
 npm run build
 ```
 
-`dist/` es la salida estática que publica Vercel. El build conserva `assets`, `case-studies`, `diseno-web-torreon`, los documentos HTML y los archivos públicos de la raíz. No publica dependencias ni código de desarrollo.
+GSAP está fijado en `package.json` y `package-lock.json`; no se carga desde un CDN. El build genera `dist/` para Vercel y preserva assets, páginas y rutas existentes. Tailwind importa tema/utilidades sin Preflight para conservar la base visual del home.
 
-La línea de tiempo usa una S vertical en el flujo normal de la página. El plano mide 3 pantallas (mínimo 1700 px), con un giro horizontal más contenido y cuatro paradas alternadas. Encabezado, curva y textos suben con el mismo scroll nativo, sin una ventana sticky ni una cámara artificial.
+`test:process` ejecuta fixtures del controlador real compilado con dobles de GSAP: alcance local de triggers, zoom reversible, párrafos legibles, cambio de breakpoint y movimiento reducido, SSR, desmontaje antes de cargar fuentes y limpieza de títulos/triggers. La integración DOM adicional comprueba el HTML pre-renderizado, los cuatro bloques, IDs/ARIA, recursos y la hidratación.
 
-El home renderiza artículos semánticos con número, título, descripción e icono decorativo. No tienen recuadro, borde, relleno, sombra, escala ni animación de hover. Los iconos miden 88 px en escritorio, 44 px en tablet/móvil y 36 px en pantallas pequeñas; el texto dispone de su propia columna o fila. `GradientCard` y su demo siguen disponibles como componentes independientes.
-
-La bolita arranca en el origen con cero trazo iluminado. Cuando se acerca a una parada, su texto aparece suavemente con opacidad y un desplazamiento máximo de 12 px. Después permanece en la página y sale por arriba con el scroll: no vuelve a cerrarse ni encogerse. Al subir, el progreso y las apariciones se revierten. La línea pendiente es tenue; el brillo activo y el trazo blanco comparten el recorte vertical. El SVG cabe dentro de su viewBox y sus extremos se atenúan hacia las secciones vecinas.
-
-La posición de cada artículo se calcula con la envolvente de la curva sobre toda su altura para conservar espacio alrededor del contenido. El ancho se ajusta al área disponible. Los cuatro artículos permanecen accesibles para lectores de pantalla incluso antes de aparecer visualmente; no dependen de un resumen duplicado, `aria-hidden` o `inert`. En movimiento reducido, ventanas de menos de 600 px de alto o sin APIs necesarias, se presentan estáticos. `test:process` comprueba el origen sin luz, aparición gradual y persistente, legibilidad semántica, límites SVG, separación, scroll inverso, salida y limpieza del controlador.
-
-React, React DOM, Framer Motion, Lucide, CVA, clsx y tailwind-merge están instalados y fijados en `package-lock.json`. TypeScript y Tailwind CLI son dependencias de desarrollo. La configuración manual de shadcn ya está creada; no hace falta ejecutar `init` sobre este sitio.
-
-Para crear un proyecto React nuevo con shadcn desde cero, la alternativa oficial es `npx shadcn@latest init` y elegir un proyecto React/TypeScript. Para añadir después componentes a este repositorio, usar `npx shadcn@latest add <nombre>` y revisar los cambios de CSS antes de compilar. No es necesario para las tarjetas integradas.
-
-Tailwind importa el tema y las utilidades sin Preflight para conservar el reset, las fuentes y el aspecto del home existente. Solo se escanean `components/` para generar utilidades. La tarjeta mantiene las cuatro variantes de color del ejemplo y sus enlaces opcionales; el home usa hitos sin superficie y un trazo violeta tenue con progreso blanco, sin botones repetidos entre etapas.
-
-Referencias oficiales: https://ui.shadcn.com/docs/installation/manual · https://ui.shadcn.com/docs/components-json · https://tailwindcss.com/docs/preflight
+Referencias: https://moyra.co/ · https://gsap.com/docs/v3/Plugins/ScrollTrigger/ · https://gsap.com/docs/v3/Plugins/SplitText/ · https://gsap.com/docs/v3/GSAP/gsap.matchMedia/
