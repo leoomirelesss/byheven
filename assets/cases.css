@@ -5,6 +5,7 @@
 .case-overline { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 55px; padding-bottom: 18px; border-bottom: 1px solid #35353d; font-size: 12px; line-height: 1.4; color: #aaaab5; }
 .case-home-title { margin: 0 0 38px; max-width: 1100px; font: 400 clamp(44px, 6.1vw, 116px)/1.03 'Outfit', sans-serif; letter-spacing: -.045em; }
 .case-home-bottom { display: flex; justify-content: space-between; align-items: end; gap: 28px; }
+.case-home-bottom > .case-text-link { margin-left: auto; }
 .case-home-bottom p { margin: 0; max-width: 370px; font-size: 15px; line-height: 1.45; color: #aaaab5; }
 .case-text-link { display: inline-flex; align-items: center; gap: 28px; min-height: 44px; color: #ceced7; font-size: 14px; text-decoration: none; }
 .case-story { position: relative; }
@@ -98,6 +99,7 @@ body[data-case-page] a { color: inherit; }
   .case-overline { margin-bottom: 36px; font-size: 11px; }
   .case-home-title { font-size: 10.3vw; }
   .case-home-bottom { align-items: start; flex-direction: column; gap: 18px; }
+  .case-home-bottom > .case-text-link { margin-left: 0; }
   .case-home-bottom p { font-size: 14px; }
   .case-viewport { padding: 25px 24px; }
   .case-track { gap: 14px; }

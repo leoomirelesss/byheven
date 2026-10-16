@@ -9,6 +9,14 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 .home-chapter { color: #ceced7; font-family: 'Outfit', sans-serif; }
 .home-chapter { padding: clamp(80px, 9vw, 165px) 2.65vw; }
 .home-inner { max-width: 1800px; margin-inline: auto; }
+.arrival-mask { display: block; overflow: clip; padding-block: .08em .14em; margin-block: -.08em -.14em; }
+[data-arrival-line] { display: block; }
+.is-arrival-ready [data-arrival-line] { transform: translate3d(0, var(--arrival-line-y, 0%), 0); }
+[data-arrival-item].is-arrival-ready { transform: translate3d(0, var(--arrival-y, 0px), 0); opacity: var(--arrival-opacity, 1); }
+@media (prefers-reduced-motion: reduce), (max-height: 599px) {
+  .arrival-mask { overflow: visible; }
+  .is-arrival-ready [data-arrival-line], [data-arrival-item].is-arrival-ready { transform: none !important; opacity: 1 !important; }
+}
 .home-overline { display: flex; justify-content: space-between; gap: 24px; padding-bottom: 18px; margin: 0 0 70px; border-bottom: 1px solid #45414f; color: #aaa6b4; font-size: 11px; letter-spacing: .04em; }
 .home-heading { margin: 0; font: 400 clamp(45px, 5.8vw, 108px)/1.02 'Outfit', sans-serif; letter-spacing: -.045em; }
 .home-copy { max-width: 370px; margin: 28px 0 0; color: #aaa6b4; font-size: clamp(15px, 1.1vw, 19px); line-height: 1.5; }

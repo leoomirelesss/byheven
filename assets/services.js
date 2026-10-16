@@ -36,8 +36,8 @@
     const top = parseFloat(padding.paddingTop) || 0;
     const bottom = parseFloat(padding.paddingBottom) || 0;
     const hold = window.innerWidth <= 700
-      ? Math.min(112, Math.max(72, window.innerHeight * .12))
-      : Math.min(180, Math.max(96, window.innerHeight * .18));
+      ? Math.min(152, Math.max(96, window.innerHeight * .16))
+      : Math.min(240, Math.max(128, window.innerHeight * .24));
     section.style.setProperty('--services-arrival-top', `${top}px`);
     section.style.setProperty('--services-arrival-height', `${inner.offsetHeight + top + bottom + hold}px`);
   };

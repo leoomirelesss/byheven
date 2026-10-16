@@ -11,9 +11,13 @@ El home es estático: teléfono → servicios → proyectos → FAQ → contacto
 - Componentes reutilizables shadcn: `components/ui/`; datos archivados del proceso: `components/process-cards.tsx`.
 - TypeScript y alias `@/`: `tsconfig.json`. Tailwind: `styles/components.css`; `cn`: `lib/utils.ts`.
 
-React, TypeScript y Tailwind están instalados. `components/ui` mantiene las importaciones de shadcn estables. No hace falta reiniciar la configuración. En otro proyecto, comenzar con `npx shadcn@latest init`; aquí se pueden añadir componentes mediante `npx shadcn@latest add <nombre>`. El home ya no solicita el bundle React/GSAP de proceso ni sus hojas CSS. No se cambia el fondo continuo ni se añaden efectos visuales.
+React, TypeScript y Tailwind están instalados. `components/ui` mantiene las importaciones de shadcn estables. No hace falta reiniciar la configuración. En otro proyecto, comenzar con `npx shadcn@latest init`; aquí se pueden añadir componentes mediante `npx shadcn@latest add <nombre>`. El home ya no solicita el bundle React/GSAP de proceso ni sus hojas CSS. El fondo continuo se conserva.
 
 ## Movimiento
+
+`assets/chapter-arrivals.js` usa el mismo reloj para presentar títulos por líneas enmascaradas y acompañar los bloques con una subida corta. La entrada depende del scroll; una vez presentada, queda completa y sale con el documento, sin desvanecimiento de salida. Foco, movimiento reducido, ventanas bajas y ausencia de JavaScript mantienen el contenido legible. Las medidas compensan el desplazamiento visual propio para no mover los puntos de entrada al recalcular el layout. La pausa nativa de servicios es ahora de 0.24 veces la altura del viewport en escritorio (128–240px), y 0.16 en móvil (96–152px).
+
+La auditoría y la cobertura de las diez FAQ están en `docs/HOME-UX-AUDIT.md`.
 
 Teléfono, galería y FAQ usan un solo requestAnimationFrame bajo demanda. Los eventos de scroll se agrupan; la geometría se mide al inicializar o invalidar el layout, no en cada actualización de scroll. ResizeObserver, fuentes, resize y cambios de preferencias invalidan las medidas. El avance usa amortiguación temporal de 70ms, consistente a 60/120Hz. Las entradas/salidas de escenas y saltos largos se sincronizan con la posición nativa para liberar sticky en su punto correcto. No se interceptan rueda, touch ni teclado; no hay scroll virtual global.
 

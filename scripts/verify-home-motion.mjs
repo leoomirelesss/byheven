@@ -27,8 +27,8 @@ f.media.matches=false;target=0;f.window.scrollY=4000;f.listeners.scroll();f.step
 dispose();f.clock.wake();const count=log.length;f.flush();assert.equal(log.length,count,'unsubscribe releases the client');
 assert(!listenersForInput(f.listeners),'native wheel, touch and keyboard remain unclaimed');
 function listenersForInput(listeners){return ['wheel','touchmove','keydown'].some(key=>key in listeners);}
-for(const name of ['shopify-hero','cases','faq-scroll','services','home-finish','contact-light'])transformSync(readFileSync(new URL(`../assets/${name}.js`,import.meta.url),'utf8'),{loader:'js'});
-for(const name of ['shopify-hero','cases','home-finish'])transformSync(readFileSync(new URL(`../assets/${name}.css`,import.meta.url),'utf8'),{loader:'css'});
+for(const name of ['shopify-hero','cases','faq-scroll','services','home-finish','contact-light','chapter-arrivals'])transformSync(readFileSync(new URL(`../assets/${name}.js`,import.meta.url),'utf8'),{loader:'js'});
+for(const name of ['shopify-hero','cases','home-finish','services'])transformSync(readFileSync(new URL(`../assets/${name}.css`,import.meta.url),'utf8'),{loader:'css'});
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 assert(!/id="process"|href="#process"|process-cards\.(?:js|css)|process-story\.css/.test(html),'removed chapter has no markup, dead links or runtime requests');
 assert(html.indexOf('assets/scroll-story.js')<html.indexOf('assets/shopify-hero.js'),'clock loads before consumers');
@@ -38,7 +38,7 @@ console.log('PASS: shared clock batching, finite settling, idle sleep, 60/120Hz 
 function element(properties={}){
  const classes=new Set(),values={},handlers={};
  return {style:{values,setProperty:(k,v)=>values[k]=v,removeProperty:k=>delete values[k]},dataset:{},
- classList:{toggle(k,on){if(on)classes.add(k);else classes.delete(k);},remove:k=>classes.delete(k),contains:k=>classes.has(k)},
+ classList:{add:k=>classes.add(k),toggle(k,on){if(on)classes.add(k);else classes.delete(k);},remove:k=>classes.delete(k),contains:k=>classes.has(k)},
  handlers,addEventListener:(type,fn)=>handlers[type]=fn,querySelector:()=>null,querySelectorAll:()=>[],...properties};
 }
 const g=fixture();let reads=0;const wide={matches:true,addEventListener(){}};
@@ -61,7 +61,7 @@ g.media.matches=false;g.window.innerHeight=500;g.clock.reset();g.flush();assert(
 
 const q=fixture();q.window.matchMedia=s=>s.includes('reduced')?q.media:{matches:false,addEventListener(){}};q.window.ResizeObserver=class{};
 let faqReads=0,faqTop=6000;
-const summaries=Array.from({length:12},(_,i)=>element({offsetHeight:54,matches:()=>true,getBoundingClientRect:()=>({top:i*70})}));
+const summaries=Array.from({length:10},(_,i)=>element({offsetHeight:54,matches:()=>true,getBoundingClientRect:()=>({top:i*70})}));
 const questions=summaries.map((summary,i)=>element({offsetHeight:70,querySelector:()=>summary,getBoundingClientRect:()=>({top:i*70})}));
 const chat=element({scrollHeight:1100,getBoundingClientRect:()=>({top:0})});
 const chatViewport=element({clientHeight:398});
@@ -74,7 +74,39 @@ const distance=1100-398;q.window.scrollY=faqTop+distance*1.35/2;q.clock.reset();
 const measuredFAQ=faqReads;q.window.scrollY+=80;q.listeners.scroll();q.flush();assert.equal(faqReads,measuredFAQ,'FAQ scrolling does not read layout');
 q.window.scrollY=faqTop+distance*1.35;q.listeners.scroll();q.flush();assert(Math.abs(parseFloat(chat.style.values['--faq-offset'])+702)<.001,'last FAQ reaches the visible window before release');
 q.window.scrollY=faqTop;q.listeners.scroll();q.flush();assert.equal(chat.style.values['--faq-offset'],'0px','FAQ reverses fully');
-summaries[11].handlers.focus({target:summaries[11]});q.flush();assert(q.window.scrollY>faqTop,'keyboard focus reveals an off-window question');
+summaries[9].handlers.focus({target:summaries[9]});q.flush();assert(q.window.scrollY>faqTop,'keyboard focus reveals an off-window question');
 faqTop=7000;q.clock.invalidate();q.flush();q.window.scrollY=faqTop;q.clock.reset();q.flush();assert.equal(chat.style.values['--faq-offset'],'0px','layout changes refresh the chapter start');
 q.media.matches=true;q.clock.reset();q.flush();assert(!faq.classList.contains('is-scroll-story'));assert(!('--faq-offset' in chat.style.values));
 console.log('PASS: real gallery/FAQ controllers with the shared clock: cached geometry, forward/reverse/endpoints, responsive fallback, keyboard reveal, changed layout and reduced motion.');
+
+const a=fixture();let arrivalReads=0;
+function arrivalNode(top,lines=[]){
+ const node=element({querySelectorAll:()=>lines,contains(target){return target===this;},getBoundingClientRect(){arrivalReads++;return {top:top-a.window.scrollY+(parseFloat(node.style.values['--arrival-y'])||0)};}});
+ return node;
+}
+const titleLines=[element(),element()],title=arrivalNode(1400,titleLines),body=arrivalNode(1500);
+a.document.querySelectorAll=()=>[title,body];a.run(readFileSync(new URL('../assets/chapter-arrivals.js',import.meta.url),'utf8'));a.flush();
+assert.equal(titleLines[0].style.values['--arrival-line-y'],'108%');
+a.window.scrollY=660;a.listeners.scroll();a.flush();const lineY=parseFloat(titleLines[0].style.values['--arrival-line-y']);assert(lineY>0&&lineY<108,'heading enters progressively with page scroll');
+const entryReads=arrivalReads;a.window.scrollY=800;a.listeners.scroll();a.flush();assert.equal(arrivalReads,entryReads,'entrances use cached positions');const bodyY=body.style.values['--arrival-y'];
+a.clock.invalidate();a.flush();assert.equal(body.style.values['--arrival-y'],bodyY,'an element presentation shift does not move its trigger');
+a.window.scrollY=1000;a.listeners.scroll();a.flush();assert(titleLines.every(line=>line.style.values['--arrival-line-y']==='0%'));assert.equal(body.style.values['--arrival-opacity'],'1');
+a.window.scrollY=0;a.listeners.scroll();a.flush();assert.equal(titleLines[0].style.values['--arrival-line-y'],'0%','presented content has no artificial exit or reverse fade');
+a.media.matches=true;a.listeners.motion();a.flush();assert(!title.classList.contains('is-arrival-ready'));assert(!('--arrival-y' in body.style.values));
+const focused=fixture(),focusLine=element(),focusTitle=element({querySelectorAll:()=>[focusLine],getBoundingClientRect:()=>({top:1400}),contains:()=>true});focused.document.querySelectorAll=()=>[focusTitle];focused.run(readFileSync(new URL('../assets/chapter-arrivals.js',import.meta.url),'utf8'));focused.flush();focused.listeners.focusin({target:focusTitle});focused.flush();assert.equal(focusLine.style.values['--arrival-line-y'],'0%','interacted content is fully presented');
+
+const v=fixture();v.window.innerWidth=1440;v.window.ResizeObserver=class{};
+function serviceRow(open=false){
+ const attrs={'aria-expanded':String(open)},button=element({setAttribute:(k,x)=>attrs[k]=x,getAttribute:k=>attrs[k]});
+ const panel=element({setAttribute(){}}),symbol={};const row=element({querySelector:s=>s.includes('toggle')?button:s.includes('panel')?panel:symbol});return {row,button,panel};
+}
+const serviceRows=[serviceRow(true),serviceRow(),serviceRow()],inner={offsetHeight:600};
+const serviceSection=element({querySelectorAll:()=>serviceRows.map(x=>x.row),querySelector:()=>inner});v.document.querySelector=()=>serviceSection;
+v.run(readFileSync(new URL('../assets/services.js',import.meta.url),'utf8'));v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),816,'desktop hold adds 216px at 900px, up from 162px');
+serviceRows[1].button.handlers.click();assert(serviceRows[0].panel.inert);assert.equal(serviceRows[1].panel.inert,false);assert.equal(serviceRows[1].button.getAttribute('aria-expanded'),'true');
+v.window.innerWidth=390;v.listeners.resize();v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),744,'mobile hold grows modestly to 144px at 900px');
+inner.offsetHeight=720;v.listeners.resize();v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),864,'hold tracks accordion height');
+v.media.matches=true;v.listeners.motion();v.flush();assert(!serviceSection.classList.contains('is-arrival-paused'));assert(!('--services-arrival-height' in serviceSection.style.values));
+assert(!/class="(?:home-overline|case-overline|commerce-services-label)"/.test(html),'no section labels or their dividing rules remain in home markup');
+assert.equal((html.match(/class="chat-item"/g)||[]).length,10,'FAQ keeps ten distinct useful questions');
+console.log('PASS: scroll-led masked arrivals, no exit fade, focus and reduced-motion fallbacks, stable cached triggers, modest responsive reading hold, accordion interaction and ten audited FAQs.');
