@@ -22,10 +22,13 @@ Con Node 22 o superior, desde la raíz del repositorio:
 ```bash
 npm ci
 npm run typecheck
+npm run test:process
 npm run build
 ```
 
 `dist/` es la salida estática que publica Vercel. El build conserva `assets`, `case-studies`, `diseno-web-torreon`, los documentos HTML y los archivos públicos de la raíz. No publica dependencias ni código de desarrollo.
+
+La línea de tiempo usa el alto real de la tarjeta y su distancia al eje para decidir si cabe. En ventanas de hasta 760 px de alto, compacta el encabezado y el espacio vertical. En movimiento reducido, ventanas muy bajas o sin la mejora de scroll, conserva una línea con sus cuatro etapas sobre las tarjetas estáticas. `test:process` comprueba los casos de altura, scroll de ida y vuelta y limpieza del controlador; también se ejecuta durante el build.
 
 React, React DOM, Framer Motion, Lucide, CVA, clsx y tailwind-merge están instalados y fijados en `package-lock.json`. TypeScript y Tailwind CLI son dependencias de desarrollo. La configuración manual de shadcn ya está creada; no hace falta ejecutar `init` sobre este sitio.
 

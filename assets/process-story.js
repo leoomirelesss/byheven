@@ -44,7 +44,9 @@ export function initProcessStory() {
   const measure = () => {
     if (motion.matches || window.innerHeight < 600) { fallback(); return; }
     section.classList.add('is-process-story');
-    if (scene.clientHeight < 470) { fallback(); return; }
+    const cardBottom = parseFloat(getComputedStyle(cards[0]).bottom);
+    const requiredHeight = cards[0].offsetHeight + cardBottom + 8;
+    if (!Number.isFinite(requiredHeight) || scene.clientHeight < requiredHeight) { fallback(); return; }
     enabled = true;
     scene.setAttribute('aria-hidden', 'true');
     if (summary) summary.hidden = false;
