@@ -42,7 +42,7 @@
   const screenNames = ['home', 'collection', 'product'];
   let active = -1, start = 0, step = 1, width = 1, height = 1, keys;
   let progress = 0, lastProgress = -1, pointerX = 0, pointerY = 0, px = 0, py = 0;
-  let force = true;
+  let force = true, scrollStarted = false;
   const visibility = new Map();
   const clamp = n => Math.max(0, Math.min(1, n));
   const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
@@ -80,6 +80,10 @@
     }
   };
   const render = state => {
+    if (!scrollStarted && state.y > start + 1) {
+      scrollStarted = true;
+      scene.classList.add('has-started-scrolling');
+    }
     if (motion.matches) return false;
     const target = clamp((state.y - start) / (step * 2)) * 2;
     const exact = state.immediate || state.y <= start || state.y >= start + step * 2;

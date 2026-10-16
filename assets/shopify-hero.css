@@ -18,7 +18,7 @@
 .flow-description p { font-size: clamp(13px, 1.03vw, 20px); font-weight: 400; line-height: 1.24; letter-spacing: -.01em; }
 .flow-description .flow-service-label { color: #88888f; font-size: 11px; margin-bottom: 14px; letter-spacing: .04em; }
 .flow-actions { display: flex; align-items: center; gap: 10px; margin-top: 22px; }
-.flow-scroll-cue { position: absolute; right: 2.65vw; bottom: max(clamp(96px, 12svh, 140px), env(safe-area-inset-bottom)); display: inline-flex; align-items: center; gap: 12px; margin: 0; color: #b5b0c1; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+.flow-scroll-cue { position: absolute; right: 2.65vw; bottom: max(clamp(96px, 12svh, 140px), env(safe-area-inset-bottom)); display: inline-flex; align-items: center; gap: 12px; margin: 0; color: #b5b0c1; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; transition: opacity 260ms ease-out; }
 .flow-scroll-cue svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 .flow-contact { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 11px 26px; border-radius: 100px; color: var(--brand-dark); background: #ceced7; font-size: 12px; font-weight: 400; text-decoration: none; transition: background .25s, color .25s, transform .25s; }
 .flow-contact:is(:hover,:focus-visible) { background: #72558d; color: #ffffff; transform: translateY(-2px); }
@@ -118,3 +118,6 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
   .flow-feature-copy, .flow-slide[data-phase="2"] .flow-feature-copy { left: 24px; bottom: 100px; max-width: 245px; font-size: 13px; z-index: 6; }
 }
 
+
+.flow-hero.has-started-scrolling .flow-scroll-cue { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .flow-scroll-cue { transition: none; } }
