@@ -1,4 +1,4 @@
-(() => {
+export function initProcessStory() {
   const section = document.querySelector('[data-process-story]');
   const stage = section?.querySelector('.process-story-stage');
   const scene = section?.querySelector('.process-story-scene');
@@ -23,6 +23,7 @@
   let geometry = [];
   let displayed = null;
   let lastTime = 0;
+  let disposed = false;
 
   const fallback = () => {
     enabled = false;
@@ -43,7 +44,7 @@
   const measure = () => {
     if (motion.matches || window.innerHeight < 600) { fallback(); return; }
     section.classList.add('is-process-story');
-    if (scene.clientHeight < 440) { fallback(); return; }
+    if (scene.clientHeight < 470) { fallback(); return; }
     enabled = true;
     scene.setAttribute('aria-hidden', 'true');
     if (summary) summary.hidden = false;
@@ -110,14 +111,26 @@
     if (displayed !== target) schedule();
   };
   const schedule = (remeasure = false) => {
+    if (disposed) return;
     measureNext ||= remeasure;
     if (!frame) frame = requestAnimationFrame(render);
   };
-  window.addEventListener('scroll', () => schedule(), {passive: true});
-  window.addEventListener('resize', () => schedule(true), {passive: true});
-  motion.addEventListener('change', () => schedule(true));
+  const onScroll = () => schedule();
+  const onResize = () => schedule(true);
+  window.addEventListener('scroll', onScroll, {passive: true});
+  window.addEventListener('resize', onResize, {passive: true});
+  motion.addEventListener('change', onResize);
   const observer = new ResizeObserver(() => schedule(true));
   [stage, scene].forEach(element => observer.observe(element));
   document.fonts?.ready.then(() => schedule(true));
   schedule(true);
-})();
+  return () => {
+    disposed = true;
+    if (frame) cancelAnimationFrame(frame);
+    observer.disconnect();
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onResize);
+    motion.removeEventListener('change', onResize);
+    fallback();
+  };
+}
