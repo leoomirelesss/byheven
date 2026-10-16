@@ -1,22 +1,23 @@
 export function initProcessStory() {
   const section = document.querySelector('[data-process-story]');
   const stage = section?.querySelector('.process-story-stage');
+  const world = section?.querySelector('.process-story-world');
   const scene = section?.querySelector('.process-story-scene');
   const axis = section?.querySelector('.process-story-axis');
   const path = section?.querySelector('[data-process-path]');
   const reveal = section?.querySelector('[data-process-reveal]');
   const cards = [...(section?.querySelectorAll('[data-process-card]') || [])];
+  const stations = [...(section?.querySelectorAll('.process-story-stations i') || [])];
   const number = section?.querySelector('[data-process-number]');
   const label = section?.querySelector('[data-process-label]');
   const summary = section?.querySelector('.process-story-summary');
-  if (!stage || !scene || !axis || !reveal || !path?.getTotalLength || !path?.getPointAtLength || cards.length !== 4 || !('ResizeObserver' in window)) return;
+  if (!stage || !world || !scene || !axis || !reveal || !number || !label || !path?.getTotalLength || !path?.getPointAtLength || cards.length !== 4 || stations.length !== 4 || !('ResizeObserver' in window)) return;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   const ease = value => { const t = clamp(value, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); };
   const readingStart = .21;
   const readingEnd = .54;
   const travelStart = .74;
-  const stations = [...section.querySelectorAll('.process-story-stations i')];
   let enabled = false;
   let frame = 0;
   let measureNext = true;
@@ -28,11 +29,20 @@ export function initProcessStory() {
   let disposed = false;
   let pathLength = 0;
   let axisSize = {width: 0, height: 0};
-  const curvePoint = position => {
-    const point = path.getPointAtLength(pathLength * clamp(position, 0, 1));
-    return {x: point.x * axisSize.width / 1000, y: point.y * axisSize.height / 160, unitX: point.x};
+  const curvePoint = distance => {
+    const point = path.getPointAtLength(clamp(distance, 0, pathLength));
+    return {x: point.x * axisSize.width / 1000, y: point.y * axisSize.height / 2600, unitY: point.y};
   };
-
+  // The S can turn left and right; its y always increases. Locate each stop by y.
+  const distanceAtY = y => {
+    let low = 0, high = pathLength;
+    for (let pass = 0; pass < 24; pass++) {
+      const mid = (low + high) / 2;
+      if (path.getPointAtLength(mid).y < y) low = mid;
+      else high = mid;
+    }
+    return (low + high) / 2;
+  };
   const fallback = () => {
     enabled = false;
     active = -1;
@@ -40,9 +50,10 @@ export function initProcessStory() {
     lastTime = 0;
     section.classList.remove('is-process-story');
     section.style.removeProperty('--process-story-height');
+    world.style.removeProperty('--process-camera-y');
     scene.removeAttribute('aria-hidden');
     if (summary) summary.hidden = true;
-    reveal.setAttribute('width', '0');
+    reveal.setAttribute('height', '0');
     stations.forEach(station => {
       station.classList.remove('is-complete');
       station.style.removeProperty('left');
@@ -58,28 +69,32 @@ export function initProcessStory() {
   const measure = () => {
     if (motion.matches || window.innerHeight < 600) { fallback(); return; }
     section.classList.add('is-process-story');
-    const sceneRect = scene.getBoundingClientRect();
     const axisRect = axis.getBoundingClientRect();
     pathLength = path.getTotalLength();
     axisSize = {width: axisRect.width, height: axisRect.height};
-    if (!Number.isFinite(pathLength) || !pathLength || !axisRect.width || !axisRect.height) { fallback(); return; }
-    const stemLength = parseFloat(getComputedStyle(scene).getPropertyValue('--process-stem-length')) || 36;
+    const largestCard = Math.max(...cards.map(card => card.offsetHeight));
+    const widestCard = Math.max(...cards.map(card => card.offsetWidth));
+    if (!Number.isFinite(pathLength) || !pathLength || !axisRect.width || !axisRect.height || largestCard > stage.offsetHeight * .7 || widestCard > axisRect.width - 8) { fallback(); return; }
+    const stemLength = parseFloat(getComputedStyle(scene).getPropertyValue('--process-stem-length')) || 32;
     geometry = cards.map((card, index) => {
-      const point = curvePoint(index / (cards.length - 1));
-      const marker = axisRect.left - sceneRect.left + point.x;
-      const markerY = axisRect.top - sceneRect.top + point.y;
-      const half = card.offsetWidth / 2;
-      const center = clamp(marker, half + 4, sceneRect.width - half - 4);
-      const origin = marker - center + half;
-      card.style.setProperty('--process-card-x', `${center}px`);
-      card.style.setProperty('--process-card-origin', `${origin}px`);
-      card.style.setProperty('--process-card-bottom', `${scene.clientHeight - markerY + stemLength}px`);
-      stations[index]?.style.setProperty('left', `${point.x}px`);
-      stations[index]?.style.setProperty('top', `${point.y}px`);
-      return {marker, y: point.y, label: clamp(point.x, 64, axisRect.width - 64)};
+      const distance = distanceAtY(Number(stations[index].dataset.stepY));
+      const point = curvePoint(distance);
+      const onRight = index % 2 === 0;
+      const preferredLeft = onRight ? point.x - stemLength - card.offsetWidth : point.x + stemLength;
+      const left = clamp(preferredLeft, 4, axisRect.width - card.offsetWidth - 4);
+      const stemStart = onRight ? card.offsetWidth : point.x - left;
+      const stemWidth = onRight ? point.x - left - card.offsetWidth : left - point.x;
+      card.style.setProperty('--process-card-left', `${left}px`);
+      card.style.setProperty('--process-card-top', `${point.y}px`);
+      card.style.setProperty('--process-card-origin', `${point.x - left}px`);
+      card.style.setProperty('--process-stem-left', `${stemStart}px`);
+      card.style.setProperty('--process-stem-width', `${Math.max(0, stemWidth)}px`);
+      stations[index].style.setProperty('left', `${point.x}px`);
+      stations[index].style.setProperty('top', `${point.y}px`);
+      // Initial title remains in the world; later stops lift it out with the curve.
+      const camera = index === 0 ? 0 : Math.max(0, point.y - stage.offsetHeight * (index === 2 ? .58 : .55));
+      return {distance, camera};
     });
-    const requiredHeight = Math.max(...cards.map(card => card.offsetHeight + parseFloat(getComputedStyle(card).bottom) + 8));
-    if (!Number.isFinite(requiredHeight) || scene.clientHeight < requiredHeight) { fallback(); return; }
     enabled = true;
     scene.setAttribute('aria-hidden', 'true');
     if (summary) summary.hidden = false;
@@ -99,23 +114,26 @@ export function initProcessStory() {
     const increment = difference * (1 - Math.exp(-elapsed / 125));
     const priorStep = Math.floor(displayed);
     const traveling = priorStep < cards.length - 1 && displayed - priorStep >= travelStart;
-    const maxIncrement = elapsed * (traveling ? .00065 : .0045);
+    const maxIncrement = elapsed * (traveling ? .00045 : .0045);
     displayed += clamp(increment, -maxIncrement, maxIncrement);
     if (Math.abs(target - displayed) < .0001) displayed = target;
-    const progress = displayed;
-    const index = Math.min(cards.length - 1, Math.floor(progress));
-    const local = progress - index;
+    const index = Math.min(cards.length - 1, Math.floor(displayed));
+    const local = displayed - index;
     const open = ease(local / readingStart) * (1 - ease((local - readingEnd) / (travelStart - readingEnd)));
     const content = ease((open - .45) / .55);
-    const move = index === cards.length - 1 ? 0 : ease((local - travelStart) / (1 - travelStart));
-    const position = (index + move) / (cards.length - 1);
-    const marker = curvePoint(position);
+    const move = ease((local - travelStart) / (1 - travelStart));
+    const current = geometry[index];
+    const next = geometry[Math.min(index + 1, cards.length - 1)];
+    const distance = current.distance + (next.distance - current.distance) * move;
+    const marker = curvePoint(distance);
+    let camera = current.camera + (next.camera - current.camera) * move;
+    if (index === cards.length - 1) camera += move * stage.offsetHeight * .24;
+    world.style.setProperty('--process-camera-y', `${-camera}px`);
     axis.style.setProperty('--process-marker-x', `${marker.x}px`);
     axis.style.setProperty('--process-marker-y', `${marker.y}px`);
-    reveal.setAttribute('width', String(marker.unitX + 10));
-    axis.style.setProperty('--process-axis-progress', String(position));
-    axis.style.setProperty('--process-label-x', `${geometry[index].label}px`);
-    axis.style.setProperty('--process-label-y', `${geometry[index].y}px`);
+    // Vertical reveal: horizontal clipping would cut across later turns of the S.
+    reveal.setAttribute('height', String(marker.unitY + 160));
+    axis.style.setProperty('--process-axis-progress', String((index + (index < cards.length - 1 ? move : 0)) / (cards.length - 1)));
     axis.style.setProperty('--process-card-open', String(open));
     cards[index].style.setProperty('--process-card-open', String(open));
     cards[index].style.setProperty('--process-card-scale-x', String(.94 + open * .06));
