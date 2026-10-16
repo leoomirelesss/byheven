@@ -50,7 +50,7 @@ const gallery=element({querySelector:()=>galleryViewport,getBoundingClientRect()
 g.document.querySelector=s=>s==='[data-case-story]'?gallery:null;g.document.querySelectorAll=()=>[];g.document.body={hasAttribute:()=>false};
 g.window.scrollTo=options=>{g.window.scrollY=options.top;};
 g.run(readFileSync(new URL('../assets/cases.js',import.meta.url),'utf8'));g.flush();assert(gallery.classList.contains('is-pinned'));
-const travel=(3580-1360)*1.25;
+const travel=(3580-1360)*1.45;
 g.window.scrollY=2000+travel/2;g.clock.reset();g.flush();assert.equal(gallery.dataset.caseProgress,'0.5000');assert(galleryTrack.style.transform.includes('-1110px'));
 const beforeReads=reads;g.window.scrollY+=100;g.listeners.scroll();g.flush();assert.equal(reads,beforeReads,'gallery scroll does not read layout');
 g.window.scrollY=2000;g.listeners.scroll();g.flush();assert.equal(gallery.dataset.caseProgress,'0.0000');
@@ -70,9 +70,9 @@ const nodes={'.faq-stage':faqStage,'.home-faq-layout':faqLayout,'.home-faq-intro
 const faq=element({querySelector:s=>nodes[s],querySelectorAll:()=>questions,getBoundingClientRect(){faqReads++;return {top:faqTop-q.window.scrollY};}});
 q.document.getElementById=()=>faq;q.window.scrollTo=options=>{q.window.scrollY=options.top;};
 q.run(readFileSync(new URL('../assets/faq-scroll.js',import.meta.url),'utf8'));q.flush();assert(faq.classList.contains('is-scroll-story'));
-const distance=1100-398;q.window.scrollY=faqTop+distance*1.35/2;q.clock.reset();q.flush();assert(Math.abs(parseFloat(chat.style.values['--faq-offset'])+351)<.001);
+const distance=1100-398;q.window.scrollY=faqTop+distance*1.55/2;q.clock.reset();q.flush();assert(Math.abs(parseFloat(chat.style.values['--faq-offset'])+351)<.001);
 const measuredFAQ=faqReads;q.window.scrollY+=80;q.listeners.scroll();q.flush();assert.equal(faqReads,measuredFAQ,'FAQ scrolling does not read layout');
-q.window.scrollY=faqTop+distance*1.35;q.listeners.scroll();q.flush();assert(Math.abs(parseFloat(chat.style.values['--faq-offset'])+702)<.001,'last FAQ reaches the visible window before release');
+q.window.scrollY=faqTop+distance*1.55;q.listeners.scroll();q.flush();assert(Math.abs(parseFloat(chat.style.values['--faq-offset'])+702)<.001,'last FAQ reaches the visible window before release');
 q.window.scrollY=faqTop;q.listeners.scroll();q.flush();assert.equal(chat.style.values['--faq-offset'],'0px','FAQ reverses fully');
 summaries[9].handlers.focus({target:summaries[9]});q.flush();assert(q.window.scrollY>faqTop,'keyboard focus reveals an off-window question');
 faqTop=7000;q.clock.invalidate();q.flush();q.window.scrollY=faqTop;q.clock.reset();q.flush();assert.equal(chat.style.values['--faq-offset'],'0px','layout changes refresh the chapter start');

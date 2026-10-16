@@ -7,7 +7,7 @@ Recorrido: Shopify → servicios → proyectos → FAQ → contacto. Se conserva
 | Necesidad | Dónde se resuelve |
 | --- | --- |
 | Entender la oferta principal | Portada: administración de Shopify, catálogo, promociones y pedidos |
-| Distinguir servicio mensual y proyecto | Introducción de servicios, modalidades y FAQ de cotización |
+| Distinguir servicio mensual y proyecto | Modalidades de servicios y FAQ de cotización |
 | Conocer el alcance | Tres servicios con tareas incluidas; contenido con IA identificado como complemento |
 | Ver trabajos | EMYASA, Stone Küchë, Parsömen y D’OR; acceso a todos los casos |
 | Trabajar sobre una tienda existente o crear una nueva | FAQ de tienda actual y tienda desde cero |
@@ -20,7 +20,7 @@ Recorrido: Shopify → servicios → proyectos → FAQ → contacto. Se conserva
 
 De doce a diez, sin añadir preguntas a la sección. Se retiraron la de contenido con IA (ya se explica como complemento) y la de páginas fuera de Shopify (ya se muestran sitios y landing pages en servicios). La pregunta genérica de automatización se sustituyó por «¿Cómo revisamos los avances?», recuperando el seguimiento útil del proceso retirado. Las otras nueve preguntas conservan sus respuestas. No se inventan precios, plazos fijos, resultados ni condiciones comerciales.
 
-La portada distingue ahora operación diaria y reportes para decidir, evitando repetir el mismo beneficio en las tres pantallas. Se retiraron frases genéricas del portafolio, etiquetas de modalidad repetidas y contadores que no ayudaban a decidir. El cuerpo visible pasa de 841 a 711 palabras, contando también las copias decorativas de los títulos de acordeón.
+La portada distingue ahora operación diaria y reportes para decidir, evitando repetir el mismo beneficio en las tres pantallas. Se retiraron frases genéricas del portafolio, etiquetas de modalidad repetidas y contadores que no ayudaban a decidir. El cuerpo visible pasa de 841 a 683 palabras, contando también las copias decorativas de los títulos de acordeón.
 
 ## Comportamiento
 
