@@ -24,11 +24,16 @@ for (const [index, slug] of slugs.entries()) {
 {
   let client, reads=0, writes=0, unsubscribed=0, disconnected=0;
   const data=new Map(), classes=new Set(), events={};
+  let titleBottom=700;
+  const storyAttrs=new Set(), storyStyles=new Map();
+  const overview={offsetHeight:1200};
+  const story={querySelector:()=>overview,toggleAttribute(name,on){if(on)storyAttrs.add(name);else storyAttrs.delete(name);},style:{setProperty:(k,v)=>storyStyles.set(k,v),removeProperty:k=>storyStyles.delete(k)}};
   const media={matches:false,addEventListener(){},removeEventListener(){}};
   const letters=Array.from('AcademicQuest',char=>({textContent:char,attributes:new Map(),
     setAttribute(k,v){writes++;this.attributes.set(k,v);},removeAttribute(k){writes++;this.attributes.delete(k);}}));
   const words=Array.from({length:2},()=>({style:{values:new Map(),setProperty(k,v){writes++;this.values.set(k,v);}}}));
-  const hero={offsetHeight:1000,querySelector:()=>({classList:{add:name=>classes.add(name)}}),
+  const title={getBoundingClientRect(){reads++;return{bottom:titleBottom};}};
+  const hero={offsetHeight:1000,querySelector:selector=>selector==='.case-hero-title'?title:{classList:{add:name=>classes.add(name)}},
     querySelectorAll:selector=>selector==='.case-title-word'?words:letters,
     getBoundingClientRect(){reads++;return{top:0};},style:{setProperty(k,v){writes++;data.set(k,v);}}};
   const settings={parallax:2.5,arrivalMin:140,arrivalMax:240,arrivalDistance:.24,arrivalShift:32,lineDelay:.14,lineDelayMax:.28};
@@ -36,16 +41,18 @@ for (const [index, slug] of slugs.entries()) {
     subscribe(value){client=value;return()=>{unsubscribed++;};},invalidate(){client.measure();}};
   const view={HevenMotion:clock,scrollY:0,innerWidth:1400,innerHeight:900,matchMedia:()=>media,addEventListener:(name,fn)=>{events[name]=fn;}};
   vm.runInNewContext(read('assets/case-detail.js'),{
-    document:{querySelector:()=>hero},window:view,ResizeObserver:class{observe(){}disconnect(){disconnected++;}},
+    document:{querySelector:selector=>selector==='[data-case-hero]'?hero:story},window:view,ResizeObserver:class{observe(){}disconnect(){disconnected++;}},
   });
   const render=y=>client.render({y,dt:16.67,immediate:true});
   const glyphs=()=>letters.map(letter=>letter.attributes.get('data-scramble'));
   client.measure();const initialReads=reads;
+  assert(storyAttrs.has('data-showcase-ready'));assert.equal(storyStyles.get('--case-overview-top'),'-324px','long copy is fully readable before it sticks');
   render(0);assert(glyphs().every(glyph=>!glyph),'initial title is complete and legible');
   render(120);const middle=glyphs();assert(middle.filter(Boolean).length>0&&middle.filter(Boolean).length<=2,'decoding is a small moving band, not a screen of noise');
   render(180);render(120);assert.deepEqual(glyphs(),middle,'reverse scroll returns the exact same glyphs without randomness or timers');
-  for(let y=0;y<=240;y+=2){render(y);assert(glyphs().filter(Boolean).length<=2);}
-  assert(glyphs().every(glyph=>!glyph),'letters settle completely at the entrance boundary');
+  for(let y=0;y<=700;y+=5){render(y);assert(glyphs().filter(Boolean).length<=2);}
+  assert(glyphs().every(glyph=>!glyph),'letters settle when the title leaves the viewport');
+  render(650);assert(glyphs().some(Boolean),'decoding continues after the old short entrance range, until the last visible part of the title');render(700);
   assert.equal(letters.map(letter=>letter.textContent).join(''),'AcademicQuest','original text and its width are never replaced');
   assert(words.every(word=>word.style.values.get('--case-word-y')==='0px'));
   render(500);assert.equal(data.get('--case-hero-y'),'12.5px');assert(!data.has('--case-title-x'),'no sideways ticker survives');
@@ -58,8 +65,9 @@ for (const [index, slug] of slugs.entries()) {
   assert(!moving,'follow easing settles and lets the shared clock sleep');
   assert.equal(reads,initialReads,'scroll frames never read layout');
   media.matches=true;client.measure();render(120);
+  assert(!storyAttrs.has('data-showcase-ready')&&!storyStyles.size,'reduced motion restores the ordinary reading flow');
   assert.equal(data.get('--case-hero-y'),'0px');assert(glyphs().every(glyph=>!glyph));assert(words.every(word=>word.style.values.get('--case-word-y')==='0px'));
-  media.matches=false;view.innerWidth=375;client.measure();render(500);assert.equal(data.get('--case-hero-y'),'0px','mobile has no extra image drift');
+  media.matches=false;view.innerWidth=375;titleBottom=840;client.measure();render(800);assert(glyphs().some(Boolean),'wrapped titles get their own full visible range');render(500);assert(!storyAttrs.has('data-showcase-ready'),'mobile keeps its native reading flow');assert.equal(data.get('--case-hero-y'),'0px','mobile has no extra image drift');
   events.pagehide({persisted:true});assert.equal(unsubscribed,0);
   events.pagehide({persisted:false});assert.equal(unsubscribed,1);assert.equal(disconnected,1);
 }

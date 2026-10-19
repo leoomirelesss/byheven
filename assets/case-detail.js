@@ -1,4 +1,4 @@
-/* A single editorial name with a brief scroll-linked decoding pass.
+/* A single editorial name decodes across its visible scroll range.
    The original letters retain their width; no random loops or extra scroll clock. */
 (() => {
   const hero = document.querySelector('[data-case-hero]');
@@ -8,8 +8,11 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const cue = hero.querySelector('.case-scroll-cue');
   const words = [...hero.querySelectorAll('.case-title-word')];
-  const letters = [...hero.querySelectorAll('.case-title-char')].map(element => ({element, glyph: null}));
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const letters = [...hero.querySelectorAll('.case-title-char')].map(element => ({element, glyph: null, lowercase: element.textContent === element.textContent.toLocaleLowerCase()}));
+  const title = hero.querySelector('.case-hero-title');
+  const story = document.querySelector('[data-case-showcase-story]');
+  const overview = story?.querySelector('.case-editorial');
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const clamp = value => Math.max(0, Math.min(1, value));
   const ease = value => value * value * value * (value * (value * 6 - 15) + 10);
   let top = 0, height = 1, arrival = 1, depth = 0, progress = 0, intro = 0, last = '', dismissed = false;
@@ -17,7 +20,14 @@
     measure() {
       top = hero.getBoundingClientRect().top + window.scrollY;
       height = Math.max(1, hero.offsetHeight);
-      arrival = Math.min(config.arrivalMax, Math.max(config.arrivalMin, height * config.arrivalDistance));
+      // Finish only when the title's final line has left the viewport.
+      arrival = Math.max(1, title.getBoundingClientRect().bottom + window.scrollY - top);
+      if (story && overview) {
+        const enabled = !reduced.matches && window.innerWidth >= 900 && window.innerHeight >= 640;
+        story.toggleAttribute('data-showcase-ready', enabled);
+        if (enabled) story.style.setProperty('--case-overview-top', `${Math.min(24, window.innerHeight - overview.offsetHeight - 24)}px`);
+        else story.style.removeProperty('--case-overview-top');
+      }
       depth = window.innerWidth >= 900 && window.innerHeight >= 640 ? height * config.parallax / 100 : 0;
       last = '';
     },
@@ -36,12 +46,13 @@
         const phase = ease(clamp((intro - delay) / (1 - delay)));
         word.style.setProperty('--case-word-y', `${reduced.matches ? 0 : config.arrivalShift * .35 * (1 - phase)}px`);
       });
-      const phase = ease(intro);
+      const phase = intro * intro * (3 - 2 * intro);
       letters.forEach((letter, index) => {
-        const age = phase * (letters.length + 2) - index;
+        const age = phase * (letters.length + .5) - index;
         // At most two letters decode at once. Start/end poses are fully readable.
         const active = !reduced.matches && intro > 0 && intro < 1 && age >= 0 && age < 1.6;
-        const glyph = active ? alphabet[(Math.floor(age * 5) + index * 7) % alphabet.length] : null;
+        let glyph = active ? alphabet[(Math.floor(age * 3) + index * 7) % alphabet.length] : null;
+        if (glyph && letter.lowercase) glyph = glyph.toLocaleLowerCase();
         if (glyph === letter.glyph) return;
         if (glyph === null) letter.element.removeAttribute('data-scramble');
         else letter.element.setAttribute('data-scramble', glyph);
@@ -52,7 +63,8 @@
     },
   });
   reduced.addEventListener('change', clock.invalidate);
-  const observer = new ResizeObserver(clock.invalidate); observer.observe(hero);
+  const observer = new ResizeObserver(clock.invalidate); observer.observe(hero); observer.observe(title);
+  if (overview) observer.observe(overview);
   window.addEventListener('pagehide', event => {
     if (event.persisted) return;
     unsubscribe(); observer.disconnect(); reduced.removeEventListener('change', clock.invalidate);
