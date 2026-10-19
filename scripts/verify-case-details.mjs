@@ -13,7 +13,10 @@ for (const [index, slug] of slugs.entries()) {
   assert(html.includes(`/case-studies/${slugs[(index+1)%slugs.length]}/`),'all six cases form a complete navigation cycle');
   assert(!html.includes('/#process'));
   assert.equal(footer(html),footer(read('index.html')),'every detail page uses the home footer');
-  for(const [,path] of html.matchAll(/(?:src|href)="(\/assets\/[^"#]+)"/g))assert(existsSync(new URL(`..${path}`,import.meta.url)),path);
+  for(const [,path] of html.matchAll(/(?:src|href)="(\/assets\/[^"#]+)"/g)){
+    const file=new URL(`..${path}`,import.meta.url);assert(existsSync(file),path);
+    if(path.endsWith('.webp')){const bytes=readFileSync(file);assert(bytes.length>32&&bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP','valid supplied image: '+path);}
+  }
   assert(html.includes('/assets/scroll-story.js')&&html.includes('/assets/chapter-arrivals.js'));
 }
 
@@ -40,46 +43,99 @@ for (const [index, slug] of slugs.entries()) {
   events.pagehide({persisted:false});assert.equal(unsubscribed,1);assert.equal(disconnected,1);
 }
 
-// Real navigation fallback: native browsers do not get intercepted; ordinary link semantics survive.
-function navigation({native=false,reduced=false,entry=null,blockedStorage=false}={}) {
-  const documentEvents={},bodyEvents={},windowEvents={},classes=new Set(),assigned=[];
-  let resolveDeparture, canceled=0, saved=entry;
-  const location={href:'https://example.com/case-studies/',origin:'https://example.com',pathname:'/case-studies/',search:'',assign:url=>assigned.push(url)};
-  const window={matchMedia:()=>({matches:reduced}),addEventListener:(name,fn)=>{windowEvents[name]=fn;}};
+// Exercise the same click controller with and without native transition APIs.
+function navigation({native=false,reduced=false,entry=null,blockedStorage=false,start='https://example.com/case-studies/',loading=false,canAnimate=true}={}) {
+  const documentEvents={},windowEvents={},classes=new Set(),assigned=[],animations=[],children=[];
+  let saved=entry, scrolled=0, resets=0;
+  const location=new URL(start);location.assign=url=>assigned.push(url);
+  const classList={add:(...names)=>names.forEach(n=>classes.add(n)),remove:(...names)=>names.forEach(n=>classes.delete(n)),contains:n=>classes.has(n)};
+  const animate=(target,frames,options)=>{
+    let finish;const finished=new Promise(resolve=>{finish=resolve;});
+    const effect={target,frames,options,finished,done:false,canceled:false,finish(){effect.done=true;finish();},cancel(){effect.canceled=true;effect.finish();}};
+    animations.push(effect);return effect;
+  };
+  const curtain={style:{},setAttribute(){},animate:(frames,options)=>animate('curtain',frames,options)};
+  const main={animate:(frames,options)=>animate('main',frames,options)};
+  const root={classList,...(canAnimate?{animate(){}}:{})};
+  const window={HevenMotion:{reset(){resets++;}},matchMedia:()=>({matches:reduced}),addEventListener:(name,fn)=>{windowEvents[name]=fn;}};
   if(native)Object.assign(window,{CSSViewTransitionRule:class{},onpageswap:null,onpagereveal:null});
   vm.runInNewContext(read('assets/page-transitions.js'),{
-    window,location,URL,
+    window,location,URL,setTimeout:()=>0,
     sessionStorage:{getItem(){if(blockedStorage)throw Error('denied');return saved;},removeItem(){saved=null;},setItem(_,v){if(blockedStorage)throw Error('denied');saved=v;}},
-    document:{documentElement:{classList:{add:n=>classes.add(n),remove:n=>classes.delete(n)}},addEventListener:(name,fn)=>{documentEvents[name]=fn;},
-      body:{addEventListener:(name,fn)=>{bodyEvents[name]=fn;},animate(){return{finished:new Promise(resolve=>{resolveDeparture=resolve;}),cancel(){canceled++;}};}}},
+    document:{readyState:loading?'loading':'complete',documentElement:root,createElement:()=>curtain,body:{append:element=>children.push(element)},
+      querySelector:selector=>selector==='main'?main:selector==='[data-case-hero] img'?{decode:()=>Promise.resolve()}:null,
+      getElementById:id=>['work','services','faq','inicio','contact'].includes(id)?{scrollIntoView(){scrolled++;}}:null,
+      addEventListener:(name,fn)=>{documentEvents[name]=fn;}},
   });
   const click=(href,overrides={},attributes={})=>{
-    const link={href,target:attributes.target||'',hasAttribute:name=>!!attributes[name]};
+    const link={href:new URL(href,location.href).href,target:attributes.target||'',hasAttribute:name=>!!attributes[name],closest:()=>attributes.studio?{}:null};
     const event={target:{closest:()=>link},button:0,defaultPrevented:false,preventDefault(){this.defaultPrevented=true;},...overrides};
     return{event,done:documentEvents.click?.(event)};
   };
-  return{click,assigned,classes,documentEvents,bodyEvents,windowEvents,finish:()=>resolveDeparture(),saved:()=>saved,canceled:()=>canceled};
+  return{click,assigned,classes,documentEvents,windowEvents,animations,children,location,
+    finish:()=>animations.filter(a=>a.target==='curtain'&&!a.done).at(-1)?.finish(),saved:()=>saved,scrolled:()=>scrolled,resets:()=>resets};
 }
-assert(!navigation({native:true}).documentEvents.click,'native cross-document navigation is left to the browser');
+const flush=()=>new Promise(resolve=>setImmediate(resolve));
 for(const [href,event,attributes] of [
-  ['https://example.com/case-studies/emyasa/',{ctrlKey:true},{}],
-  ['https://example.com/case-studies/emyasa/',{}, {target:'_blank'}],
-  ['https://example.com/case-studies/emyasa/',{}, {download:true}],
-  ['https://example.com/case-studies/#grid',{},{}],
+  ['/case-studies/emyasa/',{ctrlKey:true},{}],
+  ['/case-studies/emyasa/',{}, {target:'_blank'}],
+  ['/case-studies/emyasa/',{}, {download:true}],
+  ['#grid',{},{}],
   ['https://outside.example/',{},{}],
   ['mailto:hello@example.com',{},{}],
 ])assert(!navigation().click(href,event,attributes).event.defaultPrevented,'modified/external/hash/download links stay native');
-assert(!navigation({reduced:true}).click('https://example.com/case-studies/emyasa/').event.defaultPrevented);
-for(const blockedStorage of [false,true]){
-  const env=navigation({blockedStorage});const pending=env.click('https://example.com/case-studies/emyasa/');
-  assert(pending.event.defaultPrevented);assert.equal(env.assigned.length,0);
-  env.finish();await pending.done;assert.equal(env.assigned.length,1,'fallback navigates after its finite outgoing animation, even with storage blocked');
-  env.windowEvents.pageshow({persisted:true});assert.equal(env.canceled(),1,'back/forward restores the unblurred document');
+assert(!navigation({reduced:true}).click('/case-studies/emyasa/').event.defaultPrevented);
+assert(!navigation({canAnimate:false}).documentEvents.click,'no animation support keeps ordinary navigation');
+for(const native of [false,true])for(const blockedStorage of [false,true]){
+  for(const [source,start,href] of [
+    ['carousel','https://example.com/','/case-studies/emyasa/'],
+    ['menu','https://example.com/case-studies/emyasa/','/#services'],
+    ['footer','https://example.com/case-studies/','/#work'],
+    ['all-cases','https://example.com/case-studies/emyasa/','/case-studies/'],
+    ['slashless','https://example.com/','/case-studies'],
+  ]){
+    const env=navigation({native,blockedStorage,start});const pending=env.click(href,{}, {studio:source==='menu'||source==='footer'});
+    assert(pending.event.defaultPrevented,source+' starts the same transition in every browser');
+    assert.equal(env.assigned.length,0);assert(env.classes.has('is-page-leaving'));
+    env.finish();await pending.done;assert.equal(env.assigned[0],new URL(href,start).href);
+    if(!blockedStorage)assert.equal(env.saved(),env.assigned[0],'entry flag identifies the exact destination including its hash');
+    env.windowEvents.pageshow({persisted:true});assert(!env.classes.size,'back/forward removes all transient layers');
+  }
 }
-const incoming=navigation({entry:'1'});assert(incoming.classes.has('is-page-entering'));
-incoming.windowEvents.pageshow({persisted:false});assert(incoming.classes.has('is-page-entering'),'initial pageshow must not cancel the entry');
-incoming.bodyEvents.animationend({animationName:'heven-fallback-in'});assert(!incoming.classes.size);
+// Studio anchors on the home use the same curtain while keeping one-page navigation.
+for(const native of [false,true]){
+  const env=navigation({native,start:'https://example.com/'});const pending=env.click('#services',{}, {studio:true});
+  assert(pending.event.defaultPrevented);env.finish();await flush();
+  assert.equal(env.scrolled(),1);assert.equal(env.resets(),1);assert.equal(env.location.hash,'#services');assert.equal(env.assigned.length,0);
+  env.finish();await pending.done;assert(!env.classes.size);
+}
+// A restored page cannot finish an older departure over a newer navigation.
+{
+  const env=navigation();const old=env.click('/case-studies/emyasa/');
+  env.windowEvents.pageshow({persisted:true});const next=env.click('/case-studies/dor/');
+  await old.done;assert.equal(env.assigned.length,0);env.finish();await next.done;assert.equal(env.assigned.length,1);assert(env.assigned[0].endsWith('/dor/'));
+}
+{
+  const url='https://example.com/case-studies/emyasa/';
+  const env=navigation({start:url,entry:url,loading:true});
+  assert(env.classes.has('is-page-entering'));assert.equal(env.children.length,0,'head bootstrap covers the page before body parsing');
+  env.documentEvents.DOMContentLoaded();await flush();assert.equal(env.children.length,1);
+  env.windowEvents.pageshow({persisted:false});assert(env.classes.has('is-page-leaving'),'initial pageshow does not cancel entry');
+  env.finish();await flush();assert(!env.classes.size,'entry releases its curtain and content effects');
+}
+{
+  const env=navigation({start:'https://example.com/case-studies/',entry:'https://example.com/case-studies',loading:true});
+  assert(env.classes.has('is-page-entering'),'canonical trailing-slash redirects keep the entry animation');
+}
 for(const path of ['index.html','case-studies/index.html',...slugs.map(slug=>`case-studies/${slug}/index.html`)]){
-  const html=read(path);assert(html.includes('/assets/page-transitions.css')&&html.includes('/assets/page-transitions.js'));
+  const html=read(path);assert(html.includes('/assets/page-transitions.css')&&html.includes('<script src="/assets/page-transitions.js"></script>'));
 }
-console.log('PASS: six semantic cases, matching footer, complete links/assets, reversible hero, reduced motion, native transitions and fallback link/history behavior.');
+for(const slug of slugs){
+  const html=read(`case-studies/${slug}/index.html`);
+  assert(html.includes(`/assets/cases/heroes/${slug}.webp`));
+  const photos=[...html.matchAll(/<img[^>]+src="([^\"]+\.webp)"/g)];
+  if(['dor-os','academic-quest'].includes(slug)){
+    assert.equal(photos.length,1,'apps display only their hero');assert(!html.includes('case-showcase'));
+  }else assert(html.includes(`/assets/cases/screens/${slug}.webp`));
+}
+console.log('PASS: supplied case assets, hero-only apps, shared footer, reversible hero, menu/footer/carousel transitions, home anchors, pre-paint entry, restored history and reduced motion.');
