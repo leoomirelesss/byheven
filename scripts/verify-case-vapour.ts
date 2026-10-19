@@ -125,6 +125,15 @@ assert(!/requestAnimationFrame|setInterval|setTimeout|pointermove|pointerdown|uT
 assert(STATIC_HAZE_FRAGMENT.includes('smoothstep(edge-soft,edge+soft,q.y)'), 'fold uses defined smoothstep edge order');
 console.log('PASS: frozen haze draws only initially/on resize, caches equal sizes, restores context, releases resources and has no pointer or time uniforms.');
 
+const {createStaticAuroraVeil, AURORA_FRAGMENT, AURORA_PALETTE} = await import('../lib/aurora-veil');
+const beforeAurora=paints;
+const disposeAurora=createStaticAuroraVeil(hazeCanvas as unknown as HTMLCanvasElement)!;
+assert.equal(paints,beforeAurora+1);assert(hazeCanvas.width*hazeCanvas.height<=620_000,'detail background caps the framebuffer size');
+resize();assert.equal(paints,beforeAurora+1,'frozen aurora has no idle redraw');
+assert.equal(AURORA_PALETTE.shadow,'#000000');assert(AURORA_FRAGMENT.includes('smoothstep(.02,.38,fromTop)'),'upper field stays black');
+events.webglcontextlost({preventDefault(){}});assert(!attributes.has('data-haze-ready'));events.webglcontextrestored();assert(attributes.has('data-haze-ready'));disposeAurora();
+console.log('PASS: adapted Aurora Veil uses a black upper field, bounded framebuffer, static exposure, context recovery and cleanup.');
+
 
 const {caseEntrance, caseDepth, entranceEase, createCaseChoreography} = await import('../lib/case-choreography');
 const {default: profileVM} = await import('node:vm');

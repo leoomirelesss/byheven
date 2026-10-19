@@ -44,7 +44,7 @@ for (const [index, slug] of slugs.entries()) {
 }
 
 // Exercise the same click controller with and without native transition APIs.
-function navigation({native=false,reduced=false,entry=null,blockedStorage=false,start='https://example.com/case-studies/',loading=false,canAnimate=true,saveData=false,imageReady=true,imageHangs=false}={}) {
+function navigation({native=false,reduced=false,entry=null,blockedStorage=false,start='https://example.com/case-studies/',loading=false,canAnimate=true,saveData=false,imageReady=true,imageHangs=false,fontsHang=false,imageFails=false}={}) {
   const documentEvents={},windowEvents={},classes=new Set(),assigned=[],animations=[],children=[],resources=[];
   const timers=new Map();let timerId=0,saved=entry,scrolled=0,resets=0;
   const location=new URL(start);location.assign=url=>assigned.push(url);
@@ -57,14 +57,21 @@ function navigation({native=false,reduced=false,entry=null,blockedStorage=false,
   const curtain={style:{},setAttribute(){},animate:(frames,options)=>animate('curtain',frames,options)};
   const main={animate:(frames,options)=>animate('main',frames,options)};
   const root={classList,...(canAnimate?{animate(){}}:{})};
+  const frames=[];let resolveImage,resolveFonts,decodes=0;
+  const imageWait=new Promise(resolve=>{resolveImage=resolve;});
+  const fontsWait=new Promise(resolve=>{resolveFonts=resolve;});
+  const image={complete:imageReady,getBoundingClientRect:()=>({top:0,bottom:900,left:0,right:1920}),
+    decode(){decodes++;return imageFails?Promise.reject(Error('failed image')):imageHangs?imageWait:Promise.resolve();}};
+  const offscreen={getBoundingClientRect:()=>({top:4000,bottom:5000,left:0,right:1920}),decode(){throw Error('offscreen image must not block entry');}};
   const window={HevenMotion:{reset(){resets++;}},innerWidth:1920,innerHeight:1080,devicePixelRatio:1,navigator:{connection:{saveData}},matchMedia:()=>({matches:reduced}),addEventListener:(name,fn)=>{windowEvents[name]=fn;}};
   if(native)Object.assign(window,{CSSViewTransitionRule:class{},onpageswap:null,onpagereveal:null});
   const document={readyState:loading?'loading':'complete',documentElement:root,createElement:tag=>tag==='link'?{}:curtain,body:{append:element=>children.push(element)},head:{append:element=>resources.push(element)},
-    querySelector:selector=>selector==='main'?main:selector==='[data-case-hero] img'?{complete:imageReady,decode:()=>imageHangs?new Promise(()=>{}):Promise.resolve()}:null,
+    fonts:{ready:fontsHang?fontsWait:Promise.resolve()},querySelector:selector=>selector==='main'?main:null,
+    querySelectorAll:selector=>selector==='main img'?[image,offscreen]:[],
     getElementById:id=>['work','services','faq','inicio','contact'].includes(id)?{scrollIntoView(){scrolled++;}}:null,
     addEventListener:(name,fn)=>{documentEvents[name]=fn;},removeEventListener:name=>{delete documentEvents[name];}};
   vm.runInNewContext(read('assets/page-transitions.js'),{
-    window,location,URL,setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),
+    window,location,URL,requestAnimationFrame:fn=>{frames.push(fn);return frames.length;},setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),
     sessionStorage:{getItem(){if(blockedStorage)throw Error('denied');return saved;},removeItem(){saved=null;},setItem(_,v){if(blockedStorage)throw Error('denied');saved=v;}},
     document,
   });
@@ -75,6 +82,8 @@ function navigation({native=false,reduced=false,entry=null,blockedStorage=false,
   };
   const intent=(href,type='pointerover')=>documentEvents[type]?.({target:{closest:()=>({href:new URL(href,location.href).href,hasAttribute:()=>false})}});
   return{click,intent,assigned,classes,documentEvents,windowEvents,animations,children,resources,document,location,
+    resolveImage,resolveFonts,decodes:()=>decodes,
+    paint:async()=>{for(let i=0;i<8;i++){await flush();frames.splice(0).forEach(fn=>fn());}await flush();},
     timers:delay=>{for(const [id,timer] of timers)if(timer.delay===delay){timers.delete(id);timer.fn();}},
     finish:()=>animations.filter(a=>a.target==='curtain'&&!a.done).at(-1)?.finish(),saved:()=>saved,scrolled:()=>scrolled,resets:()=>resets};
 }
@@ -135,20 +144,38 @@ assert(!navigation().click('/case-studies').event.defaultPrevented,'canonical sl
   const env=navigation({start:url,entry:url,loading:true});
   assert(env.classes.has('is-page-entering'));assert.equal(env.children.length,0,'head bootstrap covers the page before body parsing');
   env.document.readyState='interactive';env.documentEvents.readystatechange();await flush();assert.equal(env.children.length,1);
-  assert(!env.documentEvents.readystatechange,'entry mounts once before deferred modules finish');
+  assert(!env.documentEvents.readystatechange,'entry cover mounts once before deferred modules finish');
+  await env.paint();assert.equal(env.animations.length,0,'cover cannot lift before deferred modules are ready');
+  env.document.readyState='complete';env.documentEvents.DOMContentLoaded();await env.paint();assert.equal(env.animations.length,1);
   env.windowEvents.pageshow({persisted:false});assert(env.classes.has('is-page-leaving'),'initial pageshow does not cancel entry');
   env.finish();await flush();assert(!env.classes.size,'entry releases its curtain and content effects');
   assert(env.animations.every(a=>a.target==='curtain'),'no blur or transform on main: fixed backgrounds and sticky chapters keep their geometry');
 }
 {
   const url='https://example.com/#services';const env=navigation({start:url,entry:url,imageReady:false});
-  assert.equal(env.scrolled(),1,'a cross-page return settles its section under the cover');await flush();
+  await env.paint();assert.equal(env.scrolled(),1,'a cross-page return settles its section under the cover');
   assert.equal(env.animations.length,1);assert.equal(env.animations[0].options.duration,520);env.finish();await flush();assert(!env.classes.size);
 }
 {
   const url='https://example.com/case-studies/emyasa/';const env=navigation({start:url,entry:url,imageReady:false,imageHangs:true});
-  assert.equal(env.animations.length,0);env.timers(150);await flush();
-  assert.equal(env.animations.length,1,'a slow hero cannot hold the reveal beyond its short decoding budget');env.finish();await flush();assert(!env.classes.size);
+  await env.paint();assert.equal(env.decodes(),1);assert.equal(env.animations.length,0);
+  env.timers(150);env.timers(3000);await env.paint();assert.equal(env.animations.length,0,'elapsed time cannot reveal an unprepared hero');
+  env.resolveImage();await env.paint();assert.equal(env.animations.length,1,'reveal starts only after image decoding and a rendered frame');
+  env.finish();await flush();assert(!env.classes.size);
+}
+{
+  const url='https://example.com/case-studies/';const env=navigation({start:url,entry:url,fontsHang:true});
+  await env.paint();assert.equal(env.animations.length,0);assert.equal(env.decodes(),0,'layout waits for the real typography');
+  env.resolveFonts();await env.paint();assert.equal(env.animations.length,1);env.finish();await flush();assert(!env.classes.size);
+}
+{
+  const url='https://example.com/case-studies/emyasa/';const env=navigation({start:url,entry:url,imageFails:true});
+  await env.paint();assert.equal(env.animations.length,1,'a failed image releases entry to the existing fallback');env.finish();await flush();assert(!env.classes.size);
+}
+{
+  const url='https://example.com/case-studies/emyasa/';const env=navigation({start:url,entry:url,imageHangs:true});
+  await env.paint();env.windowEvents.pageshow({persisted:true});env.resolveImage();await env.paint();
+  assert.equal(env.animations.length,0,'a stale entry cannot cover or move a restored page');
 }
 {
   const env=navigation();const pending=env.click('/case-studies/dor/');env.finish();await pending.done;
@@ -164,6 +191,7 @@ for(const path of ['index.html','case-studies/index.html',...slugs.map(slug=>`ca
 for(const [index,slug] of slugs.entries()){
   const html=read(`case-studies/${slug}/index.html`);
   assert(html.includes(`/assets/cases/heroes/${slug}.webp`));
+  assert(html.includes('/assets/case-detail-background.js')&&html.includes('class="case-detail-atmosphere"'),'every detail page shares the adapted aurora');
   const photos=[...html.matchAll(/<img[^>]+src="([^\"]+\.webp)"/g)];
   const next=slugs[(index+1)%slugs.length];
   assert(new RegExp(`class="case-next-cover"[^>]*><img src="/assets/cases/heroes/${next}\\.webp"`).test(html),'each next-case teaser has its destination image');
@@ -171,4 +199,6 @@ for(const [index,slug] of slugs.entries()){
     assert.equal(photos.length,2,'apps have their hero and next-case teaser');assert(!html.includes('case-showcase'),'apps have no interior screenshot gallery');
   }else assert(html.includes(`/assets/cases/screens/${slug}.webp`));
 }
-console.log('PASS: six photo teasers, supplied assets, apps without interior galleries, shared footer, reversible hero, cross-page transitions, native home anchors, intent prefetch, early entry, restored history and reduced motion.');
+assert(!read('assets/page-transitions.css').includes('heven-curtain-safety'),'no fixed CSS timer can reveal an unready destination');
+assert(!/border-bottom:/.test(read('assets/case-detail.css')),'detail content has no section or row dividers');
+console.log('PASS: six photo teasers, supplied assets, shared footer, reversible hero, cross-page transitions, native home anchors, real DOM/font/image/paint readiness, slow loads, image errors, history and reduced motion.');

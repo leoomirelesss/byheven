@@ -69,7 +69,7 @@ void main(){
   frag=vec4(clamp(col,0.0,1.0),1.0);
 }`;
 
-export function createStaticVelvetHaze(canvas: HTMLCanvasElement, palette: HazePalette = HEVEN_HAZE_PALETTE) {
+export function createStaticVelvetHaze(canvas: HTMLCanvasElement, palette: HazePalette = HEVEN_HAZE_PALETTE, options: {fragment?: string; maxPixels?: number} = {}) {
   const gl = canvas.getContext('webgl2', {alpha: false, antialias: false, depth: false, powerPreference: 'low-power'});
   if (!gl) return null;
   let program: WebGLProgram | null = null, vao: WebGLVertexArrayObject | null = null;
@@ -83,7 +83,7 @@ export function createStaticVelvetHaze(canvas: HTMLCanvasElement, palette: HazeP
     return shader;
   };
   const init = () => {
-    const vertex = compile(gl.VERTEX_SHADER, VERTEX), fragment = compile(gl.FRAGMENT_SHADER, STATIC_HAZE_FRAGMENT);
+    const vertex = compile(gl.VERTEX_SHADER, VERTEX), fragment = compile(gl.FRAGMENT_SHADER, options.fragment ?? STATIC_HAZE_FRAGMENT);
     if (!vertex || !fragment) { if(vertex) gl.deleteShader(vertex); if(fragment) gl.deleteShader(fragment); return; }
     program = gl.createProgram();
     if (!program) { gl.deleteShader(vertex); gl.deleteShader(fragment); return; }
@@ -95,7 +95,11 @@ export function createStaticVelvetHaze(canvas: HTMLCanvasElement, palette: HazeP
   const paint = () => {
     if (!program || lost) return;
     const dpr = Math.min(1.25, window.devicePixelRatio || 1);
-    const width = Math.max(1, Math.round(canvas.clientWidth * dpr)), height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    let width = Math.max(1, Math.round(canvas.clientWidth * dpr)), height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    if (options.maxPixels && width * height > options.maxPixels) {
+      const scale = Math.sqrt(options.maxPixels / (width * height));
+      width = Math.max(1, Math.floor(width * scale)); height = Math.max(1, Math.floor(height * scale));
+    }
     const size = `${width}:${height}:${dpr}`;
     if (size === lastSize) return;
     lastSize = size; canvas.width = width; canvas.height = height;

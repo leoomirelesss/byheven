@@ -16,6 +16,8 @@
     return [documentKey(url), url.hash].join('|');
   } catch { return null; } };
   if (pending && entryKey(pending) === entryKey(location.href) && !reduced.matches) root.classList.add('is-page-entering');
+  const domReady = document.readyState === 'complete' ? Promise.resolve() : new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, {once:true}));
+  const painted = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   const initialize = () => {
     const curtain = document.createElement('div');
     curtain.className = 'page-curtain'; curtain.setAttribute('aria-hidden', 'true'); curtain.inert = true;
@@ -31,14 +33,36 @@
     };
     const enter = async () => {
       const id = transitionId;
-      const image = document.querySelector('[data-case-hero] img');
-      // Warmed images normally decode immediately. Never add a long blank hold.
-      if (image && !image.complete && image.decode) {
-        let timeout;
-        await Promise.race([image.decode().catch(() => {}), new Promise(resolve => { timeout = setTimeout(resolve, 150); })]);
-        clearTimeout(timeout);
+      const current = () => leaving && id === transitionId;
+      // Keep the destination covered until its modules, fonts and first layout are ready.
+      await domReady;
+      await document.fonts?.ready;
+      if (!current()) return;
+      window.HevenMotion?.reset();
+      await painted();
+      if (!current()) return;
+      if (location.hash) {
+        try { document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({block:'start',behavior:'instant'}); } catch {}
       }
-      if (!leaving || id !== transitionId) return;
+      // Decode the actual visible images, including responsive heroes and home section content.
+      // A timer cannot determine readiness; offscreen galleries must not delay the reveal.
+      const images = [...document.querySelectorAll('main img')].filter(image => {
+        const rect = image.getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
+      });
+      await Promise.all(images.map(image => {
+        image.loading = 'eager';
+        if (image.decode) return image.decode().catch(() => {});
+        if (image.complete) return;
+        return new Promise(resolve => {
+          const done = () => { image.removeEventListener('load', done); image.removeEventListener('error', done); resolve(); };
+          image.addEventListener('load', done, {once:true}); image.addEventListener('error', done, {once:true});
+        });
+      }));
+      if (!current()) return;
+      window.HevenMotion?.reset();
+      await painted();
+      if (!current()) return;
       if (reduced.matches) { reset(); return; }
       const previous = coverMotion;
       coverMotion = curtain.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d(0,-100%,0)'}], {duration:520,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
@@ -98,14 +122,10 @@
     window.addEventListener('pageshow', event => { if (event.persisted) reset(); });
     if (root.classList.contains('is-page-entering')) {
       leaving = true; root.classList.add('is-page-leaving'); curtain.style.transform = 'translate3d(0,0,0)';
-      if (location.hash) {
-        try { document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({block:'start',behavior:'instant'}); } catch {}
-      }
-      window.HevenMotion?.reset();
       void enter();
     }
   };
-  // 'interactive' precedes deferred modules: the home phone must not hold the curtain shut.
+  // Mount the cover as soon as body exists; reveal only after the destination is ready.
   if (document.readyState === 'loading') {
     const ready = () => {
       if (document.readyState === 'loading') return;

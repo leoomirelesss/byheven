@@ -3,6 +3,5 @@
 :root { --page-curtain-fill: radial-gradient(ellipse at 65% 80%, #362342 0%, #171020 45%, #0c0912 85%); }
 .page-curtain { position: fixed; inset: 0; z-index: 2147483000; transform: translate3d(0,100%,0); pointer-events: none; contain: strict; background: var(--page-curtain-fill); }
 html.is-page-leaving .page-curtain { pointer-events: auto; will-change: transform; }
-html.is-page-entering::before { content: ''; position: fixed; inset: 0; z-index: 2147483001; background: var(--page-curtain-fill); pointer-events: auto; animation: heven-curtain-safety 1ms 3s forwards; }
-@keyframes heven-curtain-safety { to { visibility: hidden; } }
+html.is-page-entering::before { content: ''; position: fixed; inset: 0; z-index: 2147483001; background: var(--page-curtain-fill); pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) { .page-curtain, html.is-page-entering::before { display: none; } }
