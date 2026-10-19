@@ -56,7 +56,7 @@ assert(html.includes('<div class="case-card-bottom">') && html.includes('(04 pro
 const css = readFileSync(new URL('../assets/case-index.css', import.meta.url), 'utf8');
 assert(!/case-gutter|grid-template|case-reveal|case-image-y|case-ambient-y/.test(css),'effect stylesheet does not rearrange the established layout');
 assert(!/pointermove|case-ambient-y|case-image-y|case-reveal/.test(runtime),'index runtime no longer moves background or cards');
-console.log('PASS: established case layout restored and motion limited to the title.');
+console.log('PASS: established case layout preserved and static background isolated from choreography.');
 
 const {createStaticVelvetHaze, STATIC_HAZE_FRAGMENT, hexToRgb} = await import('../lib/velvet-haze');
 assert.deepEqual(hexToRgb('#fff'), [1, 1, 1]);assert.deepEqual(hexToRgb('bad-color'), [0, 0, 0]);
@@ -87,3 +87,29 @@ const hazeSource=readFileSync(new URL('../lib/velvet-haze.ts',import.meta.url),'
 assert(!/requestAnimationFrame|setInterval|setTimeout|pointermove|pointerdown|uTime|uFrame|uLamp|uRipple/.test(hazeSource),'static background has no clock, pointer or click effects');
 assert(STATIC_HAZE_FRAGMENT.includes('smoothstep(edge-soft,edge+soft,q.y)'), 'fold uses defined smoothstep edge order');
 console.log('PASS: frozen haze draws only initially/on resize, caches equal sizes, restores context, releases resources and has no pointer or time uniforms.');
+
+
+const {caseEntrance, caseDepth, entranceEase, createCaseChoreography} = await import('../lib/case-choreography');
+assert.equal(entranceEase(0),0);assert.equal(entranceEase(1),1);
+assert(entranceEase(.1)<.02 && entranceEase(.2)-entranceEase(.1)>entranceEase(.1),'entrance starts gently and accelerates');
+const first = caseEntrance(500,1200,900), second = caseEntrance(500,1200,900,44);
+assert(first.y<second.y,'the second item enters after the first');assert(first.captionY>0,'caption has its own delayed arrival');
+for(let y=0;y<8000;y+=50)assert(Math.abs(caseDepth(y,1200,600,900))<=2,'image depth stays inside the overscan');
+let layoutReads=0, measuredClient: {measure:()=>void;render:(s:{y:number;height:number})=>boolean};
+let invalidations=0;
+const mediaMotion={matches:false,addEventListener(){},removeEventListener(){}};
+const frameWindow={innerHeight:900,innerWidth:1400,scrollY:0,matchMedia:()=>mediaMotion};
+const motionStyle=()=>{const data:Record<string,string>={};return{data,setProperty:(k:string,v:string)=>{data[k]=v;},removeProperty:(k:string)=>{delete data[k];}};};
+const photoMotion={style:motionStyle()};
+const classNames=new Set<string>();
+const motionCard={style:motionStyle(),offsetHeight:600,querySelector:()=>photoMotion,contains:()=>true,classList:{add:(s:string)=>classNames.add(s),remove:(s:string)=>classNames.delete(s)},getBoundingClientRect(){layoutReads++;return{top:1200-frameWindow.scrollY+(parseFloat(this.style.data['--case-entry-y'])||0)};}};
+const eventHandlers:Record<string,(event:unknown)=>void>={};
+Object.assign(globalThis,{window:frameWindow,document:{querySelectorAll:(s:string)=>s.includes('case-index-grid')?[motionCard]:[],addEventListener:(s:string,fn:(event:unknown)=>void)=>{eventHandlers[s]=fn;},removeEventListener:(s:string)=>{delete eventHandlers[s];}}});
+const motionClock={subscribe(client:typeof measuredClient){measuredClient=client;return()=>{};},invalidate(){invalidations++;measuredClient.measure();}};
+const disposeMotion=createCaseChoreography(motionClock);measuredClient!.measure();
+const readCount=layoutReads;measuredClient!.render({y:500,height:900});assert.equal(layoutReads,readCount,'scroll frames do not measure layout');
+const shiftBefore=motionCard.style.data['--case-entry-y'];measuredClient!.measure();measuredClient!.render({y:500,height:900});assert(Math.abs(parseFloat(shiftBefore)-parseFloat(motionCard.style.data['--case-entry-y']))<1e-8,'own shift never changes the trigger');
+eventHandlers.focusin({target:motionCard});measuredClient!.render({y:0,height:900});assert.equal(motionCard.style.data['--case-entry-opacity'],'1','focused content is immediately presented');assert(invalidations>0);
+mediaMotion.matches=true;measuredClient!.measure();assert.equal(photoMotion.style.data['--case-image-depth'],undefined);assert.equal(motionCard.style.data['--case-entry-y'],undefined,'reduced motion clears offsets');
+disposeMotion();assert.equal(classNames.size,0);assert(!('focusin' in eventHandlers));
+console.log('PASS: eased acceleration, row stagger, caption delay, bounded image parallax, cached geometry, keyboard presentation, reduced motion and cleanup.');

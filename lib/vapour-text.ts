@@ -3,7 +3,10 @@
 export const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
 export const ease = (value: number) => { const t = clamp01(value); return t * t * (3 - 2 * t); };
 export const vaporProgress = (scrollY: number, start: number, distance: number) => clamp01((scrollY - start) / Math.max(1, distance));
-export const vaporFront = (progress: number) => ease(progress) * 1.5 - .22;
+export const vaporFront = (progress: number) => {
+  const t = clamp01(progress);
+  return t * t * t * (t * (t * 6 - 15) + 10) * 1.5 - .22;
+};
 export type VaporParticle = { x: number; y: number; alpha: number; seed: number };
 export function vaporPose(particle: VaporParticle, progress: number, width: number) {
   const front = vaporFront(progress);

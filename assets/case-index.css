@@ -20,3 +20,15 @@ body[data-case-index] .case-invitation { border-top: 0; }
   .case-vapour-canvas { display: none; }
 }
 @media print { .case-index-atmosphere, .case-vapour-canvas { display: none; } .case-vapour-ink { mask-image: none !important; -webkit-mask-image: none !important; } }
+
+/* Transform-only movement preserves the established grid, spacing and caption placement. */
+body[data-case-index] .is-case-motion { transform: translate3d(0, var(--case-entry-y, 0px), 0); opacity: var(--case-entry-opacity, 1); }
+body[data-case-index] .case-index-grid .is-case-motion .case-card-bottom { transform: translate3d(0, var(--case-caption-y, 0px), 0); }
+body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: 0 var(--case-image-depth, 0%); transform: scale(1.06); }
+@media (hover: hover) and (pointer: fine) {
+  body[data-case-index] .case-index-grid .is-case-motion:hover .case-cover { transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-case-index] .is-case-motion, body[data-case-index] .is-case-motion .case-card-bottom { transform: none; opacity: 1; }
+  body[data-case-index] .is-case-motion .case-cover { translate: none; }
+}

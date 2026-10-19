@@ -1,3 +1,4 @@
+import {createCaseChoreography} from '../lib/case-choreography';
 import {createStaticVelvetHaze} from '../lib/velvet-haze';
 import {createVapourRenderer, vaporProgress} from '../lib/vapour-text';
 
@@ -9,6 +10,10 @@ if (background) {
   window.addEventListener('pagehide', event => { if (!event.persisted) release?.(); });
 }
 const clock = (window as Window & {HevenMotion?: Clock}).HevenMotion;
+if (clock) {
+  const releaseChoreography = createCaseChoreography(clock);
+  window.addEventListener('pagehide', event => { if (!event.persisted) releaseChoreography(); });
+}
 const hero = document.querySelector<HTMLElement>('[data-case-vapour]');
 const title = hero?.querySelector<HTMLElement>('h1');
 const canvas = title?.querySelector<HTMLCanvasElement>('canvas');
