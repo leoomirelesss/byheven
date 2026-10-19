@@ -1,7 +1,22 @@
-/* A single curtain also covers browsers that advertise native transitions but skip them. */
-@view-transition { navigation: none; }
-:root { --page-curtain-fill: radial-gradient(ellipse at 65% 80%, #362342 0%, #171020 45%, #0c0912 85%); }
-.page-curtain { position: fixed; inset: 0; z-index: 2147483000; transform: translate3d(0,100%,0); pointer-events: none; contain: strict; background: var(--page-curtain-fill); }
-html.is-page-leaving .page-curtain { pointer-events: auto; will-change: transform; }
-html.is-page-entering::before { content: ''; position: fixed; inset: 0; z-index: 2147483001; background: var(--page-curtain-fill); pointer-events: auto; }
-@media (prefers-reduced-motion: reduce) { .page-curtain, html.is-page-entering::before { display: none; } }
+/* Animate snapshots of the actual pages, never an intermediate color layer.
+   Unsupported browsers retain normal navigation, anchors and history. */
+@view-transition { navigation: auto; }
+::view-transition-group(root) { animation-duration: 760ms; }
+::view-transition-image-pair(root) { isolation: isolate; }
+::view-transition-old(root),
+::view-transition-new(root) { mix-blend-mode: normal; }
+::view-transition-old(root) { animation: none; z-index: 1; }
+::view-transition-new(root) {
+  z-index: 2;
+  animation: heven-page-reveal 760ms cubic-bezier(.76,0,.24,1) both;
+}
+@keyframes heven-page-reveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
