@@ -27,18 +27,20 @@ for (const [index, slug] of slugs.entries()) {
   const media={matches:false,addEventListener(){},removeEventListener(){}};
   const hero={offsetHeight:1000,clientWidth:1400,querySelector:()=>({classList:{add:name=>classes.add(name)}}),
     getBoundingClientRect(){reads++;return{top:0};},style:{setProperty(k,v){writes++;data.set(k,v);}}};
-  const clock={subscribe(value){client=value;return()=>{unsubscribed++;};},invalidate(){client.measure();}};
+  const clock={settings:{parallax:2.5},approach:(value,target,dt,immediate)=>immediate?target:value+(target-value)*.5,subscribe(value){client=value;return()=>{unsubscribed++;};},invalidate(){client.measure();}};
   vm.runInNewContext(read('assets/case-detail.js'),{
-    document:{querySelector:()=>hero},window:{HevenMotion:clock,scrollY:0,matchMedia:()=>media,addEventListener:(name,fn)=>{events[name]=fn;}},
+    document:{querySelector:()=>hero},window:{HevenMotion:clock,scrollY:0,innerWidth:1400,innerHeight:900,matchMedia:()=>media,addEventListener:(name,fn)=>{events[name]=fn;}},
     ResizeObserver:class{observe(){}disconnect(){disconnected++;}},
   });
   client.measure();const initialReads=reads;
-  client.render({y:500});assert.equal(data.get('--case-hero-y'),'60px');assert.equal(data.get('--case-title-x'),'112px');
-  client.render({y:250});assert.equal(data.get('--case-hero-y'),'30px');
-  client.render({y:2000});const settledWrites=writes;client.render({y:3000});assert.equal(writes,settledWrites,'endpoints do no extra work');
-  client.render({y:0});assert.equal(data.get('--case-title-x'),'0px');assert(classes.has('is-dismissed'),'cue stays dismissed after returning to the top');
+  client.render({y:500,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'12.5px');assert.equal(data.get('--case-title-x'),'112px');
+  client.render({y:250,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'6.25px');
+  client.render({y:2000,dt:16.67,immediate:true});const settledWrites=writes;client.render({y:3000,dt:16.67,immediate:true});assert.equal(writes,settledWrites,'endpoints do no extra work');
+  client.render({y:0,dt:16.67,immediate:true});assert.equal(data.get('--case-title-x'),'0px');assert(classes.has('is-dismissed'),'cue stays dismissed after returning to the top');
   assert.equal(reads,initialReads,'scroll frames use cached hero geometry');
-  media.matches=true;client.measure();client.render({y:500});assert.equal(data.get('--case-hero-y'),'0px');
+  client.render({y:500,dt:16.67,immediate:false});assert.equal(data.get('--case-hero-y'),'6.25px','native input follows with the same finite damping instead of a jump');
+  client.render({y:500,dt:16.67,immediate:false});assert.equal(data.get('--case-hero-y'),'9.375px');
+  media.matches=true;client.measure();client.render({y:500,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'0px');
   events.pagehide({persisted:true});assert.equal(unsubscribed,0);
   events.pagehide({persisted:false});assert.equal(unsubscribed,1);assert.equal(disconnected,1);
 }

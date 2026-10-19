@@ -55,7 +55,7 @@ assert(!/<span class="case-scroll-cue"[^>]*data-vapour-block/.test(html), 'scrol
   const {transform} = await import('esbuild');
   const {default: vm} = await import('node:vm');
   const source = (await transform(runtime.replace(/^import .+;\n/gm, ''), {loader:'ts',target:'es2022'})).code;
-  const clients:Array<{measure:()=>void;render:(state:{y:number;height:number})=>boolean}>=[];
+  const clients:Array<{measure:()=>void;render:(state:{y:number;height:number;dt?:number;immediate?:boolean})=>boolean}>=[];
   const listeners:Array<(event:{persisted:boolean})=>void>=[];
   const media={matches:false,addEventListener(){},removeEventListener(){}};
   let resolveFonts:()=>void=()=>{}, geometry=0, destroyed=0, observed=0;
@@ -63,7 +63,7 @@ assert(!/<span class="case-scroll-cue"[^>]*data-vapour-block/.test(html), 'scrol
   const poses=[[],[],[]] as number[][];
   const elements=poses.map((values,index)=>({index,querySelector:()=>({}),values}));
   const hero={offsetHeight:400,getBoundingClientRect(){geometry++;return{top:120};},querySelectorAll:()=>elements};
-  const clock={subscribe(client:typeof clients[number]){clients.push(client);return()=>{};},invalidate(){clients.forEach(client=>client.measure());}};
+  const clock={approach:(value:number,target:number,dt:number,immediate:boolean)=>immediate?target:value+(target-value)*.5,subscribe(client:typeof clients[number]){clients.push(client);return()=>{};},invalidate(){clients.forEach(client=>client.measure());}};
   vm.runInNewContext(source,{
     window:{HevenMotion:clock,innerHeight:900,scrollY:0,matchMedia:()=>media,addEventListener:(_:string,fn:typeof listeners[number])=>listeners.push(fn)},
     document:{querySelector:(selector:string)=>selector==='[data-case-vapour]'?hero:null,fonts:{ready}},
@@ -76,9 +76,11 @@ assert(!/<span class="case-scroll-cue"[^>]*data-vapour-block/.test(html), 'scrol
   resolveFonts();await ready;await Promise.resolve();
   const measuredGeometry=geometry;
   for(const y of [148,308,468,308,148]){
-    clients.forEach(client=>client.render({y,height:900}));
+    clients.forEach(client=>client.render({y,height:900,dt:16.67,immediate:true}));
     assert(poses.every(values=>values.at(-1)===vaporProgress(y,148,320)),'all three blocks share the same reversible scroll phase');
   }
+  const flowing=clients.map(client=>client.render({y:308,height:900,dt:16.67,immediate:false}));
+  assert(poses.every(values=>values.at(-1)!>0&&values.at(-1)!<vaporProgress(308,148,320))&&flowing.some(Boolean),'native scroll uses finite follow easing for all hero text');
   assert.equal(geometry,measuredGeometry,'scroll does not read hero geometry');assert.equal(observed,3);
   media.matches=true;clock.invalidate();clients.forEach(client=>client.render({y:468,height:900}));
   assert(poses.every(values=>values.at(-1)===0),'reduced motion restores all text');
@@ -146,7 +148,7 @@ assert(entranceEase(.1)<.02 && entranceEase(.2)-entranceEase(.1)>entranceEase(.1
 const first = caseEntrance(sharedProfile.settings,500,1200,900), second = caseEntrance(sharedProfile.settings,500,1200,900,sharedProfile.settings.stagger);
 assert(first.y<second.y,'the second item enters after the first');assert(first.captionY>0,'caption has its own delayed arrival');
 for(let y=0;y<8000;y+=50)assert(Math.abs(caseDepth(y,1200,600,900,sharedProfile.settings.parallax))<=sharedProfile.settings.parallax,'image depth stays inside the overscan');
-let layoutReads=0, measuredClient: {measure:()=>void;render:(s:{y:number;height:number})=>boolean};
+let layoutReads=0, measuredClient: {measure:()=>void;render:(s:{y:number;height:number;dt?:number;immediate?:boolean})=>boolean};
 let invalidations=0;
 const mediaMotion={matches:false,addEventListener(){},removeEventListener(){}};
 const frameWindow={innerHeight:900,innerWidth:1400,scrollY:0,matchMedia:()=>mediaMotion};
@@ -160,9 +162,24 @@ const motionClock={settings:sharedProfile.settings,approach:sharedProfile.approa
 const disposeMotion=createCaseChoreography(motionClock);measuredClient!.measure();
 const readCount=layoutReads;measuredClient!.render({y:500,height:900});assert.equal(layoutReads,readCount,'scroll frames do not measure layout');
 const shiftBefore=motionCard.style.data['--case-entry-y'];measuredClient!.measure();measuredClient!.render({y:500,height:900});assert(Math.abs(parseFloat(shiftBefore)-parseFloat(motionCard.style.data['--case-entry-y']))<1e-8,'own shift never changes the trigger');
-eventHandlers.focusin({target:motionCard});measuredClient!.render({y:0,height:900});assert.equal(motionCard.style.data['--case-entry-opacity'],'1','focused content is immediately presented');assert(invalidations>0);
+eventHandlers.focusin({target:motionCard});measuredClient!.render({y:0,height:900,dt:16.67,immediate:false});assert.equal(motionCard.style.data['--case-entry-opacity'],'1','focused content is immediately presented');assert(invalidations>0);
 mediaMotion.matches=true;measuredClient!.measure();assert.equal(photoMotion.style.data['--case-image-depth'],undefined);assert.equal(motionCard.style.data['--case-entry-y'],undefined,'reduced motion clears offsets');
 disposeMotion();assert.equal(classNames.size,0);assert(!('focusin' in eventHandlers));
+// Every row gets the same rhythm, including after switching to one mobile column.
+mediaMotion.matches=false;
+const rowCards=Array.from({length:4},(_,index)=>({...motionCard,style:motionStyle(),
+  getBoundingClientRect(){return{top:1200+Math.floor(index/2)*1000-frameWindow.scrollY+(parseFloat(this.style.data['--case-entry-y'])||0)};}}));
+Object.assign(globalThis,{document:{querySelectorAll:(selector:string)=>selector.includes('case-index-grid')?rowCards:[],addEventListener(){},removeEventListener(){}}});
+const disposeRows=createCaseChoreography(motionClock);measuredClient!.measure();measuredClient!.render({y:500,height:900});
+const firstRow=rowCards.slice(0,2).map(card=>card.style.data['--case-entry-y']);
+measuredClient!.render({y:1500,height:900});
+assert.deepEqual(rowCards.slice(2).map(card=>card.style.data['--case-entry-y']),firstRow,'row two repeats row one timing instead of accumulating delay');
+disposeRows();
+for(const [index,card] of rowCards.entries())card.getBoundingClientRect=()=>({top:1200+index*1000-frameWindow.scrollY+(parseFloat(card.style.data['--case-entry-y'])||0)});
+const disposeMobileRows=createCaseChoreography(motionClock);
+measuredClient!.measure();measuredClient!.render({y:1500,height:900});
+assert.equal(rowCards[1].style.data['--case-entry-y'],firstRow[0],'single-column cards have no obsolete second-column delay');
+disposeMobileRows();
 console.log('PASS: eased acceleration, row stagger, caption delay, bounded image parallax, cached geometry, keyboard presentation, reduced motion and cleanup.');
 
 // Reusing the home footer must also preserve its navigation and keyboard behavior.
@@ -172,19 +189,20 @@ const caseFooter = html.slice(html.indexOf('  <div class="sticky-footer-wrapper"
 assert.equal(caseFooter,homeFooter,'case page reuses exactly the home footer with cross-page anchors');
 assert(html.includes('data-home-navigation')&&html.includes('/assets/home-finish.js'),'home controller owns case navigation and footer');
 const {default: footerVM}=await import('node:vm');
+const footerWindowEvents:Record<string,(e:any)=>void>={};
 const footerDocEvents:Record<string,(e:unknown)=>void>={}, footerObservers:Array<{callback:(entries:unknown[])=>void;observe:()=>void;disconnect:()=>void}>=[];
 const classList=()=>{const names=new Set<string>();return{names,contains:(n:string)=>names.has(n),add:(n:string)=>names.add(n),toggle(n:string,on:boolean){if(on)names.add(n);else names.delete(n);}};};
 const menuAttrs:Record<string,string>={'aria-expanded':'false'}, footerNavAttrs:Record<string,string>={};
-let menuClick:()=>void=()=>{}, escapeKey:(e:unknown)=>void=()=>{};
+let menuClick:()=>void=()=>{}, panelClick:(e:any)=>void=()=>{}, escapeKey:(e:unknown)=>void=()=>{};
 const footerMain={inert:false}, footerBody={classList:classList()}, footerColumns=[{classList:classList()}];
 const footerLink={focused:false,focus(){this.focused=true;}}, menuLink={focus(){}};
-const footerPanel={inert:true,setAttribute(){},querySelector:()=>menuLink,addEventListener(){}};
+const footerPanel={inert:true,setAttribute(){},querySelector:()=>menuLink,addEventListener:(name:string,fn:(e:any)=>void)=>{if(name==='click')panelClick=fn;}};
 const footerToggle={setAttribute:(k:string,v:string)=>{menuAttrs[k]=v;},getAttribute:(k:string)=>menuAttrs[k],addEventListener:(name:string,fn:()=>void)=>{if(name==='click')menuClick=fn;},focus(){}};
 const footerNav={inert:false,classList:classList(),setAttribute:(k:string,v:string)=>{footerNavAttrs[k]=v;},contains:()=>false};
 const sharedFooter={inert:false,classList:classList(),querySelector:()=>footerLink,querySelectorAll:()=>footerColumns,getBoundingClientRect:()=>({top:1200,bottom:2100})};
 const FooterIO=class{callback:(entries:unknown[])=>void;constructor(callback:(entries:unknown[])=>void){this.callback=callback;footerObservers.push(this);}observe(){}disconnect(){}};
 footerVM.runInNewContext(readFileSync(new URL('../assets/home-finish.js',import.meta.url),'utf8'),{
- window:{innerHeight:900,matchMedia:()=>({matches:false,addEventListener(){}}),IntersectionObserver:FooterIO},
+ window:{innerHeight:900,matchMedia:()=>({matches:false,addEventListener(){}}),IntersectionObserver:FooterIO,addEventListener:(name:string,fn:(e:any)=>void)=>{footerWindowEvents[name]=fn;}},
  document:{body:footerBody,activeElement:null,querySelector:(s:string)=>s==='.cinema-menu-toggle'?footerToggle:s==='main'?footerMain:s==='.sticky-footer-wrapper'?sharedFooter:s==='.cinema-nav'?footerNav:null,getElementById:(s:string)=>s==='mobile-menu-panel'?footerPanel:null,querySelectorAll:()=>[],addEventListener:(s:string,fn:(e:unknown)=>void)=>{footerDocEvents[s]=fn;if(s==='keydown')escapeKey=fn;}},
  IntersectionObserver:FooterIO,requestAnimationFrame:(fn:()=>void)=>{fn();return 1;},clearTimeout(){},setTimeout(){},
 });
@@ -193,6 +211,10 @@ footerObservers[0].callback([{target:sharedFooter,isIntersecting:true,intersecti
 menuClick();assert(footerMain.inert&&sharedFooter.inert&&!footerPanel.inert,'menu isolates content for keyboard users');
 escapeKey({key:'Escape'});assert(!footerMain.inert&&footerPanel.inert&&footerLink.focused,'escape returns focus to footer when dock is hidden');
 footerObservers[0].callback([{target:sharedFooter,isIntersecting:false,intersectionRect:{height:0}}]);assert(!footerNav.inert,'dock returns when leaving footer');
+menuClick();panelClick({target:{closest:(selector:string)=>selector==='a[href]'?{}:null}});
+assert(!footerMain.inert&&footerPanel.inert,'Projects page link closes the mobile menu before navigation');
+menuClick();footerWindowEvents.pageshow({persisted:true});
+assert(!footerMain.inert&&footerPanel.inert,'back navigation cannot restore an open, inert menu state');
 footerObservers[1].callback([{isIntersecting:true}]);assert(footerColumns[0].classList.contains('visible'),'footer content is revealed');
 console.log('PASS: matching home footer, cross-page anchors, one navigation owner, dock visibility, menu isolation, escape focus and footer reveal.');
 

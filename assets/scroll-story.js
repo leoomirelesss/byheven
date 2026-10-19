@@ -99,7 +99,7 @@
     else reset();
   });
   if ('ResizeObserver' in window) {
-    const main = document.querySelector('.commerce-world');
+    const main = document.querySelector('.commerce-world, main');
     if (main) new ResizeObserver(invalidate).observe(main);
   }
   document.fonts?.ready.then(invalidate);

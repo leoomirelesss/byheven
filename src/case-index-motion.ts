@@ -30,10 +30,11 @@ if (clock && hero && blocks.length) {
     return renderer ? [{element, renderer}] : [];
   });
   if (renderers.length) {
-    let start = 0, distance = 1, enabled = false;
+    let start = 0, distance = 1, enabled = false, progress = 0;
     let fontsReady = false, active = true;
     const measure = () => {
       enabled = !reduced.matches && fontsReady;
+      if (!enabled) progress = 0;
       start = hero.getBoundingClientRect().top + window.scrollY + 28;
       distance = Math.max(260, Math.min(window.innerHeight * .64, hero.offsetHeight * .8));
       renderers.forEach(({renderer}) => {
@@ -43,8 +44,10 @@ if (clock && hero && blocks.length) {
     };
     const unsubscribe = clock.subscribe({measure, render(state) {
       if (enabled) {
-        const progress = vaporProgress(state.y, start, distance);
+        const target = vaporProgress(state.y, start, distance);
+        progress = clock.approach(progress, target, state.dt, state.immediate || target === 0 || target === 1);
         renderers.forEach(({renderer}) => renderer.render(progress));
+        return progress !== target;
       }
       return false;
     }});
@@ -63,6 +66,6 @@ if (clock && hero && blocks.length) {
       active = false;
       unsubscribe(); observer.disconnect(); reduced.removeEventListener('change', clock.invalidate);
       renderers.forEach(({renderer}) => renderer.destroy());
-    }, {once: true});
+    });
   }
 }

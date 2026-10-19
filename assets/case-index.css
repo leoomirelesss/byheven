@@ -30,7 +30,7 @@ body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: 
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-case-index] .is-case-motion, body[data-case-index] .is-case-motion .case-card-bottom { transform: none; opacity: 1; }
-  body[data-case-index] .is-case-motion .case-cover { translate: none; }
+  body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: none; transform: none; transition: none; }
 }
 
 .case-scroll-cue { display: inline-flex; align-items: center; gap: 12px; color: #b5b0c1; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; transition: opacity 260ms ease-out; }

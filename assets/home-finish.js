@@ -30,8 +30,9 @@
   };
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
   panel?.addEventListener('click', event => {
-    if (event.target.closest('a[href^="#"]')) setMenu(false);
+    if (event.target.closest('a[href]')) setMenu(false);
   });
+  window.addEventListener('pageshow', event => { if (event.persisted) setMenu(false); });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open')) setMenu(false, true);
   });

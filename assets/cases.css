@@ -1,4 +1,4 @@
-:root { --case-cover-scale: 1.065; --case-cover-hover-scale: 1.09; }
+:root { --case-image-duration: 800ms; --case-image-ease: cubic-bezier(.16,1,.3,1); --case-cover-scale: 1.065; --case-cover-hover-scale: 1.09; }
 /* Real projects, presented as large editorial covers. */
 #work.case-home, body[data-case-page] { background: #090909; color: #ceced7; font-family: 'Outfit', sans-serif; }
 #work.case-home { padding: 0 0 90px; border: 0; }
@@ -13,7 +13,7 @@
 .case-viewport { padding: 40px 2.65vw; overflow: hidden; }
 .case-track { display: flex; gap: 20px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: #61616c #151518; }
 .case-card { position: relative; isolation: isolate; display: block; flex: 0 0 calc(46vw - 12px); height: min(76svh, 850px); min-height: 440px; overflow: hidden; scroll-snap-align: start; background: #202023; color: #fff; text-decoration: none; }
-.case-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--case-focus, 50%) 50%; transition: transform .8s cubic-bezier(.16,1,.3,1); }
+.case-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--case-focus, 50%) 50%; transition: transform var(--case-image-duration) var(--case-image-ease); }
 .case-card--emyasa { --case-focus: 50%; }
 .case-card--stone-kuche { --case-focus: 56%; }
 .case-card--parsomen { --case-focus: 50%; }

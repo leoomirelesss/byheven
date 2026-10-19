@@ -32,9 +32,14 @@ export function createCaseChoreography(clock: Clock) {
   const measure = () => {
     enabled = !reduced.matches && window.innerHeight >= 600;
     parallaxEnabled = window.innerWidth >= 900 && window.innerHeight >= 640;
+    let rowTop = -Infinity, rowIndex = 0;
     entries.forEach(entry => {
       entry.top = entry.element.getBoundingClientRect().top + window.scrollY - entry.shift;
       entry.height = entry.element.offsetHeight;
+      if (entry.image) {
+        if (Math.abs(entry.top - rowTop) > 2) { rowTop = entry.top; rowIndex = 0; }
+        entry.index = rowIndex++;
+      }
       entry.last = '';
       if (!enabled) clear(entry);
       else entry.element.classList.add('is-case-motion');
@@ -64,7 +69,7 @@ export function createCaseChoreography(clock: Clock) {
   }});
   const focus = (event: FocusEvent) => {
     const entry = entries.find(entry => entry.element.contains(event.target as Node));
-    if (entry) { entry.done = true; clock.invalidate(); }
+    if (entry) { entry.done = true; entry.value = 1; clock.invalidate(); }
   };
   document.addEventListener('focusin', focus); reduced.addEventListener('change', clock.invalidate);
   return () => { unsubscribe(); document.removeEventListener('focusin', focus); reduced.removeEventListener('change', clock.invalidate); entries.forEach(clear); };
