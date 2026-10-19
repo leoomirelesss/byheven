@@ -44,9 +44,9 @@ for (const [index, slug] of slugs.entries()) {
 }
 
 // Exercise the same click controller with and without native transition APIs.
-function navigation({native=false,reduced=false,entry=null,blockedStorage=false,start='https://example.com/case-studies/',loading=false,canAnimate=true}={}) {
-  const documentEvents={},windowEvents={},classes=new Set(),assigned=[],animations=[],children=[];
-  let saved=entry, scrolled=0, resets=0;
+function navigation({native=false,reduced=false,entry=null,blockedStorage=false,start='https://example.com/case-studies/',loading=false,canAnimate=true,saveData=false,imageReady=true,imageHangs=false}={}) {
+  const documentEvents={},windowEvents={},classes=new Set(),assigned=[],animations=[],children=[],resources=[];
+  const timers=new Map();let timerId=0,saved=entry,scrolled=0,resets=0;
   const location=new URL(start);location.assign=url=>assigned.push(url);
   const classList={add:(...names)=>names.forEach(n=>classes.add(n)),remove:(...names)=>names.forEach(n=>classes.delete(n)),contains:n=>classes.has(n)};
   const animate=(target,frames,options)=>{
@@ -57,22 +57,25 @@ function navigation({native=false,reduced=false,entry=null,blockedStorage=false,
   const curtain={style:{},setAttribute(){},animate:(frames,options)=>animate('curtain',frames,options)};
   const main={animate:(frames,options)=>animate('main',frames,options)};
   const root={classList,...(canAnimate?{animate(){}}:{})};
-  const window={HevenMotion:{reset(){resets++;}},matchMedia:()=>({matches:reduced}),addEventListener:(name,fn)=>{windowEvents[name]=fn;}};
+  const window={HevenMotion:{reset(){resets++;}},innerWidth:1920,innerHeight:1080,devicePixelRatio:1,navigator:{connection:{saveData}},matchMedia:()=>({matches:reduced}),addEventListener:(name,fn)=>{windowEvents[name]=fn;}};
   if(native)Object.assign(window,{CSSViewTransitionRule:class{},onpageswap:null,onpagereveal:null});
+  const document={readyState:loading?'loading':'complete',documentElement:root,createElement:tag=>tag==='link'?{}:curtain,body:{append:element=>children.push(element)},head:{append:element=>resources.push(element)},
+    querySelector:selector=>selector==='main'?main:selector==='[data-case-hero] img'?{complete:imageReady,decode:()=>imageHangs?new Promise(()=>{}):Promise.resolve()}:null,
+    getElementById:id=>['work','services','faq','inicio','contact'].includes(id)?{scrollIntoView(){scrolled++;}}:null,
+    addEventListener:(name,fn)=>{documentEvents[name]=fn;},removeEventListener:name=>{delete documentEvents[name];}};
   vm.runInNewContext(read('assets/page-transitions.js'),{
-    window,location,URL,setTimeout:()=>0,
+    window,location,URL,setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),
     sessionStorage:{getItem(){if(blockedStorage)throw Error('denied');return saved;},removeItem(){saved=null;},setItem(_,v){if(blockedStorage)throw Error('denied');saved=v;}},
-    document:{readyState:loading?'loading':'complete',documentElement:root,createElement:()=>curtain,body:{append:element=>children.push(element)},
-      querySelector:selector=>selector==='main'?main:selector==='[data-case-hero] img'?{decode:()=>Promise.resolve()}:null,
-      getElementById:id=>['work','services','faq','inicio','contact'].includes(id)?{scrollIntoView(){scrolled++;}}:null,
-      addEventListener:(name,fn)=>{documentEvents[name]=fn;}},
+    document,
   });
   const click=(href,overrides={},attributes={})=>{
     const link={href:new URL(href,location.href).href,target:attributes.target||'',hasAttribute:name=>!!attributes[name],closest:()=>attributes.studio?{}:null};
     const event={target:{closest:()=>link},button:0,defaultPrevented:false,preventDefault(){this.defaultPrevented=true;},...overrides};
     return{event,done:documentEvents.click?.(event)};
   };
-  return{click,assigned,classes,documentEvents,windowEvents,animations,children,location,
+  const intent=(href,type='pointerover')=>documentEvents[type]?.({target:{closest:()=>({href:new URL(href,location.href).href,hasAttribute:()=>false})}});
+  return{click,intent,assigned,classes,documentEvents,windowEvents,animations,children,resources,document,location,
+    timers:delay=>{for(const [id,timer] of timers)if(timer.delay===delay){timers.delete(id);timer.fn();}},
     finish:()=>animations.filter(a=>a.target==='curtain'&&!a.done).at(-1)?.finish(),saved:()=>saved,scrolled:()=>scrolled,resets:()=>resets};
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
@@ -102,12 +105,24 @@ for(const native of [false,true])for(const blockedStorage of [false,true]){
     env.windowEvents.pageshow({persisted:true});assert(!env.classes.size,'back/forward removes all transient layers');
   }
 }
-// Studio anchors on the home use the same curtain while keeping one-page navigation.
-for(const native of [false,true]){
-  const env=navigation({native,start:'https://example.com/'});const pending=env.click('#services',{}, {studio:true});
-  assert(pending.event.defaultPrevented);env.finish();await flush();
-  assert.equal(env.scrolled(),1);assert.equal(env.resets(),1);assert.equal(env.location.hash,'#services');assert.equal(env.assigned.length,0);
-  env.finish();await pending.done;assert(!env.classes.size);
+// Menu/footer anchors never obscure or transform the existing scroll storytelling.
+for(const native of [false,true])for(const href of ['#inicio','#services','#work','#faq','#contact','/#services']){
+  const env=navigation({native,start:'https://example.com/'});const pending=env.click(href,{}, {studio:true});
+  assert(!pending.event.defaultPrevented,href+' stays native within the home');
+  assert.equal(env.animations.length,0);assert.equal(env.assigned.length,0);assert.equal(env.resources.length,0);assert(!env.classes.size);
+}
+assert(!navigation().click('/case-studies').event.defaultPrevented,'canonical slash variants are the same document');
+// Warm only intended page changes, once per destination, with the corresponding hero.
+{
+  const env=navigation({start:'https://example.com/'});
+  for(const href of ['#services','/#work','https://outside.example/'])env.intent(href);
+  assert.equal(env.resources.length,0);
+  env.intent('/case-studies/emyasa/');env.intent('/case-studies/emyasa/#project-work','focusin');
+  assert.equal(env.resources.length,2);
+  assert.equal(env.resources[0].href,'https://example.com/case-studies/emyasa/');assert.equal(env.resources[0].as,'document');
+  assert.equal(env.resources[1].href,'/assets/cases/heroes/emyasa.webp');assert.equal(env.resources[1].as,'image');
+  assert.equal(env.animations.length,0,'warming does not start an animation');
+  const saving=navigation({saveData:true});saving.intent('/case-studies/dor/');assert.equal(saving.resources.length,0);
 }
 // A restored page cannot finish an older departure over a newer navigation.
 {
@@ -119,9 +134,25 @@ for(const native of [false,true]){
   const url='https://example.com/case-studies/emyasa/';
   const env=navigation({start:url,entry:url,loading:true});
   assert(env.classes.has('is-page-entering'));assert.equal(env.children.length,0,'head bootstrap covers the page before body parsing');
-  env.documentEvents.DOMContentLoaded();await flush();assert.equal(env.children.length,1);
+  env.document.readyState='interactive';env.documentEvents.readystatechange();await flush();assert.equal(env.children.length,1);
+  assert(!env.documentEvents.readystatechange,'entry mounts once before deferred modules finish');
   env.windowEvents.pageshow({persisted:false});assert(env.classes.has('is-page-leaving'),'initial pageshow does not cancel entry');
   env.finish();await flush();assert(!env.classes.size,'entry releases its curtain and content effects');
+  assert(env.animations.every(a=>a.target==='curtain'),'no blur or transform on main: fixed backgrounds and sticky chapters keep their geometry');
+}
+{
+  const url='https://example.com/#services';const env=navigation({start:url,entry:url,imageReady:false});
+  assert.equal(env.scrolled(),1,'a cross-page return settles its section under the cover');await flush();
+  assert.equal(env.animations.length,1);assert.equal(env.animations[0].options.duration,520);env.finish();await flush();assert(!env.classes.size);
+}
+{
+  const url='https://example.com/case-studies/emyasa/';const env=navigation({start:url,entry:url,imageReady:false,imageHangs:true});
+  assert.equal(env.animations.length,0);env.timers(150);await flush();
+  assert.equal(env.animations.length,1,'a slow hero cannot hold the reveal beyond its short decoding budget');env.finish();await flush();assert(!env.classes.size);
+}
+{
+  const env=navigation();const pending=env.click('/case-studies/dor/');env.finish();await pending.done;
+  env.timers(8000);assert(!env.classes.size,'a failed or canceled navigation releases the overlay');
 }
 {
   const env=navigation({start:'https://example.com/case-studies/',entry:'https://example.com/case-studies',loading:true});
@@ -130,12 +161,14 @@ for(const native of [false,true]){
 for(const path of ['index.html','case-studies/index.html',...slugs.map(slug=>`case-studies/${slug}/index.html`)]){
   const html=read(path);assert(html.includes('/assets/page-transitions.css')&&html.includes('<script src="/assets/page-transitions.js"></script>'));
 }
-for(const slug of slugs){
+for(const [index,slug] of slugs.entries()){
   const html=read(`case-studies/${slug}/index.html`);
   assert(html.includes(`/assets/cases/heroes/${slug}.webp`));
   const photos=[...html.matchAll(/<img[^>]+src="([^\"]+\.webp)"/g)];
+  const next=slugs[(index+1)%slugs.length];
+  assert(new RegExp(`class="case-next-cover"[^>]*><img src="/assets/cases/heroes/${next}\\.webp"`).test(html),'each next-case teaser has its destination image');
   if(['dor-os','academic-quest'].includes(slug)){
-    assert.equal(photos.length,1,'apps display only their hero');assert(!html.includes('case-showcase'));
+    assert.equal(photos.length,2,'apps have their hero and next-case teaser');assert(!html.includes('case-showcase'),'apps have no interior screenshot gallery');
   }else assert(html.includes(`/assets/cases/screens/${slug}.webp`));
 }
-console.log('PASS: supplied case assets, hero-only apps, shared footer, reversible hero, menu/footer/carousel transitions, home anchors, pre-paint entry, restored history and reduced motion.');
+console.log('PASS: six photo teasers, supplied assets, apps without interior galleries, shared footer, reversible hero, cross-page transitions, native home anchors, intent prefetch, early entry, restored history and reduced motion.');

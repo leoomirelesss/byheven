@@ -39,8 +39,6 @@ body[data-case-detail] { background: #0c0912; padding-bottom: 0; overflow-x: cli
 .case-next-cover::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #0c09121a, #0c0912ba); }
 .case-next-cover h2 { margin: 0; max-width: 85%; color: #f1edf4; font: 400 clamp(46px, 8.5vw, 165px)/1.02 'Outfit',sans-serif; letter-spacing: -.055em; }
 .case-next-cover .case-arrow { width: clamp(48px, 5vw, 84px); height: auto; aspect-ratio: 1; }
-.case-next-cover--text { min-height: 220px; padding-inline: 0; }
-.case-next-cover--text::before { display: none; }
 .case-next-cover:focus-visible { outline: 3px solid #ceced7; outline-offset: 6px; }
 [data-case-detail] .case-invitation { border: 0; margin-top: 60px; }
 @media (hover:hover) and (pointer:fine) { .case-next-cover:hover > img { transform: scale(1.035); } }
@@ -60,7 +58,6 @@ body[data-case-detail] { background: #0c0912; padding-bottom: 0; overflow-x: cli
   .case-next-project { padding: 0; }
   .case-deliverables h2 { font-size: 42px; margin-bottom: 20px; }
   .case-next-cover { min-height: 430px; padding: 24px; }
-  .case-next-cover--text { min-height: 220px; padding: 32px 0; }
   .case-next-cover h2 { max-width: 75%; font-size: clamp(40px, 11vw, 70px); overflow-wrap: anywhere; }
 }
 @media (max-height: 600px) and (min-width: 701px) { .case-hero { height: 650px; } }
