@@ -31,7 +31,7 @@ export default function VapourText({text, progress, tag: Tag = 'h1', className, 
   }, [text]);
   useEffect(() => { renderer.current?.render(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : progress); }, [progress]);
   return <Tag ref={title} className={cn('case-vapour-title', className)} {...props}>
-    {text.split(' ').map((word, index) => <span key={index}>{index > 0 && ' '}<span data-vapour-word>{word}</span></span>)}
+    <span className="case-vapour-ink">{text.split(' ').map((word, index) => <span key={index}>{index > 0 && ' '}<span data-vapour-word>{word}</span></span>)}</span>
     <canvas ref={canvas} className="case-vapour-canvas" aria-hidden="true" />
   </Tag>;
 }

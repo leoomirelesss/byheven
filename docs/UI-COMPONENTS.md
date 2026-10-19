@@ -54,10 +54,16 @@ Home entrances use a quintic ease-in-out curve: soft start, acceleration, soft l
 
 ## Casos reales: título de vapor y fondo
 
-`case-studies/index.html` carga `assets/case-index.css`, el reloj compartido y el bundle `assets/case-index-motion.js` (3.3 KB sin comprimir). El fondo es procedural: negro #090909, neblina violeta apagada y ruido SVG, sin imágenes externas. Solo se aplica al índice de casos.
+`case-studies/index.html` carga `assets/case-index.css`, el reloj compartido y el bundle `assets/case-index-motion.js` (bundle ligero sin runtime React). El fondo es procedural: negro #090909, neblina violeta apagada y ruido SVG, sin imágenes externas. Solo se aplica al índice de casos.
 
 La referencia `VaporizeTextCycle` suministrada se adaptó en `lib/vapour-text.ts` a progreso 0–1 determinado por el scroll. La onda dispersa el título al salir hacia arriba y lo reconstruye al volver; no usa ciclos por tiempo ni física aleatoria por frame. La misma posición produce la misma imagen en ambos sentidos. El H1 HTML se conserva para lectores de pantalla, selección, impresión, fallos de canvas y movimiento reducido; el canvas es decorativo. Se conserva el tamaño editorial y el grid existente.
 
 `components/ui/vapour-text-effect.tsx` ofrece el adaptador React reutilizable con `text`, `progress` y `tag`. React, TypeScript, Tailwind, shadcn y el alias @/ ya estaban configurados: componentes en `components/ui`, utilidad en `lib/utils.ts`, estilos Tailwind en `styles/components.css`; estilos públicos de esta página en `assets/case-index.css`. No se requieren nuevas dependencias ni configuración. El índice usa el mismo motor sin hidratar React. `scripts/build.ts` genera el bundle desde `src/case-index-motion.ts`.
 
 `verify-case-vapour.ts` comprueba reversibilidad, posiciones finitas, reposo sin redibujos, geometría en caché, limpieza, fallback sin canvas y semántica del título. La revisión visual del preview protegido sigue pendiente en el navegador del usuario.
+
+
+### Refinamiento editorial del índice
+El título ocupa dos líneas y el texto introductorio se alinea a su derecha. Las cuatro portadas conservan su relación 5:4, con nombres fuera de la imagen y columnas escalonadas en escritorio; en móvil pasan a una sola columna. El CTA final comparte esa alineación editorial. La luz violeta se concentra detrás de las imágenes, el ruido baja de .09 a .023 y las sombras amplias separan las portadas del fondo. El scroll desplaza la luz hasta 42px y las imágenes hasta 2% dentro de un overscan de 6%; las tarjetas se presentan con una subida de hasta 28px y permanecen legibles al volver.
+
+La dispersión aplica una máscara suave de 48px al HTML original y utiliza partículas circulares pequeñas; evita sustituir las letras por un bitmap durante el movimiento. La onda tiene easing y su recorrido se amplía, manteniendo reversibilidad. El controlador usa geometría en caché y el reloj existente; movimiento reducido limpia los offsets. Verificados build, TypeScript, pruebas de vapor y controlador de profundidad. La validación visual en el preview protegido continúa pendiente en el navegador del usuario.

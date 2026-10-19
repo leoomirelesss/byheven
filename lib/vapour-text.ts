@@ -3,15 +3,16 @@
 export const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
 export const ease = (value: number) => { const t = clamp01(value); return t * t * (3 - 2 * t); };
 export const vaporProgress = (scrollY: number, start: number, distance: number) => clamp01((scrollY - start) / Math.max(1, distance));
+export const vaporFront = (progress: number) => ease(progress) * 1.5 - .22;
 export type VaporParticle = { x: number; y: number; alpha: number; seed: number };
 export function vaporPose(particle: VaporParticle, progress: number, width: number) {
-  const front = progress * 1.48 - .16;
-  const age = clamp01((front - particle.x / Math.max(1, width)) / .32);
+  const front = vaporFront(progress);
+  const age = clamp01((front - particle.x / Math.max(1, width)) / .26);
   const drift = ease(age);
   return {
-    x: particle.x + drift * (36 + particle.seed * 100),
-    y: particle.y + Math.sin(particle.seed * 91) * drift * 58 - drift * drift * 64,
-    alpha: particle.alpha * Math.pow(1 - age, 2),
+    x: particle.x + drift * (24 + particle.seed * 72),
+    y: particle.y + Math.sin(particle.seed * 91) * drift * 22 - drift * drift * 44,
+    alpha: particle.alpha * Math.sin(Math.PI * age) * Math.pow(1 - age, 1.8),
     released: front >= particle.x / Math.max(1, width),
   };
 }
@@ -69,28 +70,25 @@ export function createVapourRenderer(title: HTMLElement, canvas: HTMLCanvasEleme
     last = progress;
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-    // Use the real HTML title at both settled endpoints; preserve semantic text throughout.
+    // Mask the actual HTML glyphs, so their shape and baseline never switch to a bitmap.
+    const front = vaporFront(progress) * width;
+    title.style.setProperty('--vapour-front', `${front}px`);
     if (!progress || progress === 1) {
       title.classList.toggle('is-vaporizing', progress === 1);
       canvas.style.opacity = '0'; return;
     }
-    const front = (progress * 1.48 - .16) * width;
-    context.save();
-    context.beginPath();
-    context.rect(Math.max(0, front + pad), 0, width + pad * 2, height + pad * 2);
-    context.clip();
-    context.drawImage(raster, 0, 0, canvas.width / dpr, canvas.height / dpr);
-    context.restore();
     context.fillStyle = color;
     particles.forEach(particle => {
       const pose = vaporPose(particle, progress, width);
       if (!pose.released || pose.alpha < .01) return;
       context.globalAlpha = pose.alpha;
-      context.fillRect(pose.x + pad, pose.y + pad, 1.4 + particle.seed * .7, 1.4 + particle.seed * .7);
+      context.beginPath();
+      context.arc(pose.x + pad, pose.y + pad, .45 + particle.seed * .35, 0, Math.PI * 2);
+      context.fill();
     });
     context.globalAlpha = 1;
     canvas.style.opacity = '1';
     title.classList.add('is-vaporizing');
   };
-  return {measure, render, destroy() { particles = []; title.classList.remove('is-vaporizing'); canvas.style.opacity = '0'; canvas.width = canvas.height = 0; }};
+  return {measure, render, destroy() { particles = []; title.classList.remove('is-vaporizing'); title.style.removeProperty('--vapour-front'); canvas.style.opacity = '0'; canvas.width = canvas.height = 0; }};
 }

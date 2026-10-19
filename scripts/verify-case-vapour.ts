@@ -12,13 +12,14 @@ assert(!forward[0].released); assert.equal(forward[100].alpha, 0);
 assert(forward.every(pose => Number.isFinite(pose.x) && Number.isFinite(pose.y) && pose.alpha >= 0 && pose.alpha <= 1));
 let reads = 0, draws = 0;
 const context = () => ({
-  setTransform() {}, clearRect() {}, fillText() {}, save() {}, restore() {}, beginPath() {}, rect() {}, clip() {},
+  setTransform() {}, clearRect() {}, fillText() {}, save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, arc() {}, fill() { draws++; },
   drawImage() { draws++; }, fillRect() { draws++; }, measureText: () => ({fontBoundingBoxAscent: 80, fontBoundingBoxDescent: 20}),
   getImageData: () => { const data = new Uint8ClampedArray(400 * 200 * 4); for(let i=3;i<data.length;i+=4)data[i]=255; return {data}; },
   font: '', fillStyle: '', textBaseline: '', letterSpacing: '', globalAlpha: 1,
 });
 const classes = new Set<string>();
 const title = {
+  style: {setProperty() {}, removeProperty() {}},
   getBoundingClientRect() { reads++; return {width: 200, height: 100, top: 0, left: 0}; },
   querySelectorAll: () => [{textContent: 'Casos', getBoundingClientRect() { reads++; return {left: 0, top: 0, height: 100}; }}],
   classList: {add: (name: string) => classes.add(name), remove: (name: string) => classes.delete(name), toggle(name: string, on: boolean) { if(on)classes.add(name);else classes.delete(name); }},
@@ -48,3 +49,38 @@ assert(/canvas[^>]+aria-hidden="true"/.test(html));
 const runtime = readFileSync(new URL('../src/case-index-motion.ts', import.meta.url), 'utf8');
 assert(!/setTimeout|setInterval|requestAnimationFrame/.test(runtime), 'the effect uses the existing scroll clock without a timed cycle');
 console.log('PASS: vapour poses are deterministic and reversible; bounded opacity, cached drawing, no idle redraw, HTML fallback, teardown, semantic title and shared-clock integration.');
+
+// Run the real index controller with geometry and render spies.
+const {transformSync} = await import('esbuild');
+const {default: vm} = await import('node:vm');
+const values = () => { const data: Record<string,string> = {}; return {data, setProperty(k:string,v:string){data[k]=v;},removeProperty(k:string){delete data[k];}}; };
+let controllerReads = 0;
+const media = {matches: false, addEventListener() {}, removeEventListener() {}};
+const page = {scrollY: 0, innerHeight: 900, matchMedia: () => media, addEventListener() {}};
+const photo = {style: values()};
+const card = {style: values(), offsetHeight: 500, querySelector: () => photo, contains: () => true, getBoundingClientRect(){controllerReads++;return {top:1200-page.scrollY+(parseFloat(this.style.data['--case-reveal-y'])||0)};}};
+const heading = {querySelector: () => ({}), getBoundingClientRect: () => ({width: 600,height:300})};
+const hero = {offsetHeight: 600, querySelector: () => heading, getBoundingClientRect: () => ({top:100-page.scrollY})};
+const atmosphere = {style: values()};
+let client: {measure:()=>void; render:(s:{y:number;height:number;dt:number;immediate:boolean})=>boolean};
+const documentEvents: Record<string,(event:unknown)=>void> = {};
+const clock = {subscribe(value:typeof client){client=value;return ()=>{};},invalidate(){client.measure();}};
+const controller = transformSync(runtime.replace(/^import[^\n]+\n/, ''), {loader:'ts',format:'iife'}).code;
+vm.runInNewContext(controller, {
+ window: {...page, HevenMotion:clock, get scrollY(){return page.scrollY;}},
+ document: {querySelector:(s:string)=>s==='[data-case-vapour]'?hero:atmosphere,querySelectorAll:()=>[card],fonts:{ready:Promise.resolve()},addEventListener:(name:string,fn:(event:unknown)=>void)=>{documentEvents[name]=fn;},removeEventListener(){}},
+ ResizeObserver:class{observe(){}disconnect(){}},
+ createVapourRenderer:()=>({measure(){},render(){},destroy(){}}),vaporProgress,
+ clamp01:(v:number)=>Math.max(0,Math.min(1,v)),ease:(v:number)=>v*v*(3-2*v),
+});
+await Promise.resolve();
+const renderAt = (y:number) => {page.scrollY=y;return client.render({y,height:900,dt:16.67,immediate:true});};
+client!.measure();const before=controllerReads;renderAt(500);
+assert.equal(controllerReads,before,'depth scroll frames use cached geometry');
+assert(Math.abs(parseFloat(photo.style.data['--case-image-y']))<=2,'cover travel remains inside its overscan');
+renderAt(900);assert.equal(card.style.data['--case-reveal-opacity'],'1');renderAt(0);assert.equal(card.style.data['--case-reveal-opacity'],'1','presented cards stay readable when returning');
+renderAt(10000);assert.equal(atmosphere.style.data['--case-ambient-y'],'-42px','background depth is bounded');
+assert.equal(renderAt(10000),false,'depth controller never spins an idle animation loop');
+media.matches=true;client!.measure();assert.equal(photo.style.data['--case-image-y'],undefined);assert.equal(atmosphere.style.data['--case-ambient-y'],undefined);
+assert.equal((html.match(/class="case-index-media"/g)||[]).length,4,'every project has its own media plane');
+console.log('PASS: index depth uses cached geometry, bounded image/background offsets, persistent card visibility, idle sleep and reduced-motion cleanup.');
