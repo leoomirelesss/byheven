@@ -81,6 +81,7 @@ body[data-case-page] a { color: inherit; }
 .case-facts dt { color: #9999a5; }
 .case-facts dd { margin: 0; text-align: right; }
 .case-detail-image { padding: 0 2.65vw; margin: 0; }
+.case-detail-image--app { width: min(100%, 800px); margin-inline: auto; }
 .case-detail-image img { display: block; width: 100%; height: auto; }
 .case-detail-image figcaption { margin-top: 13px; color: #9999a5; font-size: 12px; }
 .case-detail-scope { display: grid; grid-template-columns: 1fr 1fr; gap: 9vw; padding: 90px 2.65vw 40px; }
