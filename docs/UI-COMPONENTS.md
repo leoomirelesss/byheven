@@ -83,3 +83,11 @@ Se retiraron las etiquetas «(SIGUIENTE PROYECTO)» y «(04 proyectos)» del ín
 La base del fondo del índice cambia solamente a violeta casi negro #0C0912 y la sombra a #08060D, manteniendo pliegues, luces, grano, exposición fija y composición. El título «Tu negocio. Nuestro siguiente proyecto.» del home baja a clamp(45px, 5.8vw, 108px) y a clamp(38px, 10.2vw, 66px) en móvil, acorde con los otros h2 del home.
 
 Verificados build/TypeScript, igualdad del markup del footer con el home, enlaces entre páginas, un solo controlador de menú, visibilidad del dock, aislamiento del menú, foco con Escape y reveal del footer. La comprobación visual del preview sigue pendiente en el navegador del usuario.
+
+
+### Consistencia entre home y proyectos
+Los enlaces de «Estudio» coinciden con el menú: Inicio, Servicios, Proyectos, Preguntas frecuentes y Hablemos. Ambos footers tienen el mismo elemento `footer-atmosphere flow-light` y las mismas reglas; una capa propia evita depender del desbordamiento del ambiente del home. El índice muestra Scroll ↓ donde antes estaba el contador y lo oculta al primer desplazamiento con 260ms, igual que el home.
+
+`HevenMotion.settings` es ahora el perfil común: rueda .68/110ms, amortiguación 70ms, entrada desde .92 del viewport en .24 de su altura (140–240px), subida 32px, opacidad inicial .72, stagger de 24px hasta 72px, desfase .14 y parallax máximo 2.5%. El home consume estos valores y el índice usa la misma amortiguación/easing; las imágenes comparten escala 1.065 y hover 1.09. La galería horizontal y el índice vertical conservan sus direcciones, usando la misma amplitud y los mismos límites de viewport (900px de ancho y 640px de alto). El fondo principal de proyectos sigue congelado.
+
+Pruebas: perfil del reloj real compartido, menús/footers equivalentes, capa de luz idéntica, cue al primer scroll, build/TypeScript, movimiento y teléfono. Revisión visual del preview pendiente en el navegador del usuario.

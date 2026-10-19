@@ -143,3 +143,8 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 @media (max-height:650px) {
   .cinema-menu-panel.mobile-menu-panel { justify-content: flex-start; padding-top: 32px; padding-bottom: 100px; }
 }
+
+/* The same static purple light on every footer. */
+.sticky-footer-wrapper { z-index: 11; }
+.sticky-footer { isolation: isolate; }
+.sticky-footer > .footer-atmosphere.flow-light { position: absolute; inset: 0; z-index: 0; pointer-events: none; }

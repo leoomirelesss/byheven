@@ -24,11 +24,16 @@ body[data-case-index] .case-invitation { border-top: 0; }
 /* Transform-only movement preserves the established grid, spacing and caption placement. */
 body[data-case-index] .is-case-motion { transform: translate3d(0, var(--case-entry-y, 0px), 0); opacity: var(--case-entry-opacity, 1); }
 body[data-case-index] .case-index-grid .is-case-motion .case-card-bottom { transform: translate3d(0, var(--case-caption-y, 0px), 0); }
-body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: 0 var(--case-image-depth, 0%); transform: scale(1.06); }
+body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: 0 var(--case-image-depth, 0%); transform: scale(var(--case-cover-scale)); }
 @media (hover: hover) and (pointer: fine) {
-  body[data-case-index] .case-index-grid .is-case-motion:hover .case-cover { transform: scale(1.08); }
+  body[data-case-index] .case-index-grid .is-case-motion:hover .case-cover { transform: scale(var(--case-cover-hover-scale)); }
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-case-index] .is-case-motion, body[data-case-index] .is-case-motion .case-card-bottom { transform: none; opacity: 1; }
   body[data-case-index] .is-case-motion .case-cover { translate: none; }
 }
+
+.case-scroll-cue { display: inline-flex; align-items: center; gap: 12px; color: #b5b0c1; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; transition: opacity 260ms ease-out; }
+.case-scroll-cue svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.case-scroll-cue.is-dismissed { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .case-scroll-cue { transition: none; } }

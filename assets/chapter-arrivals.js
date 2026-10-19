@@ -2,6 +2,7 @@
 (() => {
   const clock = window.HevenMotion;
   if (!clock) return;
+  const config = clock.settings;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const entries = [...document.querySelectorAll('[data-arrival-title], [data-arrival-item]')].map(element => ({
     element, lines: [...element.querySelectorAll('[data-arrival-line]')],
@@ -24,7 +25,7 @@
     entries.forEach(entry => {
       const group = entry.element.closest?.("section") || null;
       const order = groups.get(group) || 0;
-      entry.offset = Math.min(72, order * 24);
+      entry.offset = Math.min(config.staggerMax, order * config.stagger);
       groups.set(group, order + 1);
       if (!enabled) { clear(entry); return; }
       // A block's own presentation shift must not change its document trigger.
@@ -34,10 +35,10 @@
   };
   const render = state => {
     if (!enabled) return false;
-    const distance = Math.min(240, Math.max(140, state.height * .24));
+    const distance = Math.min(config.arrivalMax, Math.max(config.arrivalMin, state.height * config.arrivalDistance));
     let moving = false;
     entries.forEach(entry => {
-      const target = entry.done ? 1 : clamp((state.y + state.height * .92 - entry.top - entry.offset) / distance);
+      const target = entry.done ? 1 : clamp((state.y + state.height * config.arrivalStart - entry.top - entry.offset) / distance);
       entry.value = clock.approach(entry.value, target, state.dt, state.immediate);
       moving ||= entry.value !== target;
       if (entry.value === 1) entry.done = true;
@@ -45,14 +46,14 @@
       const eased = ease(entry.value);
       if (entry.lines.length) {
         entry.lines.forEach((line, index) => {
-          const delay = Math.min(.28, index * .14);
+          const delay = Math.min(config.lineDelayMax, index * config.lineDelay);
           const progress = clamp((entry.value - delay) / (1 - delay));
           line.style.setProperty('--arrival-line-y', `${108 * (1 - ease(progress))}%`);
         });
       } else {
-        entry.shift = 32 * (1 - eased);
+        entry.shift = config.arrivalShift * (1 - eased);
         entry.element.style.setProperty('--arrival-y', `${entry.shift}px`);
-        entry.element.style.setProperty('--arrival-opacity', String(.72 + .28 * eased));
+        entry.element.style.setProperty('--arrival-opacity', String(config.arrivalOpacity + (1 - config.arrivalOpacity) * eased));
       }
       entry.last = entry.value;
     });

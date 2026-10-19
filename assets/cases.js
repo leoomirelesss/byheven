@@ -19,7 +19,7 @@
       track.style.transform = `translate3d(${-maxX * progress}px,0,0)`;
       layers.forEach(layer => {
         const position = Math.max(-1, Math.min(1, (layer.center - maxX * progress - viewportWidth / 2) / viewportWidth));
-        layer.image.style.setProperty('--case-depth-x', `${position * -2.5}%`);
+        layer.image.style.setProperty('--case-depth-x', `${position * -clock.settings.parallax}%`);
       });
       story.dataset.caseProgress = progress.toFixed(4);
       lastProgress = progress; force = false;

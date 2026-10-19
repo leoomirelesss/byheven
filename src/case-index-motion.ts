@@ -1,9 +1,9 @@
-import {createCaseChoreography} from '../lib/case-choreography';
+import {createCaseChoreography, type MotionSettings} from '../lib/case-choreography';
 import {createStaticVelvetHaze} from '../lib/velvet-haze';
 import {createVapourRenderer, vaporProgress} from '../lib/vapour-text';
 
 type Frame = {y: number; height: number; dt: number; immediate: boolean};
-type Clock = {subscribe: (client: {measure: () => void; render: (state: Frame) => boolean}) => () => void; invalidate: () => void};
+type Clock = {settings:MotionSettings; approach:(value:number,target:number,dt:number,immediate:boolean)=>number; subscribe: (client: {measure: () => void; render: (state: Frame) => boolean}) => () => void; invalidate: () => void};
 const background = document.querySelector<HTMLCanvasElement>('.case-haze-canvas');
 if (background) {
   const release = createStaticVelvetHaze(background);
@@ -11,6 +11,12 @@ if (background) {
 }
 const clock = (window as Window & {HevenMotion?: Clock}).HevenMotion;
 if (clock) {
+  const cue = document.querySelector<HTMLElement>('.case-scroll-cue');
+  let dismissed = false;
+  clock.subscribe({measure() {}, render(state) {
+    if (cue && !dismissed && state.y > 1) { dismissed = true; cue.classList.add('is-dismissed'); }
+    return false;
+  }});
   const releaseChoreography = createCaseChoreography(clock);
   window.addEventListener('pagehide', event => { if (!event.persisted) releaseChoreography(); });
 }

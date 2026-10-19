@@ -1,3 +1,4 @@
+:root { --case-cover-scale: 1.065; --case-cover-hover-scale: 1.09; }
 /* Real projects, presented as large editorial covers. */
 #work.case-home, body[data-case-page] { background: #090909; color: #ceced7; font-family: 'Outfit', sans-serif; }
 #work.case-home { padding: 0 0 90px; border: 0; }
@@ -131,9 +132,9 @@ body[data-case-page] a { color: inherit; }
 }
 
 /* Scroll parallax is independent of hover zoom and stays inside the cropped cover. */
-.case-story.is-pinned .case-cover { translate: var(--case-depth-x, 0%) 0; transform: scale(1.065); }
+.case-story.is-pinned .case-cover { translate: var(--case-depth-x, 0%) 0; transform: scale(var(--case-cover-scale)); }
 @media (hover: hover) and (pointer: fine) {
   .case-story.is-pinned .case-card:hover .case-cover,
-  .case-story.is-pinned .case-card:focus-visible .case-cover { transform: scale(1.09); }
+  .case-story.is-pinned .case-card:focus-visible .case-cover { transform: scale(var(--case-cover-hover-scale)); }
 }
 @media (prefers-reduced-motion: reduce) { .case-cover { translate: none !important; } }

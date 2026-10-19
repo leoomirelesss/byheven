@@ -1,5 +1,6 @@
 /* One demand-driven clock for wheel easing and every scroll-driven chapter. */
 (() => {
+  const settings = Object.freeze({wheelGain: .68, wheelEase: 110, followEase: 70, arrivalStart: .92, arrivalDistance: .24, arrivalMin: 140, arrivalMax: 240, arrivalShift: 32, arrivalOpacity: .72, stagger: 24, staggerMax: 72, lineDelay: .14, lineDelayMax: .28, parallax: 2.5});
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const clients = new Set();
   let frame = 0, previousTime = 0, previousY = window.scrollY;
@@ -22,7 +23,7 @@
     }
     limit = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
-    const delta = event.deltaY * unit * .68;
+    const delta = event.deltaY * unit * settings.wheelGain;
     const current = window.scrollY;
     if (!wheelActive || delta * (wheelTarget - current) < 0) { wheelTarget = current; wheelPosition = current; }
     const next = clamp(wheelTarget + delta);
@@ -44,7 +45,7 @@
     if (wheelActive) {
       wheelTarget = clamp(wheelTarget);
       const current = window.scrollY;
-      const next = wheelPosition + (wheelTarget - wheelPosition) * (1 - Math.exp(-dt / 110));
+      const next = wheelPosition + (wheelTarget - wheelPosition) * (1 - Math.exp(-dt / settings.wheelEase));
       wheelPosition = next;
       const settled = Math.abs(wheelTarget - next) < 1;
       window.scrollTo({top: settled ? wheelTarget : next, behavior: 'instant'});
@@ -68,12 +69,13 @@
     else previousTime = 0;
   }
   window.HevenMotion = {
+    settings,
     subscribe(client) { clients.add(client); invalidate(); return () => clients.delete(client); },
     wake, invalidate, reset,
     // Time-based damping feels the same at 60 and 120Hz; exact endpoints let sticky release cleanly.
     approach(value, target, dt, immediate = false, epsilon = .0001) {
       if (immediate || Math.abs(target - value) < epsilon) return target;
-      const next = value + (target - value) * (1 - Math.exp(-dt / 70));
+      const next = value + (target - value) * (1 - Math.exp(-dt / settings.followEase));
       return Math.abs(target - next) < epsilon ? target : next;
     },
   };

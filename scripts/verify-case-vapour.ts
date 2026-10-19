@@ -90,11 +90,16 @@ console.log('PASS: frozen haze draws only initially/on resize, caches equal size
 
 
 const {caseEntrance, caseDepth, entranceEase, createCaseChoreography} = await import('../lib/case-choreography');
+const {default: profileVM} = await import('node:vm');
+const profileWindow: Record<string,unknown> = {scrollY:0,innerHeight:900,matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(){}};
+profileVM.runInNewContext(readFileSync(new URL('../assets/scroll-story.js',import.meta.url),'utf8'),{window:profileWindow,document:{hidden:false,querySelector:()=>null,addEventListener(){}},requestAnimationFrame:()=>1,cancelAnimationFrame(){}});
+const sharedProfile = profileWindow.HevenMotion as {settings:Parameters<typeof caseEntrance>[0] & {wheelGain:number;wheelEase:number;followEase:number};approach:(value:number,target:number,dt:number,immediate:boolean)=>number};
+assert.equal(sharedProfile.settings.wheelGain,.68);assert.equal(sharedProfile.settings.wheelEase,110);assert.equal(sharedProfile.settings.followEase,70);
 assert.equal(entranceEase(0),0);assert.equal(entranceEase(1),1);
 assert(entranceEase(.1)<.02 && entranceEase(.2)-entranceEase(.1)>entranceEase(.1),'entrance starts gently and accelerates');
-const first = caseEntrance(500,1200,900), second = caseEntrance(500,1200,900,44);
+const first = caseEntrance(sharedProfile.settings,500,1200,900), second = caseEntrance(sharedProfile.settings,500,1200,900,sharedProfile.settings.stagger);
 assert(first.y<second.y,'the second item enters after the first');assert(first.captionY>0,'caption has its own delayed arrival');
-for(let y=0;y<8000;y+=50)assert(Math.abs(caseDepth(y,1200,600,900))<=2,'image depth stays inside the overscan');
+for(let y=0;y<8000;y+=50)assert(Math.abs(caseDepth(y,1200,600,900,sharedProfile.settings.parallax))<=sharedProfile.settings.parallax,'image depth stays inside the overscan');
 let layoutReads=0, measuredClient: {measure:()=>void;render:(s:{y:number;height:number})=>boolean};
 let invalidations=0;
 const mediaMotion={matches:false,addEventListener(){},removeEventListener(){}};
@@ -105,7 +110,7 @@ const classNames=new Set<string>();
 const motionCard={style:motionStyle(),offsetHeight:600,querySelector:()=>photoMotion,contains:()=>true,classList:{add:(s:string)=>classNames.add(s),remove:(s:string)=>classNames.delete(s)},getBoundingClientRect(){layoutReads++;return{top:1200-frameWindow.scrollY+(parseFloat(this.style.data['--case-entry-y'])||0)};}};
 const eventHandlers:Record<string,(event:unknown)=>void>={};
 Object.assign(globalThis,{window:frameWindow,document:{querySelectorAll:(s:string)=>s.includes('case-index-grid')?[motionCard]:[],addEventListener:(s:string,fn:(event:unknown)=>void)=>{eventHandlers[s]=fn;},removeEventListener:(s:string)=>{delete eventHandlers[s];}}});
-const motionClock={subscribe(client:typeof measuredClient){measuredClient=client;return()=>{};},invalidate(){invalidations++;measuredClient.measure();}};
+const motionClock={settings:sharedProfile.settings,approach:sharedProfile.approach,subscribe(client:typeof measuredClient){measuredClient=client;return()=>{};},invalidate(){invalidations++;measuredClient.measure();}};
 const disposeMotion=createCaseChoreography(motionClock);measuredClient!.measure();
 const readCount=layoutReads;measuredClient!.render({y:500,height:900});assert.equal(layoutReads,readCount,'scroll frames do not measure layout');
 const shiftBefore=motionCard.style.data['--case-entry-y'];measuredClient!.measure();measuredClient!.render({y:500,height:900});assert(Math.abs(parseFloat(shiftBefore)-parseFloat(motionCard.style.data['--case-entry-y']))<1e-8,'own shift never changes the trigger');
@@ -144,3 +149,13 @@ escapeKey({key:'Escape'});assert(!footerMain.inert&&footerPanel.inert&&footerLin
 footerObservers[0].callback([{target:sharedFooter,isIntersecting:false,intersectionRect:{height:0}}]);assert(!footerNav.inert,'dock returns when leaving footer');
 footerObservers[1].callback([{isIntersecting:true}]);assert(footerColumns[0].classList.contains('visible'),'footer content is revealed');
 console.log('PASS: matching home footer, cross-page anchors, one navigation owner, dock visibility, menu isolation, escape focus and footer reveal.');
+
+const menuSection=(page:string)=>page.slice(page.indexOf('id="mobile-menu-panel"'),page.indexOf('</div>',page.indexOf('id="mobile-menu-panel"')));
+const studioSection=(page:string)=>page.slice(page.indexOf('id="fc1"'),page.indexOf('</ul>',page.indexOf('id="fc1"')));
+const navLinks=(section:string)=>[...section.matchAll(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].map(match=>[match[1],match[2]]);
+assert.deepEqual(navLinks(studioSection(homeHtml)),navLinks(menuSection(homeHtml)),'home studio links match its menu');
+assert.deepEqual(navLinks(studioSection(html)),navLinks(menuSection(html)),'case studio links match its menu');
+assert(homeFooter.includes('footer-atmosphere flow-light'),'both footers have the identical explicit gradient layer');
+assert(html.includes('class="case-scroll-cue"'),'scroll cue occupies the removed counter slot');
+assert(runtime.includes("state.y > 1")&&runtime.includes("cue.classList.add('is-dismissed')"),'cue dismisses on the first scroll');
+console.log('PASS: identical menu/footer destinations, shared footer light, first-scroll cue and shared home motion profile.');
