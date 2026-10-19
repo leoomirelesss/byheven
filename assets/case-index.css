@@ -1,53 +1,22 @@
-/* Editorial index. The light sits behind the work, with restrained texture. */
-body[data-case-index] { isolation: isolate; background: #090909; overflow-x: clip; --case-gutter: clamp(24px, 4.2vw, 84px); padding-bottom: 100px; }
-.case-index-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 15% 18%, #131016, transparent 60%), #090909; }
-.case-index-atmosphere::before { content: ''; position: absolute; inset: -18%; background: radial-gradient(ellipse at 79% 64%, #61527e70 0, #39264e45 21%, transparent 48%), radial-gradient(ellipse at 24% 29%, #3e2b5260 0, transparent 38%); filter: blur(62px); transform: translate3d(0, var(--case-ambient-y, 0px), 0); }
+/* Frozen Velvet Haze. Layout and hierarchy come from the original cases.css. */
+body[data-case-index] { isolation: isolate; background: #090909; overflow-x: clip; }
+.case-index-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: #090909; }
+/* Static fallback retains the folded light if WebGL is unavailable. */
+.case-index-atmosphere::before { content: ''; position: absolute; inset: -3%; background: linear-gradient(156deg, transparent 26%, #090909b8 49%, #090909 74%), radial-gradient(ellipse at 79% 4%, #49358d75, transparent 43%), radial-gradient(ellipse at 28% 20%, #82788f70, #40334f60 34%, transparent 65%), #090909; filter: blur(25px); }
 .case-index-atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .023; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); background-size: 180px 180px; }
-body[data-case-index] .case-page-chrome { padding: 32px var(--case-gutter); }
-body[data-case-index] .case-index-hero { padding: clamp(50px, 7svh, 85px) var(--case-gutter) clamp(64px, 7vw, 124px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, .4fr); column-gap: 7vw; row-gap: clamp(30px, 3.3vw, 60px); align-items: end; }
-body[data-case-index] .case-index-caption { grid-column: 1 / -1; grid-row: 1; margin: 0; align-items: center; color: #96909f; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
-body[data-case-index] .case-index-hero h1 { grid-column: 1; grid-row: 2; font-size: clamp(90px, 12.4vw, 224px); line-height: .88; letter-spacing: -.065em; }
-body[data-case-index] .case-index-hero > p { grid-column: 2; grid-row: 2; max-width: 290px; margin: 0 0 7px; color: #aba5b5; font-size: clamp(15px, 1.15vw, 21px); line-height: 1.5; letter-spacing: -.015em; }
+.case-haze-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.case-haze-canvas[data-haze-ready] { opacity: 1; }
+.case-index-atmosphere:has(.case-haze-canvas[data-haze-ready])::before,
+.case-index-atmosphere:has(.case-haze-canvas[data-haze-ready])::after { display: none; }
 .case-vapour-title { position: relative; }
 .case-vapour-ink { display: block; }
 .case-vapour-title [data-vapour-word] { display: inline-block; }
 .case-vapour-title.is-vaporizing > .case-vapour-ink { -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--vapour-front) - 24px), #000 calc(var(--vapour-front) + 24px)); mask-image: linear-gradient(90deg, transparent calc(var(--vapour-front) - 24px), #000 calc(var(--vapour-front) + 24px)); }
 .case-vapour-canvas { position: absolute; pointer-events: none; opacity: 0; max-width: none; }
-body[data-case-index] .case-index-grid { padding: 0 var(--case-gutter); gap: clamp(60px, 6vw, 112px) clamp(24px, 4vw, 72px); align-items: start; }
-body[data-case-index] .case-index-grid .case-card { min-height: 0; height: auto; aspect-ratio: auto; background: transparent; overflow: visible; opacity: var(--case-reveal-opacity, 1); transform: translate3d(0, var(--case-reveal-y, 0px), 0); }
-body[data-case-index] .case-index-grid .case-card:nth-child(even) { margin-top: clamp(48px, 7vw, 126px); }
-body[data-case-index] .case-index-grid .case-card::after { display: none; }
-.case-index-media { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 5/4; background: #151219; box-shadow: 0 22px 60px -24px #000c, 0 60px 110px -60px #000a; }
-.case-index-media .case-cover { translate: 0 var(--case-image-y, 0%); transform: scale(1.06); }
-body[data-case-index] .case-card-bottom { position: static; padding: 23px 0 0; align-items: center; gap: 12px; }
-body[data-case-index] .case-card-bottom h3 { color: #ceced7; font-size: clamp(25px, 2.4vw, 44px); font-weight: 400; letter-spacing: -.045em; }
-body[data-case-index] .case-card-bottom p { color: #a49cac; font-size: 12px; margin-top: 9px; }
-body[data-case-index] .case-arrow { width: 42px; height: 42px; background: transparent; border-color: #b6a7cc35; color: #ceced7; }
-body[data-case-index] .case-arrow .ui-arrow { width: 17px; height: 17px; }
-body[data-case-index] .case-invitation { margin: clamp(100px, 12vw, 210px) var(--case-gutter) 0; padding: 0 0 60px; border: 0; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 36px; }
-body[data-case-index] .case-invitation h2 { margin: 0; font-size: clamp(46px, 6.4vw, 116px); line-height: .98; letter-spacing: -.055em; }
-body[data-case-index] .case-invitation .case-text-link { margin-bottom: 6px; font-size: 13px; }
-@media (hover: hover) and (pointer: fine) {
-  body[data-case-index] .case-card:hover .case-cover { transform: scale(1.085); }
-  body[data-case-index] .case-card:hover .case-arrow { background: #ceced7; color: #241833; border-color: #ceced7; }
-}
-@media (max-width: 700px) {
-  body[data-case-index] .case-page-chrome { padding: 24px var(--case-gutter); }
-  body[data-case-index] .case-index-hero { padding-top: 48px; grid-template-columns: 1fr; row-gap: 30px; }
-  body[data-case-index] .case-index-hero h1 { font-size: clamp(88px, 20vw, 140px); grid-column: 1; }
-  body[data-case-index] .case-index-hero > p { grid-column: 1; grid-row: 3; max-width: 300px; font-size: 15px; }
-  body[data-case-index] .case-index-caption { font-size: 8px; gap: 20px; }
-  body[data-case-index] .case-index-grid { grid-template-columns: 1fr; row-gap: 52px; }
-  body[data-case-index] .case-index-grid .case-card:nth-child(even) { margin-top: 0; }
-  body[data-case-index] .case-card-bottom { padding-top: 18px; }
-  body[data-case-index] .case-invitation { grid-template-columns: 1fr; margin-top: 100px; }
-  .case-index-atmosphere::before { filter: blur(38px); }
-}
+body[data-case-index] .case-invitation { border-top: 0; }
+@media (max-width: 600px) { body[data-case-index] .case-index-hero h1 { font-size: clamp(60px, 16vw, 96px); } }
 @media (prefers-reduced-motion: reduce) {
   .case-vapour-title.is-vaporizing > .case-vapour-ink { mask-image: none; -webkit-mask-image: none; }
   .case-vapour-canvas { display: none; }
-  body[data-case-index] .case-index-grid .case-card { transform: none; opacity: 1; }
-  .case-index-media .case-cover { translate: none; transform: none !important; }
-  .case-index-atmosphere::before { transform: none; }
 }
 @media print { .case-index-atmosphere, .case-vapour-canvas { display: none; } .case-vapour-ink { mask-image: none !important; -webkit-mask-image: none !important; } }

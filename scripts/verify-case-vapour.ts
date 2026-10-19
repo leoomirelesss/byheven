@@ -50,37 +50,40 @@ const runtime = readFileSync(new URL('../src/case-index-motion.ts', import.meta.
 assert(!/setTimeout|setInterval|requestAnimationFrame/.test(runtime), 'the effect uses the existing scroll clock without a timed cycle');
 console.log('PASS: vapour poses are deterministic and reversible; bounded opacity, cached drawing, no idle redraw, HTML fallback, teardown, semantic title and shared-clock integration.');
 
-// Run the real index controller with geometry and render spies.
-const {transformSync} = await import('esbuild');
-const {default: vm} = await import('node:vm');
-const values = () => { const data: Record<string,string> = {}; return {data, setProperty(k:string,v:string){data[k]=v;},removeProperty(k:string){delete data[k];}}; };
-let controllerReads = 0;
-const media = {matches: false, addEventListener() {}, removeEventListener() {}};
-const page = {scrollY: 0, innerHeight: 900, matchMedia: () => media, addEventListener() {}};
-const photo = {style: values()};
-const card = {style: values(), offsetHeight: 500, querySelector: () => photo, contains: () => true, getBoundingClientRect(){controllerReads++;return {top:1200-page.scrollY+(parseFloat(this.style.data['--case-reveal-y'])||0)};}};
-const heading = {querySelector: () => ({}), getBoundingClientRect: () => ({width: 600,height:300})};
-const hero = {offsetHeight: 600, querySelector: () => heading, getBoundingClientRect: () => ({top:100-page.scrollY})};
-const atmosphere = {style: values()};
-let client: {measure:()=>void; render:(s:{y:number;height:number;dt:number;immediate:boolean})=>boolean};
-const documentEvents: Record<string,(event:unknown)=>void> = {};
-const clock = {subscribe(value:typeof client){client=value;return ()=>{};},invalidate(){client.measure();}};
-const controller = transformSync(runtime.replace(/^import[^\n]+\n/, ''), {loader:'ts',format:'iife'}).code;
-vm.runInNewContext(controller, {
- window: {...page, HevenMotion:clock, get scrollY(){return page.scrollY;}},
- document: {querySelector:(s:string)=>s==='[data-case-vapour]'?hero:atmosphere,querySelectorAll:()=>[card],fonts:{ready:Promise.resolve()},addEventListener:(name:string,fn:(event:unknown)=>void)=>{documentEvents[name]=fn;},removeEventListener(){}},
- ResizeObserver:class{observe(){}disconnect(){}},
- createVapourRenderer:()=>({measure(){},render(){},destroy(){}}),vaporProgress,
- clamp01:(v:number)=>Math.max(0,Math.min(1,v)),ease:(v:number)=>v*v*(3-2*v),
-});
-await Promise.resolve();
-const renderAt = (y:number) => {page.scrollY=y;return client.render({y,height:900,dt:16.67,immediate:true});};
-client!.measure();const before=controllerReads;renderAt(500);
-assert.equal(controllerReads,before,'depth scroll frames use cached geometry');
-assert(Math.abs(parseFloat(photo.style.data['--case-image-y']))<=2,'cover travel remains inside its overscan');
-renderAt(900);assert.equal(card.style.data['--case-reveal-opacity'],'1');renderAt(0);assert.equal(card.style.data['--case-reveal-opacity'],'1','presented cards stay readable when returning');
-renderAt(10000);assert.equal(atmosphere.style.data['--case-ambient-y'],'-42px','background depth is bounded');
-assert.equal(renderAt(10000),false,'depth controller never spins an idle animation loop');
-media.matches=true;client!.measure();assert.equal(photo.style.data['--case-image-y'],undefined);assert.equal(atmosphere.style.data['--case-ambient-y'],undefined);
-assert.equal((html.match(/class="case-index-media"/g)||[]).length,4,'every project has its own media plane');
-console.log('PASS: index depth uses cached geometry, bounded image/background offsets, persistent card visibility, idle sleep and reduced-motion cleanup.');
+// The rollback restores the established layout; the background has no motion inputs.
+assert(!html.includes('case-index-media') && !html.includes('<br><span data-vapour-word>'));
+assert(html.includes('<div class="case-card-bottom">') && html.includes('(04 proyectos)'));
+const css = readFileSync(new URL('../assets/case-index.css', import.meta.url), 'utf8');
+assert(!/case-gutter|grid-template|case-reveal|case-image-y|case-ambient-y/.test(css),'effect stylesheet does not rearrange the established layout');
+assert(!/pointermove|case-ambient-y|case-image-y|case-reveal/.test(runtime),'index runtime no longer moves background or cards');
+console.log('PASS: established case layout restored and motion limited to the title.');
+
+const {createStaticVelvetHaze, STATIC_HAZE_FRAGMENT, hexToRgb} = await import('../lib/velvet-haze');
+assert.deepEqual(hexToRgb('#fff'), [1, 1, 1]);assert.deepEqual(hexToRgb('bad-color'), [0, 0, 0]);
+let paints = 0, programsFreed = 0, verticesFreed = 0, resize: () => void = () => {};
+const events: Record<string,(event?:unknown)=>void> = {}, attributes = new Set<string>();
+const gl = {
+ VERTEX_SHADER:1, FRAGMENT_SHADER:2, COMPILE_STATUS:3, LINK_STATUS:4, TRIANGLES:5,
+ createShader:()=>({}),shaderSource(){},compileShader(){},getShaderParameter:()=>true,deleteShader(){},
+ createProgram:()=>({}),attachShader(){},linkProgram(){},getProgramParameter:()=>true,
+ deleteProgram(){programsFreed++;},createVertexArray:()=>({}),deleteVertexArray(){verticesFreed++;},
+ useProgram(){},bindVertexArray(){},viewport(){},uniform2f(){},uniform1f(){},uniform3fv(){},getUniformLocation:()=>({}),drawArrays(){paints++;},
+};
+const hazeCanvas = {
+ clientWidth: 1200,clientHeight:800,width:0,height:0,getContext:()=>gl,
+ setAttribute:(name:string)=>attributes.add(name),removeAttribute:(name:string)=>attributes.delete(name),
+ addEventListener:(name:string,fn:(event?:unknown)=>void)=>{events[name]=fn;},removeEventListener:(name:string)=>{delete events[name];},
+};
+Object.assign(globalThis,{ResizeObserver:class{constructor(callback:()=>void){resize=callback;}observe(){}disconnect(){}}});
+const disposeHaze = createStaticVelvetHaze(hazeCanvas as unknown as HTMLCanvasElement)!;
+assert.equal(paints,1,'background paints a single frozen exposure');assert(attributes.has('data-haze-ready'));
+resize();resize();assert.equal(paints,1,'unchanged size does not redraw');
+hazeCanvas.clientWidth=900;resize();assert.equal(paints,2,'resize redraws once');
+events.webglcontextlost({preventDefault(){}});assert(!attributes.has('data-haze-ready'),'context loss exposes the static CSS fallback');resize();assert.equal(paints,2);
+events.webglcontextrestored();assert.equal(paints,3,'context restoration rebuilds the static frame');
+disposeHaze();assert(programsFreed>=2&&verticesFreed>=2,'cleanup releases GPU objects');assert.equal(Object.keys(events).length,0);
+assert.equal(createStaticVelvetHaze({getContext:()=>null} as unknown as HTMLCanvasElement),null,'WebGL-unavailable fallback');
+const hazeSource=readFileSync(new URL('../lib/velvet-haze.ts',import.meta.url),'utf8');
+assert(!/requestAnimationFrame|setInterval|setTimeout|pointermove|pointerdown|uTime|uFrame|uLamp|uRipple/.test(hazeSource),'static background has no clock, pointer or click effects');
+assert(STATIC_HAZE_FRAGMENT.includes('smoothstep(edge-soft,edge+soft,q.y)'), 'fold uses defined smoothstep edge order');
+console.log('PASS: frozen haze draws only initially/on resize, caches equal sizes, restores context, releases resources and has no pointer or time uniforms.');
