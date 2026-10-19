@@ -8,8 +8,8 @@ const footer = page => page.slice(page.indexOf('  <div class="sticky-footer-wrap
 for (const [index, slug] of slugs.entries()) {
   const html = read(`case-studies/${slug}/index.html`);
   assert.equal((html.match(/<h1\b/g)||[]).length,1);
-  assert(/<h1[^>]+aria-label="[^"]+"/.test(html),'one semantic project name labels the visual ticker');
-  assert(html.includes('case-hero-ticker" aria-hidden="true"'),'decorative repeats are not announced');
+  assert(/<h1[^>]+aria-label="[^"]+"/.test(html),'one semantic project name labels the decorative letter treatment');
+  assert(html.includes('case-hero-name" aria-hidden="true"')&&!html.includes('case-hero-ticker'),'one name replaces the repeating ticker');
   assert(html.includes(`/case-studies/${slugs[(index+1)%slugs.length]}/`),'all six cases form a complete navigation cycle');
   assert(!html.includes('/#process'));
   assert.equal(footer(html),footer(read('index.html')),'every detail page uses the home footer');
@@ -20,27 +20,46 @@ for (const [index, slug] of slugs.entries()) {
   assert(html.includes('/assets/scroll-story.js')&&html.includes('/assets/chapter-arrivals.js'));
 }
 
-// Real hero controller: reversible positions, no per-frame geometry and native reduced motion.
+// Real hero controller: deterministic decoding, stable type width and shared finite easing.
 {
   let client, reads=0, writes=0, unsubscribed=0, disconnected=0;
   const data=new Map(), classes=new Set(), events={};
   const media={matches:false,addEventListener(){},removeEventListener(){}};
-  const hero={offsetHeight:1000,clientWidth:1400,querySelector:()=>({classList:{add:name=>classes.add(name)}}),
+  const letters=Array.from('AcademicQuest',char=>({textContent:char,attributes:new Map(),
+    setAttribute(k,v){writes++;this.attributes.set(k,v);},removeAttribute(k){writes++;this.attributes.delete(k);}}));
+  const words=Array.from({length:2},()=>({style:{values:new Map(),setProperty(k,v){writes++;this.values.set(k,v);}}}));
+  const hero={offsetHeight:1000,querySelector:()=>({classList:{add:name=>classes.add(name)}}),
+    querySelectorAll:selector=>selector==='.case-title-word'?words:letters,
     getBoundingClientRect(){reads++;return{top:0};},style:{setProperty(k,v){writes++;data.set(k,v);}}};
-  const clock={settings:{parallax:2.5},approach:(value,target,dt,immediate)=>immediate?target:value+(target-value)*.5,subscribe(value){client=value;return()=>{unsubscribed++;};},invalidate(){client.measure();}};
+  const settings={parallax:2.5,arrivalMin:140,arrivalMax:240,arrivalDistance:.24,arrivalShift:32,lineDelay:.14,lineDelayMax:.28};
+  const clock={settings,approach:(value,target,dt,immediate)=>immediate?target:Math.abs(target-value)<.0001?target:value+(target-value)*(1-Math.exp(-dt/70)),
+    subscribe(value){client=value;return()=>{unsubscribed++;};},invalidate(){client.measure();}};
+  const view={HevenMotion:clock,scrollY:0,innerWidth:1400,innerHeight:900,matchMedia:()=>media,addEventListener:(name,fn)=>{events[name]=fn;}};
   vm.runInNewContext(read('assets/case-detail.js'),{
-    document:{querySelector:()=>hero},window:{HevenMotion:clock,scrollY:0,innerWidth:1400,innerHeight:900,matchMedia:()=>media,addEventListener:(name,fn)=>{events[name]=fn;}},
-    ResizeObserver:class{observe(){}disconnect(){disconnected++;}},
+    document:{querySelector:()=>hero},window:view,ResizeObserver:class{observe(){}disconnect(){disconnected++;}},
   });
+  const render=y=>client.render({y,dt:16.67,immediate:true});
+  const glyphs=()=>letters.map(letter=>letter.attributes.get('data-scramble'));
   client.measure();const initialReads=reads;
-  client.render({y:500,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'12.5px');assert.equal(data.get('--case-title-x'),'112px');
-  client.render({y:250,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'6.25px');
-  client.render({y:2000,dt:16.67,immediate:true});const settledWrites=writes;client.render({y:3000,dt:16.67,immediate:true});assert.equal(writes,settledWrites,'endpoints do no extra work');
-  client.render({y:0,dt:16.67,immediate:true});assert.equal(data.get('--case-title-x'),'0px');assert(classes.has('is-dismissed'),'cue stays dismissed after returning to the top');
-  assert.equal(reads,initialReads,'scroll frames use cached hero geometry');
-  client.render({y:500,dt:16.67,immediate:false});assert.equal(data.get('--case-hero-y'),'6.25px','native input follows with the same finite damping instead of a jump');
-  client.render({y:500,dt:16.67,immediate:false});assert.equal(data.get('--case-hero-y'),'9.375px');
-  media.matches=true;client.measure();client.render({y:500,dt:16.67,immediate:true});assert.equal(data.get('--case-hero-y'),'0px');
+  render(0);assert(glyphs().every(glyph=>!glyph),'initial title is complete and legible');
+  render(120);const middle=glyphs();assert(middle.filter(Boolean).length>0&&middle.filter(Boolean).length<=2,'decoding is a small moving band, not a screen of noise');
+  render(180);render(120);assert.deepEqual(glyphs(),middle,'reverse scroll returns the exact same glyphs without randomness or timers');
+  for(let y=0;y<=240;y+=2){render(y);assert(glyphs().filter(Boolean).length<=2);}
+  assert(glyphs().every(glyph=>!glyph),'letters settle completely at the entrance boundary');
+  assert.equal(letters.map(letter=>letter.textContent).join(''),'AcademicQuest','original text and its width are never replaced');
+  assert(words.every(word=>word.style.values.get('--case-word-y')==='0px'));
+  render(500);assert.equal(data.get('--case-hero-y'),'12.5px');assert(!data.has('--case-title-x'),'no sideways ticker survives');
+  render(250);assert.equal(data.get('--case-hero-y'),'6.25px');
+  render(2000);const settledWrites=writes;render(3000);assert.equal(writes,settledWrites,'endpoints stop DOM work');
+  render(0);assert(classes.has('is-dismissed'),'cue remains dismissed after returning to the top');
+  let moving=client.render({y:120,dt:16.67,immediate:false});
+  assert(moving&&parseFloat(data.get('--case-hero-y'))>0&&parseFloat(data.get('--case-hero-y'))<3,'native input follows shared easing');
+  for(let i=0;i<150&&moving;i++)moving=client.render({y:120,dt:16.67,immediate:false});
+  assert(!moving,'follow easing settles and lets the shared clock sleep');
+  assert.equal(reads,initialReads,'scroll frames never read layout');
+  media.matches=true;client.measure();render(120);
+  assert.equal(data.get('--case-hero-y'),'0px');assert(glyphs().every(glyph=>!glyph));assert(words.every(word=>word.style.values.get('--case-word-y')==='0px'));
+  media.matches=false;view.innerWidth=375;client.measure();render(500);assert.equal(data.get('--case-hero-y'),'0px','mobile has no extra image drift');
   events.pagehide({persisted:true});assert.equal(unsubscribed,0);
   events.pagehide({persisted:false});assert.equal(unsubscribed,1);assert.equal(disconnected,1);
 }
