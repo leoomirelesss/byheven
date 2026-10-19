@@ -7,7 +7,7 @@ import {cn} from '@/lib/utils';
 export function WebsiteShaderCanvas({className, children}: {className?: string; children?: ReactNode}) {
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => { if (canvas.current) return createStaticAuroraVeil(canvas.current) || undefined; }, []);
-  return <div className={cn('relative isolate overflow-hidden bg-[#08070a]', className)}>
+  return <div className={cn('relative isolate overflow-hidden bg-[#0c0912]', className)}>
     <div className="case-detail-atmosphere" style={{position:'absolute'}} aria-hidden="true"><canvas ref={canvas} className="case-haze-canvas" /></div>
     <div className="relative">{children}</div>
   </div>;

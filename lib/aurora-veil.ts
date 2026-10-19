@@ -2,7 +2,7 @@ import {createStaticVelvetHaze, type HazePalette} from './velvet-haze';
 
 /** The supplied Aurora Veil, frozen at one exposure in BY HEVËN's ink/lavender palette. */
 export const AURORA_PALETTE: HazePalette = {
-  ink: '#08070a', shadow: '#000000', ember: '#4b354c',
+  ink: '#0c0912', shadow: '#000000', ember: '#4b354c',
   violet: '#786495', lavender: '#a296ae', silver: '#91869e',
 };
 export const AURORA_FRAGMENT = `#version 300 es
@@ -41,7 +41,7 @@ void main(){
   // A black upper field lets the hero fade into neutral shadow, without a violet cast.
   float fromTop=1.0-uv.y;
   color=mix(uShadow,color,smoothstep(.02,.38,fromTop));
-  color=mix(color,uInk,smoothstep(.7,1.0,fromTop)*.7);
+  color=mix(color,uInk,smoothstep(.7,1.0,fromTop));
   color+=(hash21(floor(gl_FragCoord.xy/max(uDpr,1.0)))-.5)*.008;
   frag=vec4(clamp(color,0.0,1.0),1.0);
 }`;
