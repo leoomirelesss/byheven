@@ -1,0 +1,35 @@
+import {createVapourRenderer, vaporProgress} from '../lib/vapour-text';
+
+type Frame = {y: number; height: number; dt: number; immediate: boolean};
+type Clock = {subscribe: (client: {measure: () => void; render: (state: Frame) => boolean}) => () => void; invalidate: () => void};
+const clock = (window as Window & {HevenMotion?: Clock}).HevenMotion;
+const hero = document.querySelector<HTMLElement>('[data-case-vapour]');
+const title = hero?.querySelector<HTMLElement>('h1');
+const canvas = title?.querySelector<HTMLCanvasElement>('canvas');
+if (clock && hero && title && canvas) {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const renderer = createVapourRenderer(title, canvas);
+  if (renderer) {
+    let start = 0, distance = 1, enabled = false;
+    let fontsReady = false;
+    const measure = () => {
+      enabled = !reduced.matches && fontsReady;
+      start = hero.getBoundingClientRect().top + window.scrollY + 28;
+      distance = Math.max(260, Math.min(window.innerHeight * .64, hero.offsetHeight * .8));
+      if (enabled) renderer.measure();
+      else renderer.render(0);
+    };
+    const unsubscribe = clock.subscribe({measure, render(state) {
+      if (enabled) renderer.render(vaporProgress(state.y, start, distance));
+      return false;
+    }});
+    const refreshFonts = () => { fontsReady = true; renderer.measure(true); clock.invalidate(); };
+    document.fonts.ready.then(refreshFonts);
+    reduced.addEventListener('change', clock.invalidate);
+    const observer = new ResizeObserver(clock.invalidate); observer.observe(title);
+    window.addEventListener('pagehide', event => {
+      if (event.persisted) return;
+      unsubscribe(); observer.disconnect(); reduced.removeEventListener('change', clock.invalidate); renderer.destroy();
+    }, {once: true});
+  }
+}

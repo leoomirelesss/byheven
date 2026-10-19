@@ -1,0 +1,19 @@
+/* A dark interpretation of the reference's blurred plum light and fine grain. */
+body[data-case-index] { isolation: isolate; background: #090909; overflow-x: clip; }
+.case-index-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: #090909; }
+.case-index-atmosphere::before { content: ''; position: absolute; inset: -10%; background: radial-gradient(ellipse at 27% 45%, #47324f88, transparent 43%), radial-gradient(ellipse at 76% 62%, #3a354c66, transparent 49%), radial-gradient(ellipse at 58% 0%, #28212f66, transparent 56%); filter: blur(45px); }
+.case-index-atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .09; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); background-size: 180px 180px; }
+.case-vapour-title { position: relative; }
+.case-vapour-title [data-vapour-word] { display: inline-block; }
+.case-vapour-title.is-vaporizing [data-vapour-word] { opacity: 0; }
+.case-vapour-canvas { position: absolute; pointer-events: none; opacity: 0; max-width: none; }
+body[data-case-index] .case-invitation { border-top: 0; }
+@media (max-width: 600px) {
+  body[data-case-index] .case-index-hero h1 { font-size: clamp(60px, 16vw, 96px); }
+  .case-index-atmosphere::before { filter: blur(28px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-vapour-title.is-vaporizing [data-vapour-word] { opacity: 1; }
+  .case-vapour-canvas { display: none; }
+}
+@media print { .case-index-atmosphere, .case-vapour-canvas { display: none; } .case-vapour-title [data-vapour-word] { opacity: 1 !important; } }

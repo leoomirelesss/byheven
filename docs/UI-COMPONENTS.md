@@ -51,3 +51,13 @@ The shared scroll clock now eases the actual document position for vertical whee
 
 ### Entrance choreography and depth
 Home entrances use a quintic ease-in-out curve: soft start, acceleration, soft landing. Phone turns retain their existing smoothstep curve and tested angular-speed limit. Heading lines have a 0.14 progress stagger; each section's following elements have 24px scroll offsets capped at 72px. These are scroll-linked offsets, not timers, so pausing and reversing remain predictable. Presented content stays visible. Desktop pinned project covers move up to 2.5% independently inside a 1.065 crop; hover zoom composes with this movement. Mobile/native galleries and reduced-motion mode omit cover parallax. Geometry is cached on layout invalidation; all movement uses the existing shared clock. Functional/controller/build checks passed; protected-preview visual QA remains unavailable.
+
+## Casos reales: título de vapor y fondo
+
+`case-studies/index.html` carga `assets/case-index.css`, el reloj compartido y el bundle `assets/case-index-motion.js` (3.3 KB sin comprimir). El fondo es procedural: negro #090909, neblina violeta apagada y ruido SVG, sin imágenes externas. Solo se aplica al índice de casos.
+
+La referencia `VaporizeTextCycle` suministrada se adaptó en `lib/vapour-text.ts` a progreso 0–1 determinado por el scroll. La onda dispersa el título al salir hacia arriba y lo reconstruye al volver; no usa ciclos por tiempo ni física aleatoria por frame. La misma posición produce la misma imagen en ambos sentidos. El H1 HTML se conserva para lectores de pantalla, selección, impresión, fallos de canvas y movimiento reducido; el canvas es decorativo. Se conserva el tamaño editorial y el grid existente.
+
+`components/ui/vapour-text-effect.tsx` ofrece el adaptador React reutilizable con `text`, `progress` y `tag`. React, TypeScript, Tailwind, shadcn y el alias @/ ya estaban configurados: componentes en `components/ui`, utilidad en `lib/utils.ts`, estilos Tailwind en `styles/components.css`; estilos públicos de esta página en `assets/case-index.css`. No se requieren nuevas dependencias ni configuración. El índice usa el mismo motor sin hidratar React. `scripts/build.ts` genera el bundle desde `src/case-index-motion.ts`.
+
+`verify-case-vapour.ts` comprueba reversibilidad, posiciones finitas, reposo sin redibujos, geometría en caché, limpieza, fallback sin canvas y semántica del título. La revisión visual del preview protegido sigue pendiente en el navegador del usuario.
