@@ -8,6 +8,8 @@
   const clock = window.HevenMotion;
   let start = 0, travel = 1, maxX = 0, progress = 0, lastProgress = -1;
   let enabled = false, force = true;
+  const layers = track ? [...track.querySelectorAll(".case-card")].map(card => ({card, image: card.querySelector(".case-cover"), center: 0})).filter(layer => layer.image) : [];
+  let viewportWidth = 1;
   const clamp = value => Math.max(0, Math.min(1, value));
   const render = state => {
     if (!enabled) return false;
@@ -15,6 +17,10 @@
     progress = clock.approach(progress, target, state.dt, state.immediate || state.y <= start || state.y >= start + travel);
     if (force || progress !== lastProgress) {
       track.style.transform = `translate3d(${-maxX * progress}px,0,0)`;
+      layers.forEach(layer => {
+        const position = Math.max(-1, Math.min(1, (layer.center - maxX * progress - viewportWidth / 2) / viewportWidth));
+        layer.image.style.setProperty('--case-depth-x', `${position * -2.5}%`);
+      });
       story.dataset.caseProgress = progress.toFixed(4);
       lastProgress = progress; force = false;
     }
@@ -22,6 +28,8 @@
   };
   const measure = () => {
     if (!story || !track) return;
+    viewportWidth = viewport.clientWidth;
+    layers.forEach(layer => { layer.center = layer.card.offsetLeft + layer.card.offsetWidth / 2; });
     const padding = getComputedStyle(viewport);
     const available = viewport.clientWidth - (parseFloat(padding.paddingLeft) || 0) - (parseFloat(padding.paddingRight) || 0);
     maxX = Math.max(0, track.scrollWidth - available);
@@ -39,6 +47,7 @@
       force = true;
     } else {
       story.style.height = ''; track.style.transform = ''; progress = 0;
+      layers.forEach(layer => layer.image.style.removeProperty('--case-depth-x'));
     }
   };
   if (story && track && clock) {

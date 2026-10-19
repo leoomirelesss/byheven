@@ -40,7 +40,7 @@ const style=()=>({values:{},setProperty(key,value){this.values[key]=value;},remo
 const slides=Array.from({length:3},()=>({style:style(),classList:{toggle(){},add(){}},setAttribute(){},removeAttribute(){}}));
 const image={src:''},device={style:style()};
 let layoutReads=0;
-const scene={clientWidth:1363,get offsetHeight(){layoutReads++;return 936;},dataset:{},style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
+const scene={classList:{add(){}},clientWidth:1363,get offsetHeight(){layoutReads++;return 936;},dataset:{},style:style(),querySelector:selector=>selector==='.flow-phone-position'?device:image,querySelectorAll:()=>slides,addEventListener(){}};
 const win={scrollY:0,innerHeight:936,innerWidth:1363,matchMedia:query=>query.includes('reduced')?motion:{matches:true},addEventListener:(type,fn)=>listeners[type]=fn,dispatchEvent:event=>{events.push(event.detail);listeners[event.type]?.(event);}};
 const story={offsetHeight:936*4.04,querySelector:()=>scene,toggleAttribute(){},getBoundingClientRect:()=>({top:-win.scrollY})};
 const doc={querySelector:selector=>selector==='[data-flow-story]'?story:null,getElementById:()=>null,addEventListener:(type,fn)=>listeners[type]=fn};

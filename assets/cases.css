@@ -129,3 +129,11 @@ body[data-case-page] a { color: inherit; }
   .case-cover, .case-arrow, .case-peek, .ui-arrow { transition: none !important; transform: none !important; }
   .case-peek { display: none; }
 }
+
+/* Scroll parallax is independent of hover zoom and stays inside the cropped cover. */
+.case-story.is-pinned .case-cover { translate: var(--case-depth-x, 0%) 0; transform: scale(1.065); }
+@media (hover: hover) and (pointer: fine) {
+  .case-story.is-pinned .case-card:hover .case-cover,
+  .case-story.is-pinned .case-card:focus-visible .case-cover { transform: scale(1.09); }
+}
+@media (prefers-reduced-motion: reduce) { .case-cover { translate: none !important; } }

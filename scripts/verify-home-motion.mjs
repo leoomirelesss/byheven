@@ -44,6 +44,7 @@ function element(properties={}){
 const g=fixture();let reads=0;const wide={matches:true,addEventListener(){}};
 g.window.matchMedia=q=>q.includes('reduced')?g.media:wide;
 const cards=Array.from({length:5},(_,i)=>element({offsetLeft:i*720,offsetWidth:700,closest(){return this;},focus(options){this.focusOptions=options;galleryTrack.handlers.focusin({target:this});}}));
+const covers=cards.map(()=>element());cards.forEach((card,i)=>{card.querySelector=selector=>selector==='.case-cover'?covers[i]:null;});
 const galleryTrack=element({scrollWidth:3580,querySelectorAll:()=>cards});
 const galleryViewport=element({clientWidth:1440,offsetHeight:900,querySelector:()=>galleryTrack});
 const gallery=element({querySelector:()=>galleryViewport,getBoundingClientRect(){reads++;return {top:2000-g.window.scrollY};}});
@@ -52,11 +53,12 @@ g.window.scrollTo=options=>{g.window.scrollY=options.top;};
 g.run(readFileSync(new URL('../assets/cases.js',import.meta.url),'utf8'));g.flush();assert(gallery.classList.contains('is-pinned'));
 const travel=(3580-1360)*1.25;
 g.window.scrollY=2000+travel/2;g.clock.reset();g.flush();assert.equal(gallery.dataset.caseProgress,'0.5000');assert(galleryTrack.style.transform.includes('-1110px'));
-const beforeReads=reads;g.window.scrollY+=100;g.listeners.scroll();g.flush();assert.equal(reads,beforeReads,'gallery scroll does not read layout');
+const depthBefore=covers[1].style.values['--case-depth-x'];
+const beforeReads=reads;g.window.scrollY+=100;g.listeners.scroll();g.flush();assert.equal(reads,beforeReads,'gallery scroll does not read layout');assert.notEqual(covers[1].style.values['--case-depth-x'],depthBefore,'cover parallax follows scroll');assert(covers.every(cover=>Math.abs(parseFloat(cover.style.values['--case-depth-x']))<=2.5),'parallax is bounded inside the crop');
 g.window.scrollY=2000;g.listeners.scroll();g.flush();assert.equal(gallery.dataset.caseProgress,'0.0000');
 g.window.scrollY=2000+travel;g.listeners.scroll();g.flush();assert.equal(gallery.dataset.caseProgress,'1.0000','gallery finishes at its release boundary');
 galleryTrack.handlers.keydown({key:'ArrowRight',target:cards[0],preventDefault(){}});g.flush();assert(cards[1].focusOptions.preventScroll);assert(g.window.scrollY>2000,'keyboard exposes the selected card');
-g.media.matches=true;g.clock.reset();g.flush();assert(!gallery.classList.contains('is-pinned'));assert.equal(galleryTrack.style.transform,'');
+g.media.matches=true;g.clock.reset();g.flush();assert(!gallery.classList.contains('is-pinned'));assert.equal(galleryTrack.style.transform,'');assert(covers.every(cover=>!('--case-depth-x' in cover.style.values)),'reduced motion removes parallax');
 g.media.matches=false;g.window.innerHeight=500;g.clock.reset();g.flush();assert(!gallery.classList.contains('is-pinned'),'short screens retain native horizontal access');
 
 const q=fixture();q.window.matchMedia=s=>s.includes('reduced')?q.media:{matches:false,addEventListener(){}};q.window.ResizeObserver=class{};
@@ -89,7 +91,7 @@ a.document.querySelectorAll=()=>[title,body];a.run(readFileSync(new URL('../asse
 assert.equal(titleLines[0].style.values['--arrival-line-y'],'108%');
 a.window.scrollY=660;a.listeners.scroll();a.flush();const lineY=parseFloat(titleLines[0].style.values['--arrival-line-y']);assert(lineY>0&&lineY<108,'heading enters progressively with page scroll');
 const entryReads=arrivalReads;a.window.scrollY=800;a.listeners.scroll();a.flush();assert.equal(arrivalReads,entryReads,'entrances use cached positions');const bodyY=body.style.values['--arrival-y'];
-a.clock.invalidate();a.flush();assert.equal(body.style.values['--arrival-y'],bodyY,'an element presentation shift does not move its trigger');
+a.clock.invalidate();a.flush();assert(Math.abs(parseFloat(body.style.values['--arrival-y'])-parseFloat(bodyY))<1e-8,'an element presentation shift does not move its trigger');
 a.window.scrollY=1000;a.listeners.scroll();a.flush();assert(titleLines.every(line=>line.style.values['--arrival-line-y']==='0%'));assert.equal(body.style.values['--arrival-opacity'],'1');
 a.window.scrollY=0;a.listeners.scroll();a.flush();assert.equal(titleLines[0].style.values['--arrival-line-y'],'0%','presented content has no artificial exit or reverse fade');
 a.media.matches=true;a.listeners.motion();a.flush();assert(!title.classList.contains('is-arrival-ready'));assert(!('--arrival-y' in body.style.values));
