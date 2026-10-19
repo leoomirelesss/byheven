@@ -21,32 +21,48 @@ if (clock) {
   window.addEventListener('pagehide', event => { if (!event.persisted) releaseChoreography(); });
 }
 const hero = document.querySelector<HTMLElement>('[data-case-vapour]');
-const title = hero?.querySelector<HTMLElement>('h1');
-const canvas = title?.querySelector<HTMLCanvasElement>('canvas');
-if (clock && hero && title && canvas) {
+const blocks = [...(hero?.querySelectorAll<HTMLElement>('[data-vapour-block]') ?? [])];
+if (clock && hero && blocks.length) {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const renderer = createVapourRenderer(title, canvas);
-  if (renderer) {
+  const renderers = blocks.flatMap(element => {
+    const canvas = element.querySelector<HTMLCanvasElement>('.case-vapour-canvas');
+    const renderer = canvas && createVapourRenderer(element, canvas);
+    return renderer ? [{element, renderer}] : [];
+  });
+  if (renderers.length) {
     let start = 0, distance = 1, enabled = false;
-    let fontsReady = false;
+    let fontsReady = false, active = true;
     const measure = () => {
       enabled = !reduced.matches && fontsReady;
       start = hero.getBoundingClientRect().top + window.scrollY + 28;
       distance = Math.max(260, Math.min(window.innerHeight * .64, hero.offsetHeight * .8));
-      if (enabled) renderer.measure();
-      else renderer.render(0);
+      renderers.forEach(({renderer}) => {
+        if (enabled) renderer.measure();
+        else renderer.render(0);
+      });
     };
     const unsubscribe = clock.subscribe({measure, render(state) {
-      if (enabled) renderer.render(vaporProgress(state.y, start, distance));
+      if (enabled) {
+        const progress = vaporProgress(state.y, start, distance);
+        renderers.forEach(({renderer}) => renderer.render(progress));
+      }
       return false;
     }});
-    const refreshFonts = () => { fontsReady = true; renderer.measure(true); clock.invalidate(); };
+    const refreshFonts = () => {
+      if (!active) return;
+      fontsReady = true;
+      renderers.forEach(({renderer}) => renderer.measure(true));
+      clock.invalidate();
+    };
     document.fonts.ready.then(refreshFonts);
     reduced.addEventListener('change', clock.invalidate);
-    const observer = new ResizeObserver(clock.invalidate); observer.observe(title);
+    const observer = new ResizeObserver(clock.invalidate);
+    renderers.forEach(({element}) => observer.observe(element));
     window.addEventListener('pagehide', event => {
       if (event.persisted) return;
-      unsubscribe(); observer.disconnect(); reduced.removeEventListener('change', clock.invalidate); renderer.destroy();
+      active = false;
+      unsubscribe(); observer.disconnect(); reduced.removeEventListener('change', clock.invalidate);
+      renderers.forEach(({renderer}) => renderer.destroy());
     }, {once: true});
   }
 }

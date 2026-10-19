@@ -48,6 +48,43 @@ assert(html.indexOf('/assets/scroll-story.js') < html.indexOf('/assets/case-inde
 assert(/canvas[^>]+aria-hidden="true"/.test(html));
 const runtime = readFileSync(new URL('../src/case-index-motion.ts', import.meta.url), 'utf8');
 assert(!/setTimeout|setInterval|requestAnimationFrame/.test(runtime), 'the effect uses the existing scroll clock without a timed cycle');
+assert.equal((html.match(/data-vapour-block(?:>|\s)/g) || []).length, 3, 'intro, title and signature participate in the effect');
+assert(!/<span class="case-scroll-cue"[^>]*data-vapour-block/.test(html), 'scroll hint keeps its independent first-scroll dismissal');
+// Exercise the page controller with three blocks, including font loading and reduced motion.
+{
+  const {transform} = await import('esbuild');
+  const {default: vm} = await import('node:vm');
+  const source = (await transform(runtime.replace(/^import .+;\n/gm, ''), {loader:'ts',target:'es2022'})).code;
+  const clients:Array<{measure:()=>void;render:(state:{y:number;height:number})=>boolean}>=[];
+  const listeners:Array<(event:{persisted:boolean})=>void>=[];
+  const media={matches:false,addEventListener(){},removeEventListener(){}};
+  let resolveFonts:()=>void=()=>{}, geometry=0, destroyed=0, observed=0;
+  const ready=new Promise<void>(resolve=>{resolveFonts=resolve;});
+  const poses=[[],[],[]] as number[][];
+  const elements=poses.map((values,index)=>({index,querySelector:()=>({}),values}));
+  const hero={offsetHeight:400,getBoundingClientRect(){geometry++;return{top:120};},querySelectorAll:()=>elements};
+  const clock={subscribe(client:typeof clients[number]){clients.push(client);return()=>{};},invalidate(){clients.forEach(client=>client.measure());}};
+  vm.runInNewContext(source,{
+    window:{HevenMotion:clock,innerHeight:900,scrollY:0,matchMedia:()=>media,addEventListener:(_:string,fn:typeof listeners[number])=>listeners.push(fn)},
+    document:{querySelector:(selector:string)=>selector==='[data-case-vapour]'?hero:null,fonts:{ready}},
+    ResizeObserver:class{observe(){observed++;}disconnect(){}},
+    createCaseChoreography:()=>()=>{},createStaticVelvetHaze:()=>null,vaporProgress,
+    createVapourRenderer:(element:typeof elements[number])=>({measure(){},render(value:number){element.values.push(value);},destroy(){destroyed++;}}),
+  });
+  clock.invalidate();clients.forEach(client=>client.render({y:308,height:900}));
+  assert(poses.every(values=>values.at(-1)===0),'text stays intact until fonts are ready');
+  resolveFonts();await ready;await Promise.resolve();
+  const measuredGeometry=geometry;
+  for(const y of [148,308,468,308,148]){
+    clients.forEach(client=>client.render({y,height:900}));
+    assert(poses.every(values=>values.at(-1)===vaporProgress(y,148,320)),'all three blocks share the same reversible scroll phase');
+  }
+  assert.equal(geometry,measuredGeometry,'scroll does not read hero geometry');assert.equal(observed,3);
+  media.matches=true;clock.invalidate();clients.forEach(client=>client.render({y:468,height:900}));
+  assert(poses.every(values=>values.at(-1)===0),'reduced motion restores all text');
+  listeners.forEach(fn=>fn({persisted:true}));assert.equal(destroyed,0);
+  listeners.forEach(fn=>fn({persisted:false}));assert.equal(destroyed,3,'cleanup releases every text canvas');
+}
 console.log('PASS: vapour poses are deterministic and reversible; bounded opacity, cached drawing, no idle redraw, HTML fallback, teardown, semantic title and shared-clock integration.');
 
 // The rollback restores the established layout; the background has no motion inputs.
