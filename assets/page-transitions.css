@@ -1,0 +1,13 @@
+/* A soft outgoing frame and an incoming page rising from below. */
+@view-transition { navigation: auto; }
+::view-transition-group(root) { animation-duration: 850ms; }
+::view-transition-old(root) { animation: heven-page-out 850ms cubic-bezier(.76,0,.24,1) both; mix-blend-mode: normal; }
+::view-transition-new(root) { animation: heven-page-in 850ms cubic-bezier(.76,0,.24,1) both; mix-blend-mode: normal; }
+@keyframes heven-page-out { from { filter: blur(0); transform: translateY(0); } to { filter: blur(7px); transform: translateY(-6%); } }
+@keyframes heven-page-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+html.is-page-entering body { animation: heven-fallback-in 650ms cubic-bezier(.22,1,.36,1) both; }
+@keyframes heven-fallback-in { from { opacity: .3; clip-path: inset(12% 0 0); } to { opacity: 1; clip-path: inset(0); } }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-old(root), ::view-transition-new(root), html.is-page-entering body { animation: none; }
+}
