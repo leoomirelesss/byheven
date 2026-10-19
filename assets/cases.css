@@ -38,8 +38,8 @@
   .case-peek { background: #fff; mix-blend-mode: difference; }
   .case-peek span { display: none; }
 }
-.case-card:focus-visible .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
-.case-card:focus-visible .case-arrow .ui-arrow, .case-text-link:focus-visible .ui-arrow { transform: translate(2px,-2px); }
+:is(.case-card, .case-next-cover):focus-visible .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
+:is(.case-card, .case-next-cover):focus-visible .case-arrow .ui-arrow, .case-text-link:focus-visible .ui-arrow { transform: translate(2px,-2px); }
 .case-story.is-pinned .case-viewport { position: sticky; top: 0; height: 100svh; min-height: 640px; display: flex; align-items: center; overflow: clip; }
 .case-story.is-pinned .case-track { width: max-content; overflow: visible; scroll-snap-type: none; will-change: transform; }
 .case-story.is-pinned .case-card { flex: 0 0 auto; width: calc(46vw - 12px); }
@@ -49,9 +49,9 @@
 @media (hover: hover) and (pointer: fine) {
   .case-peek { display: block; }
   .case-card:hover .case-cover, .case-card:focus-visible .case-cover { transform: scale(1.035); }
-  .case-card:hover .case-peek { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-  .case-card:hover .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
-  .case-card:hover .case-arrow .ui-arrow, .case-text-link:hover .ui-arrow { transform: translate(2px,-2px); }
+  :is(.case-card, .case-next-cover):hover .case-peek { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  :is(.case-card, .case-next-cover):hover .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
+  :is(.case-card, .case-next-cover):hover .case-arrow .ui-arrow, .case-text-link:hover .ui-arrow { transform: translate(2px,-2px); }
 }
 /* Dedicated index and case pages share the site's typography and navigation. */
 body[data-case-page] { margin: 0; padding: 0 0 90px; }

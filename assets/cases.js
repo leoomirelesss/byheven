@@ -71,7 +71,7 @@
     reduced.addEventListener('change', clock.reset); wide.addEventListener('change', clock.reset);
     clock.subscribe({measure, render});
   }
-  document.querySelectorAll('.case-card').forEach(card => {
+  document.querySelectorAll('.case-card, .case-next-cover').forEach(card => {
     const peek = card.querySelector('.case-peek');
     if (!peek) return;
     let pending = 0, point;
