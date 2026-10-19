@@ -75,3 +75,11 @@ El título conserva la máscara suave sobre letras HTML y partículas finas reve
 `lib/case-choreography.ts` añade curvas quintic ease-in-out al presentar las tarjetas y el CTA, con un offset de scroll de 44px para la segunda tarjeta de cada fila y una entrada posterior de los captions. Las subidas son de hasta 26px y llegan a su posición original; el markup, las columnas, las proporciones, los márgenes y la posición de los textos no cambian. El título de vapor también usa quintic ease-in-out.
 
 El parallax se limita a las imágenes: hasta 2% en escritorio, 1.3% en móvil, dentro de una ampliación de 6% para cubrir los bordes. El shader Velvet Haze conserva una exposición fija y sigue sin responder al mouse ni al scroll. Todo el movimiento usa el reloj compartido bajo demanda, geometría en caché y respeto de foco/movimiento reducido. Se verificaron easing, orden de entrada, captions, límites de parallax, estabilidad del trigger al medir, foco, limpieza y preservación del layout.
+
+
+### Cierre minimalista y footer compartido visualmente
+Se retiraron las etiquetas «(SIGUIENTE PROYECTO)» y «(04 proyectos)» del índice. El cierre mantiene una invitación breve a WhatsApp; el home conserva el formulario completo. El índice incorpora el markup del footer claro del home y sus enlaces, con anchors absolutos /#work, /#services y /#contact. `assets/site-footer.css` reutiliza las reglas base del footer; `home-finish.css/js` aportan vidrio de redes, reveal, ocultación del dock y control de menú. `data-home-navigation` evita registrar el controlador de menú alterno de cases.js en esta página. Se eliminó el padding inferior del body para que el footer cierre la página sin franja oscura.
+
+La base del fondo del índice cambia solamente a violeta casi negro #0C0912 y la sombra a #08060D, manteniendo pliegues, luces, grano, exposición fija y composición. El título «Tu negocio. Nuestro siguiente proyecto.» del home baja a clamp(45px, 5.8vw, 108px) y a clamp(38px, 10.2vw, 66px) en móvil, acorde con los otros h2 del home.
+
+Verificados build/TypeScript, igualdad del markup del footer con el home, enlaces entre páginas, un solo controlador de menú, visibilidad del dock, aislamiento del menú, foco con Escape y reveal del footer. La comprobación visual del preview sigue pendiente en el navegador del usuario.

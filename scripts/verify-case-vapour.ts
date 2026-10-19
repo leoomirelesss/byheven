@@ -52,7 +52,7 @@ console.log('PASS: vapour poses are deterministic and reversible; bounded opacit
 
 // The rollback restores the established layout; the background has no motion inputs.
 assert(!html.includes('case-index-media') && !html.includes('<br><span data-vapour-word>'));
-assert(html.includes('<div class="case-card-bottom">') && html.includes('(04 proyectos)'));
+assert(html.includes('<div class="case-card-bottom">') && !/\(04 proyectos\)|\(SIGUIENTE PROYECTO\)/.test(html));
 const css = readFileSync(new URL('../assets/case-index.css', import.meta.url), 'utf8');
 assert(!/case-gutter|grid-template|case-reveal|case-image-y|case-ambient-y/.test(css),'effect stylesheet does not rearrange the established layout');
 assert(!/pointermove|case-ambient-y|case-image-y|case-reveal/.test(runtime),'index runtime no longer moves background or cards');
@@ -113,3 +113,34 @@ eventHandlers.focusin({target:motionCard});measuredClient!.render({y:0,height:90
 mediaMotion.matches=true;measuredClient!.measure();assert.equal(photoMotion.style.data['--case-image-depth'],undefined);assert.equal(motionCard.style.data['--case-entry-y'],undefined,'reduced motion clears offsets');
 disposeMotion();assert.equal(classNames.size,0);assert(!('focusin' in eventHandlers));
 console.log('PASS: eased acceleration, row stagger, caption delay, bounded image parallax, cached geometry, keyboard presentation, reduced motion and cleanup.');
+
+// Reusing the home footer must also preserve its navigation and keyboard behavior.
+const homeHtml = readFileSync(new URL('../index.html',import.meta.url),'utf8');
+const homeFooter = homeHtml.slice(homeHtml.indexOf('  <div class="sticky-footer-wrapper">'),homeHtml.lastIndexOf('</body>')).trim();
+const caseFooter = html.slice(html.indexOf('  <div class="sticky-footer-wrapper">'),html.lastIndexOf('</body>')).replaceAll('href="/#','href="#').trim();
+assert.equal(caseFooter,homeFooter,'case page reuses exactly the home footer with cross-page anchors');
+assert(html.includes('data-home-navigation')&&html.includes('/assets/home-finish.js'),'home controller owns case navigation and footer');
+const {default: footerVM}=await import('node:vm');
+const footerDocEvents:Record<string,(e:unknown)=>void>={}, footerObservers:Array<{callback:(entries:unknown[])=>void;observe:()=>void;disconnect:()=>void}>=[];
+const classList=()=>{const names=new Set<string>();return{names,contains:(n:string)=>names.has(n),add:(n:string)=>names.add(n),toggle(n:string,on:boolean){if(on)names.add(n);else names.delete(n);}};};
+const menuAttrs:Record<string,string>={'aria-expanded':'false'}, footerNavAttrs:Record<string,string>={};
+let menuClick:()=>void=()=>{}, escapeKey:(e:unknown)=>void=()=>{};
+const footerMain={inert:false}, footerBody={classList:classList()}, footerColumns=[{classList:classList()}];
+const footerLink={focused:false,focus(){this.focused=true;}}, menuLink={focus(){}};
+const footerPanel={inert:true,setAttribute(){},querySelector:()=>menuLink,addEventListener(){}};
+const footerToggle={setAttribute:(k:string,v:string)=>{menuAttrs[k]=v;},getAttribute:(k:string)=>menuAttrs[k],addEventListener:(name:string,fn:()=>void)=>{if(name==='click')menuClick=fn;},focus(){}};
+const footerNav={inert:false,classList:classList(),setAttribute:(k:string,v:string)=>{footerNavAttrs[k]=v;},contains:()=>false};
+const sharedFooter={inert:false,classList:classList(),querySelector:()=>footerLink,querySelectorAll:()=>footerColumns,getBoundingClientRect:()=>({top:1200,bottom:2100})};
+const FooterIO=class{callback:(entries:unknown[])=>void;constructor(callback:(entries:unknown[])=>void){this.callback=callback;footerObservers.push(this);}observe(){}disconnect(){}};
+footerVM.runInNewContext(readFileSync(new URL('../assets/home-finish.js',import.meta.url),'utf8'),{
+ window:{innerHeight:900,matchMedia:()=>({matches:false,addEventListener(){}}),IntersectionObserver:FooterIO},
+ document:{body:footerBody,activeElement:null,querySelector:(s:string)=>s==='.cinema-menu-toggle'?footerToggle:s==='main'?footerMain:s==='.sticky-footer-wrapper'?sharedFooter:s==='.cinema-nav'?footerNav:null,getElementById:(s:string)=>s==='mobile-menu-panel'?footerPanel:null,querySelectorAll:()=>[],addEventListener:(s:string,fn:(e:unknown)=>void)=>{footerDocEvents[s]=fn;if(s==='keydown')escapeKey=fn;}},
+ IntersectionObserver:FooterIO,requestAnimationFrame:(fn:()=>void)=>{fn();return 1;},clearTimeout(){},setTimeout(){},
+});
+assert(!footerNav.inert,'dock is available above the footer');
+footerObservers[0].callback([{target:sharedFooter,isIntersecting:true,intersectionRect:{height:100}}]);assert(footerNav.inert&&footerNavAttrs['aria-hidden']==='true','dock hides when footer enters');
+menuClick();assert(footerMain.inert&&sharedFooter.inert&&!footerPanel.inert,'menu isolates content for keyboard users');
+escapeKey({key:'Escape'});assert(!footerMain.inert&&footerPanel.inert&&footerLink.focused,'escape returns focus to footer when dock is hidden');
+footerObservers[0].callback([{target:sharedFooter,isIntersecting:false,intersectionRect:{height:0}}]);assert(!footerNav.inert,'dock returns when leaving footer');
+footerObservers[1].callback([{isIntersecting:true}]);assert(footerColumns[0].classList.contains('visible'),'footer content is revealed');
+console.log('PASS: matching home footer, cross-page anchors, one navigation owner, dock visibility, menu isolation, escape focus and footer reveal.');

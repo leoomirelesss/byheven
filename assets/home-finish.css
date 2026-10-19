@@ -60,7 +60,7 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 .sticky-footer .social-link::before { content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, #ffffff4d, transparent 42%, #ffffff14 65%, transparent); }
 .sticky-footer .social-link:is(:hover,:focus-visible) { border-color: #a992bd99; background: linear-gradient(135deg, #4b345fe0, #241833e6); color: #f3edf8; box-shadow: inset 0 1px 0 #ffffff52, inset 0 -1px 0 #24183352, 0 0 0 1px #24183326, 0 7px 18px #24183333; }
 #contact.home-contact { padding-bottom: clamp(90px, 10vw, 185px); }
-.home-contact-title { margin: 0 0 60px; max-width: 1600px; font: 400 clamp(53px, 8.7vw, 164px)/.97 'Outfit', sans-serif; letter-spacing: -.055em; }
+.home-contact-title { margin: 0 0 60px; max-width: 1600px; font: 400 clamp(45px, 5.8vw, 108px)/1.02 'Outfit', sans-serif; letter-spacing: -.055em; }
 .home-contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 9vw; align-items: start; }
 .home-contact-lead { max-width: 440px; margin: 0 0 30px; font-size: clamp(20px, 2vw, 36px); line-height: 1.25; letter-spacing: -.025em; }
 .home-primary-link { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; width: min(100%, 380px); min-height: 72px; margin: 0 0 40px; padding: 12px 14px 12px 27px; border: 1px solid #f6efffbf; border-radius: 100px; background: #e0d6ed; color: var(--brand-dark); box-shadow: inset 0 1px 1px #ffffffc7, 0 0 24px #ad8ad82b, 0 12px 38px #75519d3d; font-size: 16px; font-weight: 500; line-height: 1.3; text-decoration: none; transition: box-shadow .35s, border-color .35s; }
@@ -121,7 +121,7 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
   .chat-question { padding: 16px 20px; font-size: 18px; }
   .chat-message { max-width: 93%; padding: 18px 20px; font-size: 16px; }
   .home-heading { font-size: clamp(38px,10.2vw,66px); }
-  .home-contact-title { font-size: clamp(43px,11.3vw,76px); margin-bottom: 38px; }
+  .home-contact-title { font-size: clamp(38px,10.2vw,66px); margin-bottom: 38px; }
   .home-contact-lead { font-size: 24px; }
   .home-contact-layout { gap: 55px; }
   .home-contact-meta > div { grid-template-columns: 67px 1fr; gap: 12px; }

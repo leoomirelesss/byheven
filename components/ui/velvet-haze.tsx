@@ -7,7 +7,7 @@ import {cn} from '@/lib/utils';
 export default function VelvetHaze({height = '100svh', className, children}: {height?: string; className?: string; children?: ReactNode}) {
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => { if (canvas.current) return createStaticVelvetHaze(canvas.current) || undefined; }, []);
-  return <div className={cn('relative isolate overflow-hidden', className)} style={{height, background: '#090909'}}>
+  return <div className={cn('relative isolate overflow-hidden', className)} style={{height, background: '#0c0912'}}>
     <div className="case-index-atmosphere" style={{position:'absolute'}} aria-hidden="true"><canvas ref={canvas} className="case-haze-canvas" /></div>
     <div className="relative">{children}</div>
   </div>;

@@ -1,6 +1,6 @@
 /** Static adaptation of the supplied Velvet Haze shader. No animation or pointer input. */
 export const HEVEN_HAZE_PALETTE = {
-  ink: '#090909', shadow: '#07060a', ember: '#49354f',
+  ink: '#0c0912', shadow: '#08060d', ember: '#49354f',
   violet: '#49358d', lavender: '#827294', silver: '#82788f',
 };
 export type HazePalette = typeof HEVEN_HAZE_PALETTE;

@@ -91,7 +91,7 @@
     card.addEventListener('pointerleave', () => { cancelAnimationFrame(pending); pending = 0; });
   });
   // The dedicated static pages reuse the site's expandable navigation.
-  if (document.body.hasAttribute('data-case-page')) {
+  if (document.body.hasAttribute('data-case-page') && !document.body.hasAttribute('data-home-navigation')) {
     const toggle = document.querySelector('.cinema-menu-toggle');
     const panel = document.getElementById('mobile-menu-panel');
     const nav = document.querySelector('.cinema-nav');
