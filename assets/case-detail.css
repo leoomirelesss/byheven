@@ -97,8 +97,8 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 .case-screen-control[aria-pressed="true"] > span, .case-screen-control:hover > span { background: #ceced7; }
 .case-screen-control:focus-visible { outline: 2px solid #ceced7; outline-offset: -3px; }
 .case-screen-counter { min-width: 42px; font-variant-numeric: tabular-nums; }
-.case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; }
-.case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(160svh - 211.2px)); }
+.case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; padding-bottom: 116px; }
+.case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(160svh - 358.4px)); }
 @media (max-width: 700px) { .case-showcase.case-device { padding-inline: 12px; } }
 @media (prefers-reduced-motion: reduce) { .case-screen-control > span { transition: none; } }
 @media print { .case-screen-story { height: auto !important; } .case-screen-story > .case-device { position: static; height: auto; } .case-screen-controls { display: none; } }
