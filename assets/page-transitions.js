@@ -26,7 +26,10 @@
     };
     prefetch(url.origin + url.pathname + url.search, 'document');
     const slug = url.pathname.match(/^\/case-studies\/(emyasa|stone-kuche|parsomen|dor|dor-os|academic-quest)\/?$/)?.[1];
-    if (slug) {
+    if (slug && window.innerWidth < 900) {
+      const width = window.innerWidth * (window.devicePixelRatio || 1);
+      prefetch(`/assets/cases/heroes/mobile/${slug}-${width <= 540 ? 540 : 1080}.webp`, 'image');
+    } else if (slug) {
       const width = Math.max(window.innerWidth, window.innerHeight * 16 / 9) * (window.devicePixelRatio || 1);
       prefetch(`/assets/cases/heroes/${slug}${width <= 1280 ? '-1280' : ''}.webp`, 'image');
     }
@@ -49,3 +52,4 @@
     if (event.persisted) window.HevenMotion?.reset();
   });
 })();
+

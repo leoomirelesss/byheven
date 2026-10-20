@@ -11,6 +11,17 @@
     const cleanups = [() => abort.abort()];
     const listen = (node, type, fn, options = {}) => node?.addEventListener(type, fn, {...options, signal: abort.signal});
 
+    const phone = document.querySelector('.flow-mobile-device img');
+    if (phone) {
+      const scene = phone.closest('.flow-scene');
+      const showFallback = () => scene.classList.add('is-mobile-device-failed');
+      const showPhoto = () => scene.classList.remove('is-mobile-device-failed');
+      listen(phone, 'error', showFallback);
+      listen(phone, 'load', showPhoto);
+      if (phone.complete && !phone.naturalWidth) showFallback();
+      cleanups.push(showPhoto);
+    }
+
     document.querySelectorAll('.case-track, .case-device-display').forEach((track, index) => {
       const isMac = track.classList.contains('case-device-display');
       const parent = isMac ? track.closest('.case-device') : track.closest('.case-viewport');

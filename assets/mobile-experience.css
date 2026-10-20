@@ -35,6 +35,11 @@
   .flow-story .flow-phone-position, .flow-story[data-scroll-ready] .flow-phone-position { position: relative; inset: auto; visibility: visible; transform: none; transition: none; }
   .flow-story .flow-phone { transform: rotateY(-12deg) rotateZ(8deg); box-shadow: 2px 3px 0 #4f4b56, 14px 24px 44px #0006; }
   .flow-story .flow-phone::before { right: -3px; width: 3px; }
+  .flow-story .flow-mobile-device { display: block; width: min(86%, 300px); }
+  .flow-mobile-device img { display: block; width: 100%; height: auto; }
+  .flow-scene:has(.flow-mobile-device) .flow-phone-position { display: none; }
+  .flow-scene.is-mobile-device-failed .flow-mobile-device { display: none; }
+  .flow-scene.is-mobile-device-failed .flow-phone-position { display: block; }
   .flow-story .flow-device-canvas, .flow-story .flow-scroll-cue, .flow-hero::after { display: none; }
 
   #services.commerce-services { padding: 72px var(--mobile-gutter); }
@@ -74,6 +79,7 @@
   .case-page-chrome .case-wordmark { font-size: 26px; }
   .case-back { font-size: .75rem; }
   .case-hero { min-height: 680px; height: 100svh; max-height: none; }
+  .case-hero::after { background: linear-gradient(180deg, #0002 0%, #0009 24%, #0009 60%, #000e 86%, #000 100%); }
   .case-hero-description { left: var(--mobile-gutter); top: 24%; width: calc(100% - 2 * var(--mobile-gutter)); max-width: 28rem; font-size: clamp(1.125rem, 1rem + .6vw, 1.5rem); line-height: 1.4; }
   .case-hero-title { inset-inline: var(--mobile-gutter); top: 48%; font-size: clamp(2.5rem, 1.25rem + 8vw, 6rem); line-height: 1.08; }
   .case-hero-meta { inset: auto var(--mobile-gutter) 100px; gap: 16px; }

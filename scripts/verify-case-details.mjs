@@ -73,14 +73,14 @@ for (const [index, slug] of slugs.entries()) {
 }
 
 // Native links remain usable with/without transitions, denied storage or reduced motion.
-function navigation({reduced=false,saveData=false,start='https://example.com/',blockedStorage=false}={}) {
+function navigation({reduced=false,saveData=false,start='https://example.com/',blockedStorage=false,width=1920,dpr=1}={}) {
   const documentEvents={},windowEvents={},resources=[];
   let resets=0;
   const location=new URL(start);
   vm.runInNewContext(read('assets/page-transitions.js'),{
     location,URL,
     sessionStorage:{removeItem(){if(blockedStorage)throw Error('denied');}},
-    window:{innerWidth:1920,innerHeight:1080,devicePixelRatio:1,
+    window:{innerWidth:width,innerHeight:1080,devicePixelRatio:dpr,
       navigator:{connection:{saveData}},matchMedia:()=>({matches:reduced}),
       HevenMotion:{reset(){resets++;}},addEventListener:(name,fn)=>{windowEvents[name]=fn;}},
     document:{createElement:()=>({}),head:{append:resource=>resources.push(resource)},
@@ -114,6 +114,10 @@ for(const [extra,attributes] of [[{ctrlKey:true},{}],[{metaKey:true},{}],[{butto
   assert.equal(env.resources.length,2,'intent deduplicates document and responsive hero prefetch');
   assert.equal(env.resources[0].href,'https://example.com/case-studies/emyasa/');
   assert.equal(env.resources[1].href,'/assets/cases/heroes/emyasa.webp');
+  for (const [width,dpr,size] of [[390,3,1080],[320,1,540]]) {
+    const mobile=navigation({width,dpr});mobile.intent('/case-studies/emyasa/');
+    assert.equal(mobile.resources[1].href,`/assets/cases/heroes/mobile/emyasa-${size}.webp`,'mobile warms its portrait instead of downloading the desktop hero');
+  }
   const saving=navigation({saveData:true});saving.intent('/case-studies/dor/');assert.equal(saving.resources.length,0);
   const same=navigation({start:'https://example.com/case-studies/'});same.intent('/case-studies');assert.equal(same.resources.length,0);
 }
@@ -148,3 +152,4 @@ assert(!/border-bottom:/.test(read('assets/case-detail.css')),'detail content ha
 console.log('PASS: six photo teasers, supplied assets, shared footer, reversible hero, direct document transitions without overlays, native anchors and navigation, intent prefetch, history and reduced motion.');
 
 await import('./verify-case-screens.mjs');
+

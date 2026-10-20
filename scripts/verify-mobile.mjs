@@ -108,3 +108,16 @@ assert.equal(faqItems.filter(item=>!item.hidden).length,4);
 faqMobile.matches=false;faqMobile.change();assert(faqItems.every(item=>!item.hidden));assert(more.removed);
 console.log('PASS: one mobile hero at short/tall heights, no extra-screen requests, desktop restoration, real home links, vector arrows/logo, compact FAQ with all answers and reversible cleanup.');
 
+const photoClasses=new Set(),photo={...element(),complete:true,naturalWidth:0,closest:()=>({classList:{add:c=>photoClasses.add(c),remove:c=>photoClasses.delete(c)}})};
+const photoMobile={matches:true,addEventListener(t,fn){this.change=fn;}};
+vm.runInNewContext(source,{
+ window:{matchMedia:q=>q.includes('max-width')?photoMobile:reduced,addEventListener(){}},
+ document:{...doc,querySelectorAll:()=>[],querySelector:q=>q==='.flow-mobile-device img'?photo:null},
+ AbortController:class{signal={};abort(){this.signal.aborted=true;}},ResizeObserver:class{},MutationObserver:class{}
+});
+assert(photoClasses.has('is-mobile-device-failed'),'an image already failed before script startup exposes the CSS phone');
+photo.handlers.load();assert(!photoClasses.has('is-mobile-device-failed'),'a recovered image restores the supplied phone');
+photo.handlers.error();assert(photoClasses.has('is-mobile-device-failed'));
+photoMobile.matches=false;photoMobile.change();assert(!photoClasses.has('is-mobile-device-failed'),'desktop cleanup removes the fallback flag');
+console.log('PASS: supplied mobile phone load failure, recovery and breakpoint cleanup.');
+
