@@ -42,7 +42,7 @@
   const screenNames = ['home', 'collection', 'product'];
   let active = -1, start = 0, step = 1, width = 1, height = 1, keys;
   let progress = 0, lastProgress = -1, pointerX = 0, pointerY = 0, px = 0, py = 0;
-  let force = true, scrollStarted = false;
+  let force = true, scrollStarted = false, staticMobile = false;
   const visibility = new Map();
   const clamp = n => Math.max(0, Math.min(1, n));
   const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
@@ -55,21 +55,22 @@
     if (phoneImage) phoneImage.src = `assets/phone/screen-${screenNames[index]}.webp`;
   };
   const measure = () => {
-    story.toggleAttribute('data-scroll-ready', !motion.matches);
+    staticMobile = window.innerWidth < 900 && window.innerHeight < 600;
+    story.toggleAttribute('data-scroll-ready', !motion.matches && !staticMobile);
     start = story.getBoundingClientRect().top + window.scrollY;
     height = scene.offsetHeight; width = scene.clientWidth;
     step = Math.max(1, height * 1.32);
-    keys = width <= 700 ? [
-      {left:42, top:32, ry:-24, rz:14, rx:0, scale:1},
-      {left:28, top:32, ry:360, rz:0, rx:0, scale:1},
-      {left:28, top:33, ry:720, rz:0, rx:0, scale:.96}
+    keys = width < 900 ? [
+      {left:34, top:32, ry:-24, rz:14, rx:0, scale:1},
+      {left:34, top:32, ry:360, rz:0, rx:0, scale:1},
+      {left:34, top:33, ry:720, rz:0, rx:0, scale:.96}
     ] : [
       {left:width <= 1100 ? 44 : 43, top:33, ry:-24, rz:15, rx:0, scale:1},
       {left:67, top:18, ry:360, rz:-3, rx:0, scale:.92},
       {left:17, top:19, ry:720, rz:-5, rx:0, scale:.84}
     ];
     force = true; visibility.clear();
-    if (motion.matches) {
+    if (motion.matches || staticMobile) {
       slides.forEach(slide => { slide.inert = false; slide.removeAttribute('aria-hidden'); slide.style.removeProperty('--slide-y'); slide.classList.add('is-active'); });
       for (const key of ['left','top','ry','rz','rx','scale','x','y']) scene.style.removeProperty(`--phone-${key}`);
       scene.style.removeProperty('--asterisk-turn');
@@ -84,7 +85,7 @@
       scrollStarted = true;
       scene.classList.add('has-started-scrolling');
     }
-    if (motion.matches) return false;
+    if (motion.matches || staticMobile) return false;
     const target = clamp((state.y - start) / (step * 2)) * 2;
     const exact = state.immediate || state.y <= start || state.y >= start + step * 2;
     progress = clock.approach(progress, target, state.dt, exact);

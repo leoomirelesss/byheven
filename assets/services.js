@@ -25,7 +25,7 @@
   let frame = 0;
   const measure = () => {
     frame = 0;
-    const enabled = !motion.matches && window.innerHeight >= 600;
+    const enabled = !motion.matches && !(window.innerWidth < 900) && window.innerHeight >= 600;
     section.classList.toggle('is-arrival-paused', enabled);
     if (!enabled) {
       section.style.removeProperty('--services-arrival-height');

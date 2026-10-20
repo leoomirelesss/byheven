@@ -10,7 +10,7 @@
   const clamp = value => Math.max(0, Math.min(limit, value));
   // Keep native touch momentum, zoom, keyboard, anchors and nested scrollers.
   function onWheel(event) {
-    if (reduced.matches || event.defaultPrevented || !event.cancelable || event.ctrlKey || event.metaKey ||
+    if (window.innerWidth < 900 || reduced.matches || event.defaultPrevented || !event.cancelable || event.ctrlKey || event.metaKey ||
         Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
     const path = event.composedPath?.() || [event.target];
     for (const node of path) {

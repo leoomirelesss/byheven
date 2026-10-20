@@ -106,8 +106,10 @@ const serviceRows=[serviceRow(true),serviceRow(),serviceRow()],inner={offsetHeig
 const serviceSection=element({querySelectorAll:()=>serviceRows.map(x=>x.row),querySelector:()=>inner});v.document.querySelector=()=>serviceSection;
 v.run(readFileSync(new URL('../assets/services.js',import.meta.url),'utf8'));v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),816,'desktop hold adds 216px at 900px, up from 162px');
 serviceRows[1].button.handlers.click();assert(serviceRows[0].panel.inert);assert.equal(serviceRows[1].panel.inert,false);assert.equal(serviceRows[1].button.getAttribute('aria-expanded'),'true');
-v.window.innerWidth=390;v.listeners.resize();v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),744,'mobile hold grows modestly to 144px at 900px');
-inner.offsetHeight=720;v.listeners.resize();v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),864,'hold tracks accordion height');
+v.window.innerWidth=390;v.listeners.resize();v.flush();assert(!serviceSection.classList.contains('is-arrival-paused'),'mobile services stay in native document flow');
+assert(!('--services-arrival-height' in serviceSection.style.values));
+inner.offsetHeight=720;v.listeners.resize();v.flush();assert(!('--services-arrival-height' in serviceSection.style.values),'mobile accordion changes do not introduce a scroll hold');
+v.window.innerWidth=1440;v.listeners.resize();v.flush();assert.equal(parseFloat(serviceSection.style.values['--services-arrival-height']),936,'desktop reading hold is restored unchanged');
 v.media.matches=true;v.listeners.motion();v.flush();assert(!serviceSection.classList.contains('is-arrival-paused'));assert(!('--services-arrival-height' in serviceSection.style.values));
 assert(!/class="(?:home-overline|case-overline|commerce-services-label)"/.test(html),'no section labels or their dividing rules remain in home markup');
 assert.equal((html.match(/class="chat-item"/g)||[]).length,10,'FAQ keeps ten distinct useful questions');
@@ -133,3 +135,13 @@ const hz60=wheelFixture(),hz120=wheelFixture();hz60.wheel(600);hz120.wheel(600);
 console.log('PASS: slower wheel travel, continuous document easing, immediate reversal, finite settling, boundaries, 60/120Hz equivalence and native input escape paths.');
 const rounded=wheelFixture();rounded.window.scrollTo=({top})=>{rounded.window.scrollY=Math.round(top);};rounded.wheel(100);rounded.flush();assert.equal(rounded.window.scrollY,68,'integer scroll positions cannot stall the animation');
 const external=wheelFixture();external.wheel(500);external.step();external.window.scrollY=2000;external.listeners.scroll();external.flush();assert.equal(external.window.scrollY,2000,'external scroll commands take ownership');
+
+q.media.matches=false;q.window.innerWidth=390;q.clock.reset();q.flush();
+assert(!faq.classList.contains('is-scroll-story'),'mobile FAQ does not pin or hide questions');
+assert(!('--faq-offset' in chat.style.values));
+const mobileWheel=wheelFixture();mobileWheel.window.innerWidth=390;
+assert(!mobileWheel.wheel(100),'mobile wheel/trackpad input remains native too');
+mobileWheel.window.innerWidth=1440;assert(mobileWheel.wheel(100),'desktop retains approved wheel pacing');
+console.log('PASS: mobile native FAQ, accordion and input; desktop timing restored at breakpoint.');
+
+await import('./verify-mobile.mjs');

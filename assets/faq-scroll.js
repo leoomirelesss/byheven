@@ -22,7 +22,7 @@
 
   const offset = () => clamp((window.scrollY - sectionTop) / pace, distance);
   const measure = () => {
-    enabled = !motion.matches && window.innerHeight >= 600;
+    enabled = !motion.matches && !(window.innerWidth < 900) && window.innerHeight >= 600;
     section.classList.toggle('is-scroll-story', enabled);
     if (!enabled) {
       section.classList.remove('is-in-view');
