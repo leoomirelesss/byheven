@@ -77,30 +77,23 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 /* A short native overlap: read the overview, then lift the complete image above it. */
 .case-showcase-story { position: relative; display: flow-root; isolation: isolate; }
 @media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
-  .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; }
+  .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; transform: translate3d(0, var(--case-overview-rise, 0px), 0); }
   .case-showcase-story[data-showcase-ready] > .case-screen-story { margin-top: clamp(96px, 18svh, 180px); }
 }
 
 
 /* One stable Mac; only its display layers crossfade. The stage rises as before. */
-.case-screen-story { position: relative; z-index: 2; background: #0c0912; }
-.case-showcase.case-device { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 0; padding: 24px 2.65vw; overflow: visible; background: radial-gradient(ellipse at 72% 55%, #78649514, transparent 64%), #0c0912; }
-.case-device-frame { position: relative; width: min(100%, 1600px); aspect-ratio: 8/5; flex: 0 0 auto; }
+.case-screen-story { position: relative; z-index: 2; background: transparent; }
+.case-showcase.case-device { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 0; padding: 24px 2.65vw; overflow: visible; background: transparent; }
+.case-device-frame { position: relative; width: min(100%, 1600px); aspect-ratio: 8/5; flex: 0 0 auto; transform: translate3d(0, var(--case-device-y, 0px), 0); }
 .case-device-frame > .case-device-shell { position: absolute; inset: 0; z-index: 2; display: block; width: 100%; height: 100%; pointer-events: none; }
 .case-device-display { position: absolute; left: 9.916666667%; top: 6.666666667%; width: 80.166666667%; height: 82.266666667%; overflow: hidden; background: #08080a; }
 .case-device-display > .case-device-view { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
 .case-device-view:first-child { opacity: 1; }
-.case-screen-nav { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 12px; font-size: 11px; color: #b9b1c5; }
-.case-screen-controls { display: flex; }
-.case-screen-control { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
-.case-screen-control > span { width: 22px; height: 2px; background: #ceced74d; transition: background 260ms ease-out; }
-.case-screen-control[aria-pressed="true"] > span, .case-screen-control:hover > span { background: #ceced7; }
-.case-screen-control:focus-visible { outline: 2px solid #ceced7; outline-offset: -3px; }
-.case-screen-counter { min-width: 42px; font-variant-numeric: tabular-nums; }
-.case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; padding-bottom: 116px; }
-.case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(160svh - 358.4px)); }
+.case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; }
+@media (min-width: 900px) { .case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(168svh - 54px)); } }
 @media (max-width: 700px) { .case-showcase.case-device { padding-inline: 12px; } }
-@media (prefers-reduced-motion: reduce) { .case-screen-control > span { transition: none; } }
-@media print { .case-screen-story { height: auto !important; } .case-screen-story > .case-device { position: static; height: auto; } .case-screen-controls { display: none; } }
+@media (prefers-reduced-motion: reduce) { .case-device-frame { transform: none; } }
+@media print { .case-screen-story { height: auto !important; } .case-screen-story > .case-device { position: static; height: auto; } .case-device-frame { transform: none; } }
 
 @media print { .case-detail-atmosphere { display: none; } .case-hero { height: 500px; min-height: 0; } .case-title-word { transform: none; } }
