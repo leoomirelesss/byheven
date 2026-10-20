@@ -33,6 +33,7 @@
 .case-arrow { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border: 1px solid #ffffff65; border-radius: 50%; background: #11111438; color: #f4f4f6; transition: color .3s, border-color .3s, background .3s; }
 .case-card--all .case-arrow { border-color: #ceced765; background: transparent; }
 .case-peek { position: absolute; z-index: 4; top: var(--peek-y, 50%); left: var(--peek-x, 50%); width: clamp(120px, 11vw, 190px); aspect-ratio: 4/5; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.96); transition: opacity .18s, transform .4s cubic-bezier(.22,1,.36,1); background: transparent; -webkit-backdrop-filter: invert(1); backdrop-filter: invert(1); outline: 1px solid #ffffff25; display: none; }
+.case-peek--cursor { position: fixed; z-index: 100; font-family: 'Outfit', sans-serif; line-height: 1.4; }
 .case-peek span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border: 1px solid #ffffff30; border-radius: 100px; background: var(--brand-dark, #241833); color: #f4f4f5; padding: 10px 14px; font-size: 11px; white-space: nowrap; }
 @supports not ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
   .case-peek { background: #fff; mix-blend-mode: difference; }
@@ -49,7 +50,7 @@
 @media (hover: hover) and (pointer: fine) {
   .case-peek { display: block; }
   .case-card:hover .case-cover, .case-card:focus-visible .case-cover { transform: scale(1.035); }
-  :is(.case-card, .case-next-cover):hover .case-peek { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  .case-peek--cursor.is-active { opacity: 1; transform: translate(-50%,-50%) scale(1); }
   :is(.case-card, .case-next-cover):hover .case-arrow { background: #efeff3; border-color: #efeff3; color: var(--brand-dark, #241833); }
   :is(.case-card, .case-next-cover):hover .case-arrow .ui-arrow, .case-text-link:hover .ui-arrow { transform: translate(2px,-2px); }
 }

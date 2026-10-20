@@ -71,25 +71,40 @@
     reduced.addEventListener('change', clock.reset); wide.addEventListener('change', clock.reset);
     clock.subscribe({measure, render});
   }
+  const hidePeeks = [];
   document.querySelectorAll('.case-card, .case-next-cover').forEach(card => {
     const peek = card.querySelector('.case-peek');
     if (!peek) return;
+    // A viewport layer escapes the card's clipping and transformed scroll chapters.
+    peek.classList.add('case-peek--cursor');
+    document.body.append(peek);
     let pending = 0, point;
-    card.addEventListener('pointermove', event => {
-      if (!fine.matches || reduced.matches) return;
+    const hide = () => {
+      cancelAnimationFrame(pending); pending = 0;
+      peek.classList.remove('is-active');
+    };
+    const follow = event => {
+      if (!fine.matches || reduced.matches || event.pointerType === 'touch') { hide(); return; }
       point = {x: event.clientX, y: event.clientY};
       if (pending) return;
       pending = requestAnimationFrame(() => {
         pending = 0;
-        const rect = card.getBoundingClientRect();
-        const halfWidth = peek.offsetWidth / 2;
-        const halfHeight = peek.offsetHeight / 2;
-        card.style.setProperty('--peek-x', `${Math.max(halfWidth + 16, Math.min(rect.width - halfWidth - 16, point.x - rect.left))}px`);
-        card.style.setProperty('--peek-y', `${Math.max(halfHeight + 16, Math.min(rect.height - halfHeight - 16, point.y - rect.top))}px`);
+        peek.style.setProperty('--peek-x', `${point.x}px`);
+        peek.style.setProperty('--peek-y', `${point.y}px`);
+        peek.classList.add('is-active');
       });
-    }, {passive: true});
-    card.addEventListener('pointerleave', () => { cancelAnimationFrame(pending); pending = 0; });
+    };
+    card.addEventListener('pointerenter', follow, {passive: true});
+    card.addEventListener('pointermove', follow, {passive: true});
+    card.addEventListener('pointerleave', hide);
+    card.addEventListener('pointercancel', hide);
+    hidePeeks.push(hide);
   });
+  const hideAllPeeks = () => hidePeeks.forEach(hide => hide());
+  window.addEventListener('blur', hideAllPeeks);
+  window.addEventListener('pagehide', hideAllPeeks);
+  fine.addEventListener('change', hideAllPeeks);
+  reduced.addEventListener('change', hideAllPeeks);
   // The dedicated static pages reuse the site's expandable navigation.
   if (document.body.hasAttribute('data-case-page') && !document.body.hasAttribute('data-home-navigation')) {
     const toggle = document.querySelector('.cinema-menu-toggle');
