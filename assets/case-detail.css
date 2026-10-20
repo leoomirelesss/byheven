@@ -94,9 +94,13 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 .case-showcase.case-device { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 0; padding: 24px 2.65vw; overflow: visible; background: transparent; }
 .case-device-frame { position: relative; width: min(100%, 1600px); aspect-ratio: 8/5; flex: 0 0 auto; transform: translate3d(0, var(--case-device-y, 0px), 0); }
 .case-device-frame > .case-device-shell { position: absolute; inset: 0; z-index: 2; display: block; width: 100%; height: 100%; pointer-events: none; }
-.case-device-display { position: absolute; left: 9.916666667%; top: 6.666666667%; width: 80.166666667%; height: 82.266666667%; overflow: hidden; background: #08080a; }
-.case-device-display > .case-device-view { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
-.case-device-view:first-child { opacity: 1; }
+.case-device-display { position: absolute; left: 9.916666667%; top: 6.666666667%; display: flex; width: 80.166666667%; height: 82.266666667%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; background: #08080a; }
+.case-device-display::-webkit-scrollbar { display: none; }
+.case-device-display:focus-visible { outline: 2px solid #ceced7; outline-offset: -3px; }
+.case-device-display > .case-device-view { position: relative; display: block; flex: 0 0 100%; width: 100%; height: 100%; opacity: 1; scroll-snap-align: start; }
+.case-screen-story[data-screen-ready] .case-device-display { display: block; overflow: hidden; }
+.case-screen-story[data-screen-ready] .case-device-view { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.case-screen-story[data-screen-ready] .case-device-view:first-child { opacity: 1; }
 .case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; }
 @media (min-width: 900px) { .case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(168svh - 54px)); } }
 @media (max-width: 700px) { .case-showcase.case-device { padding-inline: 12px; } }

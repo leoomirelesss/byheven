@@ -3,18 +3,23 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
 const source = readFileSync(new URL('../assets/case-screen-story.js', import.meta.url), 'utf8');
+const clockSource = readFileSync(new URL('../assets/scroll-story.js', import.meta.url), 'utf8');
+const settings = vm.runInNewContext(`(${clockSource.match(/Object\.freeze\((\{[^;]+\})\)/)[1]})`);
 assert(!/requestAnimationFrame|setTimeout|setInterval/.test(source), 'the sequence has no separate timer or scroll clock');
-function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.25, width = 1440} = {}) {
+function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.25, width = 1440, height = 900} = {}) {
   let client, reads = 0, writes = 0, wakes = 0, releases = 0;
   const events = {}, attributes = new Map(), heights = new Map(), frameStyles = new Map(), chapterStyles = new Map();
   const media = {matches:false,addEventListener(){},removeEventListener(){}};
-  const waits = [], labels = phone ? ['Reporte','Inicio'] : ['Inicio','Producto','Servicios','Seguimiento'];
+  const waits = [], rejects = [], imageEvents = [], labels = phone ? ['Reporte','Inicio'] : ['Inicio','Producto','Servicios','Seguimiento'];
   const views = labels.map((label, index) => ({
     complete:index !== pending, naturalWidth:index !== pending ? 1924 : 0,
     dataset:{screenLabel:label}, style:{set opacity(value){writes++;this.value=value;}},
-    decode(){return new Promise(resolve => {waits[index] = resolve;});},
+    attributes:new Map(),setAttribute(k,v){this.attributes.set(k,v);},
+    addEventListener(k,v){(imageEvents[index]??={})[k]=v;},removeEventListener(k){delete imageEvents[index][k];},
+    decode(){return new Promise((resolve,reject) => {waits[index] = resolve;rejects[index]=reject;});},
   }));
-  const stage = {get offsetHeight(){reads++;return 900;}}, display = {setAttribute(k,v){attributes.set(k,v);}};
+  const shell={complete:false,naturalWidth:2400,loading:'lazy',addEventListener(){},removeEventListener(){},decode(){this.decoded=true;return Promise.resolve();}};
+  const stage = {get offsetHeight(){reads++;return height;}}, display = {clientWidth:1000,scrollLeft:0,setAttribute(k,v){attributes.set(k,v);},removeAttribute(k){attributes.delete(k);},addEventListener(k,v){events['display:'+k]=v;},removeEventListener(k){delete events['display:'+k];},scrollTo({left}){this.scrollLeft=left;}};
   const frame = {get offsetHeight(){reads++;return frameHeight;},get offsetTop(){reads++;return phone?150:0;},style:{setProperty(k,v){writes++;frameStyles.set(k,v);}}};
   const phones=phone?views.map((image,index)=>({get offsetTop(){reads++;return index?0:126;},querySelector:()=>image,style:{values:new Map(),setProperty(k,v){writes++;this.values.set(k,v);}}})):[];
   const pin={style:{set height(value){heights.set('pin-height',value);},removeProperty(){heights.delete('pin-height');}}};
@@ -33,7 +38,7 @@ function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.2
   const chapter = {querySelector:()=>overview,hasAttribute:()=>width>=900,style:{setProperty(k,v){writes++;chapterStyles.set(k,v);}}};
   const story = {
     dataset:{screenProject:'EMYASA'},parentElement:chapter,
-    querySelector:selector=>['.case-device','.case-phone-stage'].includes(selector)?stage:['.case-device-frame','.case-phone-pair'].includes(selector)?frame:selector==='.case-phone-pin'?pin:display,
+    querySelector:selector=>['.case-device','.case-phone-stage'].includes(selector)?stage:['.case-device-frame','.case-phone-pair'].includes(selector)?frame:selector==='.case-phone-pin'?pin:selector==='.case-device-shell'?(phone?null:shell):phone?null:display,
     querySelectorAll:selector=>selector==='.case-app-phone'?phones:selector==='.case-device-view'?(phone?[]:views):[],
     hasAttribute:name=>name==='data-case-phone-story'?phone:attributes.has(name),
     toggleAttribute(k,on){if(on)attributes.set(k,true);else attributes.delete(k);},
@@ -41,11 +46,11 @@ function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.2
     getBoundingClientRect(){reads++;return{top:3000-view.scrollY};},
   };
   const clock = {
-    settings:{arrivalMin:140,arrivalMax:240,arrivalDistance:.24,stagger:24},
-    approach:(value,target,dt,immediate)=>immediate||Math.abs(target-value)<.0001?target:value+(target-value)*(1-Math.exp(-dt/70)),
+    settings,
+    approach:(value,target,dt,immediate)=>immediate||Math.abs(target-value)<.0001?target:value+(target-value)*(1-Math.exp(-dt/settings.followEase)),
     subscribe(value){client=value;return()=>releases++;},invalidate(){client.measure();},wake(){wakes++;},
   };
-  const view = {HevenMotion:clock,innerWidth:width,innerHeight:900,scrollY:0,matchMedia:()=>media,addEventListener:(k,v)=>{events[k]=v;},IntersectionObserver:class{}};
+  const view = {HevenMotion:clock,innerWidth:width,innerHeight:height,scrollY:0,matchMedia:()=>media,addEventListener:(k,v)=>{events[k]=v;},IntersectionObserver:class{}};
   let near;
   let selected;
   vm.runInNewContext(source,{
@@ -53,12 +58,15 @@ function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.2
     IntersectionObserver:class{constructor(callback){near=callback;}observe(){}disconnect(){}},
   });
   client.measure();
-  return {views,phones,events,view,media,attributes,heights,display,frameStyles,chapterStyles,text,
-    measure:()=>client.measure(),render:(y,immediate=true)=>client.render({y,dt:16.67,immediate}),
+  return {views,phones,events,view,media,attributes,heights,display,shell,frameStyles,chapterStyles,text,story,
+    measure:()=>client.measure(),render:(y,immediate=true,dt=16.67)=>client.render({y,dt,immediate}),
     near:()=>near([{isIntersecting:true}]),resolve:index=>{views[index].naturalWidth=1924;waits[index]?.();},
+    reject:index=>rejects[index]?.(new Error('source changed or request failed')),load:index=>{views[index].naturalWidth=1924;imageEvents[index]?.load?.();},
+    fail:index=>{views[index].naturalWidth=0;imageEvents[index]?.error?.();},
     reads:()=>reads,writes:()=>writes,wakes:()=>wakes,releases:()=>releases};
 }
 const hold=468, blend=216, travel=hold*4+blend*3, start=3000;
+const lead=Math.min(hold*.3,blend*.65);
 const env=fixture();assert.equal(env.heights.get('height'),`${900+travel}px`);
 const reads=env.reads();
 for(const block of env.text){
@@ -92,23 +100,31 @@ assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,98
 env.render(start+hold*.55);
 assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,916,'the base rests just beyond the lower fold at the marked position');
 assert(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25*71/1500>=47,'the top of the hardware remains visible too');
+const settledMasks=env.text.map(block=>block.style.values.get('--case-line-mask'));
+env.render(start+hold*.9);assert.deepEqual(env.text.map(block=>block.style.values.get('--case-line-mask')),settledMasks,'text stays calibrated to the actual Mac edge during the stationary reading hold');
 env.render(start);assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,980,'reversing the scroll restores the entry pose');
 for(let index=0;index<4;index++){
-  const y=start+index*(hold+blend)+hold/2;env.render(y);
+  const y=start+index*(hold+blend)+(index?lead:0)+hold*.4;env.render(y);
   assert(env.attributes.get('aria-label').includes(`pantalla ${index+1} de 4`));
   assert.equal(env.views[index].style.value,'1');
   const pose=env.views.map(view=>view.style.value);env.render(y+hold*.1);assert.deepEqual(env.views.map(view=>view.style.value),pose,'each screen has a real reading hold');
 }
-env.render(start+hold+blend/2);assert.equal(env.views[1].style.value,'0.5');assert.equal(env.views[0].style.value,'1','the opaque previous view prevents a dark flash');
-const halfway=env.views.map(view=>view.style.value);env.render(start+travel);env.render(start+hold+blend/2);assert.deepEqual(env.views.map(view=>view.style.value),halfway,'reverse scroll is deterministic');
+env.render(start+hold+lead);assert(Number(env.views[1].style.value)<1e-12,'the first screen has a longer stable reading window after its rise');
+env.render(start+hold+lead+blend/2);assert(Math.abs(Number(env.views[1].style.value)-.5)<1e-12);assert.equal(env.views[0].style.value,'1','the opaque previous view prevents a dark flash');
+const halfway=env.views.map(view=>view.style.value);env.render(start+travel);env.render(start+hold+lead+blend/2);assert.deepEqual(env.views.map(view=>view.style.value),halfway,'reverse scroll is deterministic');
 assert.equal(env.reads(),reads,'scroll frames do not read layout');
-env.render(start+travel);const writes=env.writes();assert.equal(env.render(start+travel+1000),false);assert.equal(env.writes(),writes,'the fourth view is complete before native release, with no idle work');
+env.render(start+travel+1000);const writes=env.writes();assert.equal(env.render(start+travel+1000),false);assert.equal(env.writes(),writes,'the fourth view is complete before native release, with no idle work');
 env.render(start);let moving=env.render(start+900,false);for(let i=0;i<150&&moving;i++)moving=env.render(start+900,false);assert(!moving,'shared follow easing settles');
 env.media.matches=true;env.measure();assert(!env.heights.size&&!env.attributes.has('data-screen-ready'),'reduced motion removes the pinned scroll distance');
-env.render(start);assert.equal(env.views[0].style.value,'1');assert.equal(env.views[3].style.value,'0');assert.equal(env.frameStyles.get('--case-device-y'),'0px');assert(env.text.every(block=>!block.style.values.has('--case-line-mask')),'reduced motion removes every line mask and keeps the original text visible');
+env.render(start);assert(env.views.every(view=>view.style.value==='1'),'all four screens remain available through native horizontal scroll');assert.equal(env.frameStyles.get('--case-device-y'),'0px');assert(env.text.every(block=>!block.style.values.has('--case-line-mask')),'reduced motion removes every line mask and keeps the original text visible');
+assert.equal(env.attributes.get('role'),'region');assert.equal(env.attributes.get('tabindex'),'0');assert(env.views.every(view=>view.alt&&view.attributes.get('aria-hidden')==='false'));
+for(const [key,expected] of [['ArrowRight',1000],['End',3000],['ArrowRight',3000],['ArrowLeft',2000],['Home',0],['ArrowLeft',0]]){
+  let prevented=false;env.events['display:keydown']({key,preventDefault(){prevented=true;}});assert(prevented);assert.equal(env.display.scrollLeft,expected,'the native gallery supports keyboard navigation and bounded endpoints');
+}
+env.media.matches=false;env.measure();env.render(start);assert.equal(env.display.scrollLeft,0);assert.equal(env.attributes.get('role'),'img');assert(!env.attributes.has('tabindex'));assert.equal(env.views[3].style.value,'0','restoring motion cannot leave stale native-gallery opacities');
 env.events.pagehide({persisted:true});assert.equal(env.releases(),0);env.events.pagehide({persisted:false});assert.equal(env.releases(),1);
-const loading=fixture({pending:1});loading.near();loading.render(start+hold+blend);assert.equal(loading.views[0].style.value,'1');assert.equal(loading.views[1].style.value,'0','an undecoded image cannot replace the previous screen with a blank');
-loading.resolve(1);await Promise.resolve();let catching=loading.render(start+hold+blend);assert(Number(loading.views[1].style.value)>0&&Number(loading.views[1].style.value)<1,'a late image still fades in instead of cutting');for(let i=0;i<150&&catching;i++)catching=loading.render(start+hold+blend);assert.equal(loading.views[1].style.value,'1');assert(!catching&&loading.wakes()>0);
+const loading=fixture({pending:1});loading.near();assert.equal(loading.shell.loading,'eager');assert(loading.shell.decoded,'the hardware is warmed alongside the four displays');loading.render(start+hold+lead+blend);assert.equal(loading.views[0].style.value,'1');assert.equal(loading.views[1].style.value,'0','an undecoded image cannot replace the previous screen with a blank');
+loading.resolve(1);await Promise.resolve();let catching=loading.render(start+hold+lead+blend);assert(Number(loading.views[1].style.value)>0&&Number(loading.views[1].style.value)<1,'a late image still fades in instead of cutting');for(let i=0;i<150&&catching;i++)catching=loading.render(start+hold+lead+blend);assert.equal(loading.views[1].style.value,'1');assert(!catching&&loading.wakes()>0);
 const small=fixture();small.view.innerHeight=500;small.measure();assert(!small.heights.size,'short viewports retain the static photo and ordinary scrolling');
 for(const options of [{width:390,frameHeight:229},{width:1100,frameHeight:640}]){
   const portrait=fixture(options);portrait.render(start);assert.equal(portrait.frameStyles.get('--case-device-y'),'0px','shorter Macs keep a centered native composition');
@@ -133,8 +149,25 @@ app.render(release+1000);const appWrites=app.writes();assert.equal(app.render(re
 app.render(appStart);let phoneMoving=app.render(appStart+rise/2,false);for(let i=0;i<150&&phoneMoving;i++)phoneMoving=app.render(appStart+rise/2,false);assert(!phoneMoving,'phone follow easing settles');
 app.media.matches=true;app.measure();app.render(release);assert(!app.heights.size&&!app.attributes.has('data-phone-ready'));assert.deepEqual(shifts(),[0,0],'reduced motion shows the complete static composition');
 const mobile=fixture({phone:true,width:390});mobile.render(start);assert(!mobile.heights.size&&!mobile.attributes.has('data-phone-ready'),'small screens keep ordinary scrolling');
-const lateApp=fixture({phone:true,pending:1});lateApp.near();lateApp.render(release);assert.deepEqual(lateApp.phones.map(phone=>Number(parseFloat(phone.style.values.get('--case-phone-y')).toFixed(6))),[720,990],'both images decode before the sequence can appear');
-lateApp.resolve(1);await Promise.resolve();let lateMoving=lateApp.render(release,false);assert(lateMoving);for(let i=0;i<150&&lateMoving;i++)lateMoving=lateApp.render(release,false);assert(!lateMoving&&lateApp.wakes()>0);
+const lateApp=fixture({phone:true,pending:1});lateApp.near();lateApp.render(release);assert.deepEqual(lateApp.phones.map(phone=>Number(parseFloat(phone.style.values.get('--case-phone-y')).toFixed(6))),[0,990],'one pending phone never blocks the ready phone');
+lateApp.reject(1);await Promise.resolve();await Promise.resolve();lateApp.load(1);let lateMoving=lateApp.render(release);assert(lateMoving,'a load event recovers after decode rejection');assert(parseFloat(lateApp.phones[1].style.values.get('--case-phone-y'))>0,'a late phone still eases into place during wheel frames');for(let i=0;i<150&&lateMoving;i++)lateMoving=lateApp.render(release);assert(!lateMoving&&lateApp.wakes()>0);
+const failedApp=fixture({phone:true,pending:1});failedApp.near();failedApp.fail(1);failedApp.render(release);
+assert(failedApp.phones[1].hidden&&!failedApp.story.hidden,'one broken phone is hidden while the valid phone remains');
+assert.equal(parseFloat(failedApp.phones[0].style.values.get('--case-phone-y')),0);
+failedApp.fail(0);assert(failedApp.story.hidden&&!failedApp.heights.size,'two failed images skip the empty pin instead of holding the reader');
+failedApp.load(1);assert(!failedApp.story.hidden&&!failedApp.phones[1].hidden,'a recovered source restores its story');
+const failedFirst=fixture();failedFirst.near();failedFirst.fail(0);failedFirst.render(start);
+assert.equal(failedFirst.views[1].style.value,'1','a failed first screen falls back to the next valid view without a blank display');
+const rates=[60,120].map(hz=>{
+  const scene=fixture({phone:true});scene.render(appStart);
+  for(let index=0;index<hz/4;index++)scene.render(appStart+rise/2,false,1000/hz);
+  return parseFloat(scene.phones[0].style.values.get('--case-phone-y'));
+});assert(Math.abs(rates[0]-rates[1])<1e-8,'shared time-based easing has the same pose after 250ms at 60 and 120Hz');
+for(const [height,width,frameHeight] of [[768,1366,773],[1080,1920,1008]]){
+  const sized=fixture({height,width,frameHeight});const h=Math.max(320,Math.min(600,height*.52)),b=Math.min(240,Math.max(140,height*.24));
+  assert.equal(sized.heights.get('height'),`${height+h*4+b*3}px`,'responsive rhythm keeps the original total scroll budget');
+  sized.render(start+h*4+b*3);assert.equal(sized.views[3].style.value,'1','every viewport reaches the final screen before release');
+}
 for(const [slug,names] of [['dor-os',['dor-os-report','dor-os-home']],['academic-quest',['academic-quest-planner','academic-quest-campus']]]){
   const html=readFileSync(new URL(`../case-studies/${slug}/index.html`,import.meta.url),'utf8');
   assert(html.includes('data-case-phone-story')&&html.includes('data-case-showcase-story'));
@@ -166,4 +199,4 @@ assert(!/case-screen-nav|case-screen-controls|case-screen-counter|padding-bottom
 assert(css.includes('mask-image: var(--case-line-mask, none)')&&!css.includes('--case-overview-opacity')&&!css.includes('--case-overview-rise'),'the original curtain overlap fades only actual text lines');
 assert(css.includes('mask-clip: no-clip')&&css.includes('mask-size: var(--case-line-mask-size')&&css.includes('mask-position: var(--case-line-mask-position'),'mask painting extends beyond tight text boxes without changing layout');
 assert(css.includes('.case-phone-story { position: relative; z-index: 2; background: transparent; }'));
-console.log('PASS: staggered lower/upper iPhones, pause and native full-phone reveal, responsive/reduced fallback, readiness and reverse, unclipped line fades, unchanged Mac sequence, cached layout and finite settling.');
+console.log('PASS: shared easing and stagger, redistributed Mac reading holds without added scroll, moving-front line fades, independent phone readiness and decode recovery, warmed shell, keyboard/swipe fallback, reverse, responsive endpoints, cached layout and finite settling.');
