@@ -141,8 +141,10 @@ for(const [index,slug] of slugs.entries()){
   assert(new RegExp(`class="case-next-cover"[^>]*><img src="/assets/cases/heroes/${next}\\.webp"`).test(html),'each next-case teaser has its destination image');
   if(['dor-os','academic-quest'].includes(slug)){
     assert.equal(photos.length,2,'apps have their hero and next-case teaser');assert(!html.includes('case-showcase'),'apps have no interior screenshot gallery');
-  }else assert(html.includes(`/assets/cases/screens/${slug}.webp`));
+  }else assert(html.includes(`/assets/cases/mac/${slug}-1.webp`));
 }
 assert(!read('assets/page-transitions.css').includes('heven-curtain-safety'),'no fixed CSS timer can reveal an unready destination');
 assert(!/border-bottom:/.test(read('assets/case-detail.css')),'detail content has no section or row dividers');
 console.log('PASS: six photo teasers, supplied assets, shared footer, reversible hero, direct document transitions without overlays, native anchors and navigation, intent prefetch, history and reduced motion.');
+
+await import('./verify-case-screens.mjs');
