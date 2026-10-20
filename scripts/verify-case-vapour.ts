@@ -193,12 +193,13 @@ const footerWindowEvents:Record<string,(e:any)=>void>={};
 const footerDocEvents:Record<string,(e:unknown)=>void>={}, footerObservers:Array<{callback:(entries:unknown[])=>void;observe:()=>void;disconnect:()=>void}>=[];
 const classList=()=>{const names=new Set<string>();return{names,contains:(n:string)=>names.has(n),add:(n:string)=>names.add(n),toggle(n:string,on:boolean){if(on)names.add(n);else names.delete(n);}};};
 const menuAttrs:Record<string,string>={'aria-expanded':'false'}, footerNavAttrs:Record<string,string>={};
-let menuClick:()=>void=()=>{}, panelClick:(e:any)=>void=()=>{}, escapeKey:(e:unknown)=>void=()=>{};
+let menuClick:()=>void=()=>{}, homeClick:()=>void=()=>{}, panelClick:(e:any)=>void=()=>{}, escapeKey:(e:unknown)=>void=()=>{};
 const footerMain={inert:false}, footerBody={classList:classList()}, footerColumns=[{classList:classList()}];
 const footerLink={focused:false,focus(){this.focused=true;}}, menuLink={focus(){}};
 const footerPanel={inert:true,setAttribute(){},querySelector:()=>menuLink,addEventListener:(name:string,fn:(e:any)=>void)=>{if(name==='click')panelClick=fn;}};
 const footerToggle={setAttribute:(k:string,v:string)=>{menuAttrs[k]=v;},getAttribute:(k:string)=>menuAttrs[k],addEventListener:(name:string,fn:()=>void)=>{if(name==='click')menuClick=fn;},focus(){}};
-const footerNav={inert:false,classList:classList(),setAttribute:(k:string,v:string)=>{footerNavAttrs[k]=v;},contains:()=>false};
+const footerHome={addEventListener:(name:string,fn:()=>void)=>{if(name==='click')homeClick=fn;}};
+const footerNav={inert:false,classList:classList(),setAttribute:(k:string,v:string)=>{footerNavAttrs[k]=v;},contains:()=>false,querySelector:(s:string)=>s==='.cinema-nav-mark'?footerHome:null};
 const sharedFooter={inert:false,classList:classList(),querySelector:()=>footerLink,querySelectorAll:()=>footerColumns,getBoundingClientRect:()=>({top:1200,bottom:2100})};
 const FooterIO=class{callback:(entries:unknown[])=>void;constructor(callback:(entries:unknown[])=>void){this.callback=callback;footerObservers.push(this);}observe(){}disconnect(){}};
 footerVM.runInNewContext(readFileSync(new URL('../assets/home-finish.js',import.meta.url),'utf8'),{
@@ -213,6 +214,7 @@ escapeKey({key:'Escape'});assert(!footerMain.inert&&footerPanel.inert&&footerLin
 footerObservers[0].callback([{target:sharedFooter,isIntersecting:false,intersectionRect:{height:0}}]);assert(!footerNav.inert,'dock returns when leaving footer');
 menuClick();panelClick({target:{closest:(selector:string)=>selector==='a[href]'?{}:null}});
 assert(!footerMain.inert&&footerPanel.inert,'Projects page link closes the mobile menu before navigation');
+menuClick();homeClick();assert(!footerMain.inert&&footerPanel.inert,'home star link closes the menu and restores page access before navigation');
 menuClick();footerWindowEvents.pageshow({persisted:true});
 assert(!footerMain.inert&&footerPanel.inert,'back navigation cannot restore an open, inert menu state');
 footerObservers[1].callback([{isIntersecting:true}]);assert(footerColumns[0].classList.contains('visible'),'footer content is revealed');
@@ -227,3 +229,4 @@ assert(homeFooter.includes('footer-atmosphere flow-light'),'both footers have th
 assert(html.includes('class="case-scroll-cue"'),'scroll cue occupies the removed counter slot');
 assert(runtime.includes("state.y > 1")&&runtime.includes("cue.classList.add('is-dismissed')"),'cue dismisses on the first scroll');
 console.log('PASS: identical menu/footer destinations, shared footer light, first-scroll cue and shared home motion profile.');
+
