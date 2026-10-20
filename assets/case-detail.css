@@ -77,7 +77,7 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 /* A short native overlap: read the overview, then lift the complete image above it. */
 .case-showcase-story { position: relative; display: flow-root; isolation: isolate; }
 @media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
-  .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; transform: translate3d(0, var(--case-overview-rise, 0px), 0); }
+  .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; opacity: var(--case-overview-opacity, 1); }
   .case-showcase-story[data-showcase-ready] > .case-screen-story { margin-top: clamp(96px, 18svh, 180px); }
 }
 

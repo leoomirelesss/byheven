@@ -16,7 +16,9 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
   }));
   const stage = {get offsetHeight(){reads++;return 900;}}, display = {setAttribute(k,v){attributes.set(k,v);}};
   const frame = {get offsetHeight(){reads++;return frameHeight;},style:{setProperty(k,v){writes++;frameStyles.set(k,v);}}};
-  const chapter = {hasAttribute:()=>width>=900,style:{setProperty(k,v){writes++;chapterStyles.set(k,v);}}};
+  const copy = {getBoundingClientRect(){reads++;return{bottom:2000-view.scrollY};}};
+  const overview = {offsetHeight:1200,querySelector:()=>copy,getBoundingClientRect(){reads++;return{top:1000-view.scrollY};}};
+  const chapter = {querySelector:()=>overview,hasAttribute:()=>width>=900,style:{setProperty(k,v){writes++;chapterStyles.set(k,v);}}};
   const story = {
     dataset:{screenProject:'EMYASA'},parentElement:chapter,
     querySelector:selector=>selector==='.case-device'?stage:selector==='.case-device-frame'?frame:display,
@@ -45,15 +47,20 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
 const hold=468, blend=216, travel=hold*4+blend*3, start=3000;
 const env=fixture();assert.equal(env.heights.get('height'),`${900+travel}px`);
 const reads=env.reads();
-env.render(start-900);assert.equal(env.chapterStyles.get('--case-overview-rise'),'0px');
-env.render(start-450);assert.equal(env.chapterStyles.get('--case-overview-rise'),'-450px','the overview rises with the page before the transparent Mac pins');
-env.render(start);assert.equal(env.chapterStyles.get('--case-overview-rise'),'-900px');
 const center=(900-911.25)/2;
-assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,948,'the Mac base begins just below the viewport');
+const macTop=center*2+80+911.25*71/1500;
+const textBottom=900-1200-24+1000, fadeEnd=start+macTop-textBottom;
+env.render(fadeEnd-blend);assert.equal(env.chapterStyles.get('--case-overview-opacity'),'1','copy remains fully visible before the Mac approaches');
+env.render(fadeEnd-blend/2);assert(Math.abs(Number(env.chapterStyles.get('--case-overview-opacity'))-.5)<1e-10,'the sticky text fades gradually across the shared arrival distance');
+env.render(fadeEnd);assert.equal(env.chapterStyles.get('--case-overview-opacity'),'0','the copy is invisible when the Mac reaches the last line');
+env.render(fadeEnd-blend/2);assert(Math.abs(Number(env.chapterStyles.get('--case-overview-opacity'))-.5)<1e-10,'reverse scroll restores the same fade');
+assert(!env.chapterStyles.has('--case-overview-rise'),'the original pinned overview never moves');
+env.render(start);
+assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,980,'the Mac moves down 32px without changing its dimensions');
 env.render(start+hold*.55);
-assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,884,'the complete base is visible before the first reading hold finishes');
-assert(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25*71/1500>=15,'the top of the hardware remains visible too');
-env.render(start);assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,948,'reversing the scroll restores the entry pose');
+assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,916,'the base rests just beyond the lower fold at the marked position');
+assert(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25*71/1500>=47,'the top of the hardware remains visible too');
+env.render(start);assert.equal(center+parseFloat(env.frameStyles.get('--case-device-y'))+911.25,980,'reversing the scroll restores the entry pose');
 for(let index=0;index<4;index++){
   const y=start+index*(hold+blend)+hold/2;env.render(y);
   assert(env.attributes.get('aria-label').includes(`pantalla ${index+1} de 4`));
@@ -66,7 +73,7 @@ assert.equal(env.reads(),reads,'scroll frames do not read layout');
 env.render(start+travel);const writes=env.writes();assert.equal(env.render(start+travel+1000),false);assert.equal(env.writes(),writes,'the fourth view is complete before native release, with no idle work');
 env.render(start);let moving=env.render(start+900,false);for(let i=0;i<150&&moving;i++)moving=env.render(start+900,false);assert(!moving,'shared follow easing settles');
 env.media.matches=true;env.measure();assert(!env.heights.size&&!env.attributes.has('data-screen-ready'),'reduced motion removes the pinned scroll distance');
-env.render(start);assert.equal(env.views[0].style.value,'1');assert.equal(env.views[3].style.value,'0');assert.equal(env.frameStyles.get('--case-device-y'),'0px');assert.equal(env.chapterStyles.get('--case-overview-rise'),'0px','reduced motion restores ordinary document flow');
+env.render(start);assert.equal(env.views[0].style.value,'1');assert.equal(env.views[3].style.value,'0');assert.equal(env.frameStyles.get('--case-device-y'),'0px');assert.equal(env.chapterStyles.get('--case-overview-opacity'),'1','reduced motion keeps all copy visible in ordinary document flow');
 env.events.pagehide({persisted:true});assert.equal(env.releases(),0);env.events.pagehide({persisted:false});assert.equal(env.releases(),1);
 const loading=fixture({pending:1});loading.near();loading.render(start+hold+blend);assert.equal(loading.views[0].style.value,'1');assert.equal(loading.views[1].style.value,'0','an undecoded image cannot replace the previous screen with a blank');
 loading.resolve(1);await Promise.resolve();let catching=loading.render(start+hold+blend);assert(Number(loading.views[1].style.value)>0&&Number(loading.views[1].style.value)<1,'a late image still fades in instead of cutting');for(let i=0;i<150&&catching;i++)catching=loading.render(start+hold+blend);assert.equal(loading.views[1].style.value,'1');assert(!catching&&loading.wakes()>0);
@@ -91,4 +98,5 @@ for(const selector of ['.case-screen-story','.case-showcase.case-device']){
   assert(rule.includes('background: transparent;'),'the existing page atmosphere remains visible');
 }
 assert(!/case-screen-nav|case-screen-controls|case-screen-counter|padding-bottom: 116px/.test(css));
-console.log('PASS: transparent Mac, viewport entry and full-base reveal, departing overview, no pagination, four unchanged reading holds and blends, reverse, release, cached layout, finite settling, image readiness and reduced motion.');
+assert(css.includes('opacity: var(--case-overview-opacity, 1)')&&!css.includes('--case-overview-rise'),'the original curtain overlap uses only a subtle opacity fade');
+console.log('PASS: original curtain overlap, contact-based reversible text fade, unchanged Mac size shifted down 32px, transparent stage, no pagination, four reading holds and blends, native release, cached layout, finite settling, image readiness and reduced motion.');
