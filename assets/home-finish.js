@@ -29,6 +29,7 @@
     }
   };
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  nav?.querySelector('.cinema-nav-mark')?.addEventListener('click', () => setMenu(false));
   panel?.addEventListener('click', event => {
     if (event.target.closest('a[href]')) setMenu(false);
   });
@@ -144,3 +145,4 @@
     window.location.assign(url.href);
   });
 })();
+

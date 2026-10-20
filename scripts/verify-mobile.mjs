@@ -12,7 +12,11 @@ for (const page of ['index.html','case-studies/index.html',...['emyasa','stone-k
  assert.equal((html.match(/mobile-experience\.css/g)||[]).length,1);
  assert.equal((html.match(/mobile-experience\.js/g)||[]).length,1);
  assert(html.includes('media="(max-width: 899px)"'));
+ assert(/<a class="cinema-nav-mark" href="(?:\/)?#inicio" aria-label="by Heven, inicio">/.test(html),'the star is a real home link on every page');
+ assert(!html.includes('↗'),'arrows are SVG on Safari as well as desktop');
+ assert(html.includes('/assets/brand/star-mark.svg'));
 }
+assert(!/<image|base64|<filter/.test(read('assets/brand/star-mark.svg')),'logo uses the supplied silhouette as vector geometry');
 const source=read('assets/mobile-experience.js');
 let mediaChange,domReads=0;
 const media={matches:false,addEventListener(type,fn){mediaChange=fn;}};
@@ -39,7 +43,7 @@ track.closest=()=>parent;
 track.scrollTo=options=>{track.lastScroll=options;track.scrollLeft=options.left;track.handlers.scroll();};
 let change,aborted=0;
 const mobile={matches:true,addEventListener(type,fn){change=fn;}}, reduced={matches:false};
-const doc={querySelectorAll:()=>[track],querySelector:()=>null,getElementById:()=>null,createElement:()=>element(),addEventListener(){},body:{classList:{contains:()=>false}}};
+const doc={querySelectorAll:q=>q==='.chat-item'?[]:[track],querySelector:()=>null,getElementById:()=>null,createElement:()=>element(),addEventListener(){},body:{classList:{contains:()=>false}}};
 vm.runInNewContext(source,{
  window:{matchMedia:q=>q.includes('max-width')?mobile:reduced,addEventListener(){}},document:doc,
  AbortController:class{signal={};abort(){aborted++;}},
@@ -56,3 +60,51 @@ track.children[1].hidden=true;track.children[2].offsetLeft=100;track.children[3]
 observerCallbacks.forEach(fn=>fn());next.handlers.click();assert.equal(track.scrollLeft,100,'failed/hidden images do not leave empty stops');
 mobile.matches=false;change();assert(controls.removed);assert.equal(aborted,1);assert.equal(track.getAttribute('id'),'existing-gallery');
 console.log('PASS: mobile syntax, eight-page wiring, desktop no-op, gallery boundaries, buttons, reduced motion, failed-image skipping and breakpoint cleanup.');
+
+// Exercise the actual hero at short and tall mobile heights, then restore desktop.
+const heroSource = read('assets/shopify-hero.js');
+for (const height of [568, 844]) {
+ const style=()=>({values:new Map(),setProperty(k,v){this.values.set(k,v);},removeProperty(k){this.values.delete(k);}});
+ const slide=()=>({...element(),style:style(),classList:{toggle(){},add(){}}});
+ const slides=[slide(),slide(),slide()],device={style:style()},image={src:''};
+ const scene={...element(),dataset:{},classList:{add(){}},style:style(),offsetHeight:900,clientWidth:1440,
+  querySelector:q=>q==='.flow-phone-position'?device:image,querySelectorAll:()=>slides};
+ const story={...element(),querySelector:()=>scene,getBoundingClientRect:()=>({top:0}),toggleAttribute(k,v){this.attrs.set(k,v);}};
+ let client,preloads=0;
+ const clock={subscribe(c){client=c;},reset(){},wake(){},approach:(a,b)=>b};
+ const win={innerWidth:390,innerHeight:height,scrollY:0,HevenMotion:clock,
+  matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(){},dispatchEvent(){}};
+ vm.runInNewContext(heroSource,{window:win,document:{querySelector:q=>q==='[data-flow-story]'?story:null,getElementById:()=>null},Image:class{constructor(){preloads++;}},CustomEvent:class{}});
+ client.measure();
+ assert.equal(story.attrs.get('data-scroll-ready'),false,'all mobile heights use natural hero flow');
+ assert.equal(preloads,0,'mobile does not preload the discarded screens');
+ assert.equal(image.src,'assets/phone/screen-home.webp');
+ assert.deepEqual(slides.map(s=>s.inert),[false,true,true],'only the visible mobile chapter is focusable');
+ assert.equal(client.render({y:0}),false,'mobile hero does not animate on scroll');
+ win.innerWidth=1440;client.measure();
+ assert.equal(story.attrs.get('data-scroll-ready'),true,'desktop story returns at the approved breakpoint');
+ assert.equal(preloads,2,'only desktop prepares its two extra screens');
+ for (const [y, x, angle] of [[0,619.2,-24],[1188,964.8,360],[2376,244.8,720]]) {
+   client.render({y,dt:16.67,immediate:true});
+   assert(Math.abs(parseFloat(scene.style.values.get('--phone-x'))-x)<.001,'approved desktop phone positions remain unchanged');
+   assert.equal(parseFloat(scene.dataset.phoneTurn),angle);
+ }
+}
+
+// All ten answers remain available; collapsing and breakpoint cleanup restore state.
+const faqItems=Array.from({length:10},()=>({...element(),open:false})),faqParent=element();
+const faqMobile={matches:true,addEventListener(type,fn){this.change=fn;}};
+const faqDoc={...doc,querySelectorAll:q=>q==='.chat-item'?faqItems:[],querySelector:q=>q==='.chat-faq'?faqParent:null};
+vm.runInNewContext(source,{
+ window:{matchMedia:q=>q.includes('max-width')?faqMobile:reduced,addEventListener(){}},document:faqDoc,
+ AbortController:class{signal={};abort(){this.signal.aborted=true;}},ResizeObserver:class{},MutationObserver:class{}
+});
+const more=faqParent.children[0];more.scrollIntoView=()=>{};
+assert.equal(faqItems.filter(item=>!item.hidden).length,4);
+assert.equal(more.getAttribute('aria-expanded'),'false');
+more.handlers.click();assert(faqItems.every(item=>!item.hidden));
+faqItems[6].open=true;more.handlers.click();assert(!faqItems[6].open);
+assert.equal(faqItems.filter(item=>!item.hidden).length,4);
+faqMobile.matches=false;faqMobile.change();assert(faqItems.every(item=>!item.hidden));assert(more.removed);
+console.log('PASS: one mobile hero at short/tall heights, no extra-screen requests, desktop restoration, real home links, vector arrows/logo, compact FAQ with all answers and reversible cleanup.');
+

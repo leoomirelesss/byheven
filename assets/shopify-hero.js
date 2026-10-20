@@ -7,8 +7,6 @@
   if (nav && logo) {
     const expand = value => {
       nav.classList.toggle('is-expanded', value);
-      logo.setAttribute('aria-expanded', String(value));
-      logo.setAttribute('aria-label', value ? 'Contraer navegación' : 'Expandir navegación');
     };
     nav.addEventListener('pointerenter', () => { if (finePointer.matches) expand(true); });
     nav.addEventListener('pointerleave', () => {
@@ -18,7 +16,6 @@
     nav.addEventListener('focusout', () => queueMicrotask(() => {
       if (!nav.contains(document.activeElement) && !nav.matches(':hover') && !document.body.classList.contains('mobile-menu-open')) expand(false);
     }));
-    logo.addEventListener('click', event => expand(finePointer.matches && event.detail > 0 ? true : !nav.classList.contains('is-expanded')));
     document.addEventListener('pointerdown', event => {
       if (!nav.contains(event.target) && !document.body.classList.contains('mobile-menu-open')) expand(false);
     });
@@ -48,15 +45,35 @@
   const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
   const mix = (a,b,t) => a + (b-a) * t;
   // Decode the CSS fallback's next screens before a turn needs them.
-  screenNames.slice(1).forEach(name => { const image = new Image(); image.src = `assets/phone/screen-${name}.webp`; image.decode?.().catch(() => {}); });
+  let screensPrepared = false;
+  const prepareScreens = () => {
+    if (screensPrepared || window.innerWidth < 900) return;
+    screensPrepared = true;
+    screenNames.slice(1).forEach(name => { const image = new Image(); image.src = `assets/phone/screen-${name}.webp`; image.decode?.().catch(() => {}); });
+  };
   const setScreen = index => {
     if (index === active) return;
     active = index;
     if (phoneImage) phoneImage.src = `assets/phone/screen-${screenNames[index]}.webp`;
   };
   const measure = () => {
-    staticMobile = window.innerWidth < 900 && window.innerHeight < 700;
+    staticMobile = window.innerWidth < 900;
     story.toggleAttribute('data-scroll-ready', !motion.matches && !staticMobile);
+    if (staticMobile) {
+      slides.forEach((slide, index) => {
+        slide.inert = index !== 0;
+        slide.setAttribute('aria-hidden', String(index !== 0));
+        slide.style.removeProperty('--slide-y');
+        slide.classList.toggle('is-active', index === 0);
+      });
+      for (const key of ['left','top','ry','rz','rx','scale','x','y']) scene.style.removeProperty(`--phone-${key}`);
+      scene.style.removeProperty('--asterisk-turn');
+      device.style.setProperty('--scene-x', '0px'); device.style.setProperty('--scene-y', '0px');
+      pointerX = pointerY = px = py = 0;
+      setScreen(0);
+      return;
+    }
+    prepareScreens();
     start = story.getBoundingClientRect().top + window.scrollY;
     height = scene.offsetHeight; width = scene.clientWidth;
     step = Math.max(1, height * 1.32);
@@ -138,7 +155,7 @@
     return moving;
   };
   scene.addEventListener('pointermove', event => {
-    if (motion.matches || !finePointer.matches || event.pointerType === 'touch') return;
+    if (staticMobile || motion.matches || !finePointer.matches || event.pointerType === 'touch') return;
     const rect = scene.getBoundingClientRect();
     pointerX = ((event.clientX - rect.left) / width - .5) * 18;
     pointerY = ((event.clientY - rect.top) / height - .5) * 12;
@@ -150,3 +167,4 @@
   window.addEventListener('flow:ready', () => { force = true; clock.reset(); });
   clock.subscribe({measure, render});
 })();
+

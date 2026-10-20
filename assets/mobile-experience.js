@@ -26,7 +26,8 @@
         button.type = 'button';
         button.setAttribute('aria-controls', track.id);
         button.setAttribute('aria-label', (isMac ? 'Pantalla ' : 'Proyecto ') + (direction < 0 ? 'anterior' : 'siguiente'));
-        button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="' + (direction < 0 ? 'M19 12H5m6-6-6 6 6 6' : 'M5 12h14m-6-6 6 6-6 6') + '"/></svg>';
+        const icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (direction < 0 ? 'M19 12H5m6-6-6 6 6 6' : 'M5 12h14m-6-6 6 6-6 6') + '"/></svg>';
+        button.innerHTML = direction < 0 ? icon + '<span>Anterior</span>' : '<span>Siguiente</span>' + icon;
         listen(button, 'click', () => {
           const items = [...track.children].filter(item => !item.hidden);
           if (!items.length) return;
@@ -56,6 +57,56 @@
       });
     });
 
+    // Keep the initial FAQ short without deleting answers or creating a nested scroller.
+    const questions = [...document.querySelectorAll('.chat-item')];
+    if (questions.length > 4) {
+      const extra = questions.slice(4);
+      const original = extra.map(item => ({item, hidden: item.hidden, id: item.getAttribute('id')}));
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mobile-faq-more';
+      original.forEach(({item, id}, i) => { if (!id) item.id = 'mobile-faq-' + i; });
+      button.setAttribute('aria-controls', extra.map(item => item.id).join(' '));
+      const show = expanded => {
+        extra.forEach(item => { item.hidden = !expanded; });
+        button.setAttribute('aria-expanded', String(expanded));
+        button.textContent = expanded ? 'Ver menos preguntas −' : 'Ver las ' + extra.length + ' preguntas restantes +';
+      };
+      show(false);
+      document.querySelector('.chat-faq')?.append(button);
+      listen(button, 'click', () => {
+        const expanded = button.getAttribute('aria-expanded') !== 'true';
+        if (!expanded) extra.forEach(item => { item.open = false; });
+        show(expanded);
+        if (!expanded) button.scrollIntoView({block: 'nearest', behavior: 'instant'});
+        window.HevenMotion?.invalidate();
+      });
+      cleanups.push(() => {
+        original.forEach(({item, hidden, id}) => { item.hidden = hidden; if (!id) item.removeAttribute('id'); });
+        button.remove();
+      });
+    }
+
+    // Fit the final wordmark once per width/font change, with no scroll animation.
+    const brand = document.querySelector('.footer-brand');
+    const wordmark = brand?.querySelector('.footer-logo-large');
+    if (wordmark) {
+      const fit = () => {
+        if (abort.signal.aborted) return;
+        const available = brand.clientWidth - 2;
+        const width = wordmark.getBoundingClientRect().width;
+        const size = parseFloat(getComputedStyle(wordmark).fontSize);
+        if (width > 0 && available > 0 && Math.abs(width - available) > .5) {
+          wordmark.style.setProperty('--mobile-wordmark-size', (size * available / width).toFixed(3) + 'px');
+        }
+      };
+      const resize = new ResizeObserver(fit);
+      resize.observe(brand);
+      document.fonts?.ready.then(fit);
+      fit();
+      cleanups.push(() => { resize.disconnect(); wordmark.style.removeProperty('--mobile-wordmark-size'); });
+    }
+
     // Keep keyboard focus in the visible menu, including after orientation changes.
     const panel = document.getElementById('mobile-menu-panel');
     const nav = document.querySelector('.cinema-nav');
@@ -76,3 +127,4 @@
   mount();
   window.addEventListener('pagehide', event => { if (!event.persisted) cleanup(); });
 })();
+

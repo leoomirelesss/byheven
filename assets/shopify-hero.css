@@ -49,6 +49,10 @@ body.mobile-menu-open .cinema-menu-toggle span:nth-child(1) { transform: transla
 body.mobile-menu-open .cinema-menu-toggle span:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }
 .cinema-nav-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; border-radius: 50%; font-family: 'Outfit', sans-serif; font-size: 23px; font-weight: 500; letter-spacing: -.08em; color: var(--brand-dark); line-height: 1; cursor: pointer; }
 .cinema-nav-mark img { display: block; width: 26px; height: 26px; object-fit: contain; }
+.cinema-nav-mark { text-decoration: none; }
+.cinema-nav-mark:focus-visible { outline: 2px solid #a89cc2; outline-offset: 5px; }
+.ui-arrow.ui-arrow--inline { display: inline-block; width: 1em; height: 1em; vertical-align: -.15em; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.cinema-nav-contact { gap: 6px; }
 .cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s, visibility .2s; }
 .cinema-nav.is-expanded .cinema-menu-toggle, .cinema-nav.is-expanded .cinema-nav-contact { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: .12s; }
 .cinema-nav-contact { align-self: stretch; display: flex; align-items: center; justify-content: center; color: #ceced7; background: var(--brand-dark); border-radius: 12px; width: 114px; text-decoration: none; font-size: 12px; transition: background .25s; }
@@ -121,3 +125,4 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
 
 .flow-hero.has-started-scrolling .flow-scroll-cue { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .flow-scroll-cue { transition: none; } }
+
