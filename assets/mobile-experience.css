@@ -24,7 +24,7 @@
   .flow-story .flow-slide[data-phase="0"] { display: contents; }
   .flow-story .flow-slide:not([data-phase="0"]) { display: none; }
   .flow-brand { grid-area: brand; justify-self: end; position: relative; inset: auto; font-size: 26px; min-height: 32px; margin-bottom: 8px; }
-  .flow-story .flow-title { grid-area: title; position: relative; inset: auto; font-size: clamp(2.375rem, 1.3rem + 5.2vw, 4rem); line-height: 1.05; color: #e4e1eb; }
+  .flow-story .flow-title { grid-area: title; position: relative; inset: auto; margin-top: 24px; font-size: clamp(2.375rem, 1.3rem + 5.2vw, 4rem); line-height: 1.05; color: #e4e1eb; }
   .flow-title-line { white-space: normal; }
   .flow-story .flow-description { grid-area: copy; position: relative; inset: auto; width: auto; max-width: 34rem; z-index: 6; }
   .flow-description p { font-size: 1.0625rem; line-height: 1.5; color: #d5d0de; }
@@ -120,7 +120,7 @@
   .home-primary-link { font-size: 1rem; padding-left: 20px; gap: 12px; }
   .home-cta-label { min-width: 0; }
   .sticky-footer-wrapper, .sticky-footer-inner, .sticky-footer { height: auto; min-height: 0; top: auto; position: relative; clip-path: none; }
-  .footer-content { padding: 48px var(--mobile-gutter) max(12px, env(safe-area-inset-bottom)); gap: 40px; }
+  .footer-content { padding: 48px var(--mobile-gutter) 0; gap: 40px; }
   .footer-nav-grid { width: 100%; padding-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
   .footer-nav-links { gap: 0; }
   .sticky-footer-wrapper .footer-nav-links a { min-height: 44px; display: flex; align-items: center; font-size: .875rem; line-height: 1.4; }
@@ -128,13 +128,13 @@
   .footer-brand, .footer-info { position: relative; inset: auto; width: auto; max-width: 100%; padding: 0; text-align: left; }
   .footer-info { order: 0; }
   .footer-brand { order: 1; width: calc(100% + 2 * var(--mobile-gutter)); max-width: none; margin: 12px calc(-1 * var(--mobile-gutter)) 0; overflow: clip; }
-  .footer-logo-large { display: block; width: max-content; max-width: none; margin: 0; font-size: var(--mobile-wordmark-size, 21vw); line-height: 1.12; }
+  .footer-logo-large { display: block; width: max-content; max-width: none; margin: 0 0 0 -.055em; font-size: var(--mobile-wordmark-size, 21vw); line-height: .72; }
   .footer-social { justify-content: flex-start; }
   .sticky-footer .social-link { width: 48px; height: 48px; }
   .footer-animated :is(.footer-nav-col,.footer-brand,.footer-info):not(.visible) { opacity: 1; transform: none; }
 
   .mobile-gallery-controls { display: flex; justify-content: space-between; gap: 16px; margin: 24px 0 0; }
-  .mobile-gallery-controls button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 48px; min-height: 48px; padding: 12px 16px; border: 1px solid #ceced740; border-radius: 100px; background: transparent; color: #e4e1eb; font: inherit; font-size: .875rem; cursor: pointer; }
+  .mobile-gallery-controls button { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex: none; padding: 12px; border: 1px solid #ceced740; border-radius: 50%; background: transparent; color: #e4e1eb; cursor: pointer; }
   .mobile-gallery-controls button svg { width: 20px; height: 20px; }
   .mobile-gallery-controls button:disabled { opacity: .35; cursor: default; }
   .mobile-gallery-controls button:focus-visible { outline: 2px solid #ceced7; outline-offset: 4px; }

@@ -27,7 +27,7 @@
         button.setAttribute('aria-controls', track.id);
         button.setAttribute('aria-label', (isMac ? 'Pantalla ' : 'Proyecto ') + (direction < 0 ? 'anterior' : 'siguiente'));
         const icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (direction < 0 ? 'M19 12H5m6-6-6 6 6 6' : 'M5 12h14m-6-6 6 6-6 6') + '"/></svg>';
-        button.innerHTML = direction < 0 ? icon + '<span>Anterior</span>' : '<span>Siguiente</span>' + icon;
+        button.innerHTML = icon;
         listen(button, 'click', () => {
           const items = [...track.children].filter(item => !item.hidden);
           if (!items.length) return;
