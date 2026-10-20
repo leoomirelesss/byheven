@@ -85,7 +85,7 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
     -webkit-mask-position: var(--case-line-mask-position, 0 0); mask-position: var(--case-line-mask-position, 0 0);
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
   }
-  .case-showcase-story[data-showcase-ready] > .case-screen-story { margin-top: clamp(96px, 18svh, 180px); }
+  .case-showcase-story[data-showcase-ready] > :is(.case-screen-story, .case-phone-story) { margin-top: clamp(96px, 18svh, 180px); }
 }
 
 
@@ -102,5 +102,21 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 @media (max-width: 700px) { .case-showcase.case-device { padding-inline: 12px; } }
 @media (prefers-reduced-motion: reduce) { .case-device-frame { transform: none; } }
 @media print { .case-screen-story { height: auto !important; } .case-screen-story > .case-device { position: static; height: auto; } .case-device-frame { transform: none; } }
+
+/* Two independent iPhones follow the supplied staggered composition. */
+.case-phone-story { position: relative; z-index: 2; background: transparent; }
+.case-phone-stage { position: relative; margin: 0; padding: 24px 2.65vw; overflow: visible; background: transparent; }
+.case-phone-pair { position: relative; display: grid; grid-template-columns: 41.1% 41.1%; justify-content: space-between; align-items: start; width: min(74.4%, 1488px, 96svh); margin: clamp(48px, 14svh, 150px) auto 0; }
+.case-app-phone { position: relative; min-width: 0; }
+.case-app-phone--lower { margin-top: clamp(56px, 14svh, 168px); }
+.case-app-phone img { display: block; width: 100%; height: auto; }
+.case-phone-story[data-phone-ready] .case-phone-stage { position: sticky; top: 0; height: 100svh; }
+.case-phone-story[data-phone-ready] .case-app-phone { transform: translate3d(0, var(--case-phone-y, 120svh), 0); }
+@media (max-width: 700px) {
+  .case-phone-stage { padding-inline: 24px; }
+  .case-phone-pair { width: 100%; grid-template-columns: 44% 44%; margin-top: 24px; }
+  .case-app-phone--lower { margin-top: 64px; }
+}
+@media print { .case-phone-story { padding-bottom: 0 !important; } .case-phone-pin { height: auto !important; } .case-phone-story .case-phone-stage { position: static; height: auto; } .case-app-phone { transform: none !important; } }
 
 @media print { .case-detail-atmosphere { display: none; } .case-hero { height: 500px; min-height: 0; } .case-title-word { transform: none; } .case-editorial [data-case-exit-lines] { -webkit-mask-image: none !important; mask-image: none !important; } }

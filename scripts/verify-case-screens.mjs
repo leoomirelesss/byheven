@@ -4,18 +4,20 @@ import vm from 'node:vm';
 
 const source = readFileSync(new URL('../assets/case-screen-story.js', import.meta.url), 'utf8');
 assert(!/requestAnimationFrame|setTimeout|setInterval/.test(source), 'the sequence has no separate timer or scroll clock');
-function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
+function fixture({phone = false, pending = -1, frameHeight = phone ? 850 : 911.25, width = 1440} = {}) {
   let client, reads = 0, writes = 0, wakes = 0, releases = 0;
   const events = {}, attributes = new Map(), heights = new Map(), frameStyles = new Map(), chapterStyles = new Map();
   const media = {matches:false,addEventListener(){},removeEventListener(){}};
-  const waits = [], labels = ['Inicio','Producto','Servicios','Seguimiento'];
+  const waits = [], labels = phone ? ['Reporte','Inicio'] : ['Inicio','Producto','Servicios','Seguimiento'];
   const views = labels.map((label, index) => ({
     complete:index !== pending, naturalWidth:index !== pending ? 1924 : 0,
     dataset:{screenLabel:label}, style:{set opacity(value){writes++;this.value=value;}},
     decode(){return new Promise(resolve => {waits[index] = resolve;});},
   }));
   const stage = {get offsetHeight(){reads++;return 900;}}, display = {setAttribute(k,v){attributes.set(k,v);}};
-  const frame = {get offsetHeight(){reads++;return frameHeight;},style:{setProperty(k,v){writes++;frameStyles.set(k,v);}}};
+  const frame = {get offsetHeight(){reads++;return frameHeight;},get offsetTop(){reads++;return phone?150:0;},style:{setProperty(k,v){writes++;frameStyles.set(k,v);}}};
+  const phones=phone?views.map((image,index)=>({get offsetTop(){reads++;return index?0:126;},querySelector:()=>image,style:{values:new Map(),setProperty(k,v){writes++;this.values.set(k,v);}}})):[];
+  const pin={style:{set height(value){heights.set('pin-height',value);},removeProperty(){heights.delete('pin-height');}}};
   const text = [
     {rows:[[0,24]]}, {rows:[[196,294],[300,406]],boxTop:200,boxBottom:400},
     {rows:[[600,624],[634,658],[668,692]],shift:32},
@@ -31,14 +33,15 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
   const chapter = {querySelector:()=>overview,hasAttribute:()=>width>=900,style:{setProperty(k,v){writes++;chapterStyles.set(k,v);}}};
   const story = {
     dataset:{screenProject:'EMYASA'},parentElement:chapter,
-    querySelector:selector=>selector==='.case-device'?stage:selector==='.case-device-frame'?frame:display,
-    querySelectorAll:()=>views,
+    querySelector:selector=>['.case-device','.case-phone-stage'].includes(selector)?stage:['.case-device-frame','.case-phone-pair'].includes(selector)?frame:selector==='.case-phone-pin'?pin:display,
+    querySelectorAll:selector=>selector==='.case-app-phone'?phones:selector==='.case-device-view'?(phone?[]:views):[],
+    hasAttribute:name=>name==='data-case-phone-story'?phone:attributes.has(name),
     toggleAttribute(k,on){if(on)attributes.set(k,true);else attributes.delete(k);},
-    style:{set height(value){heights.set('height',value);},removeProperty:k=>heights.delete(k)},
+    style:{set height(value){heights.set('height',value);},set paddingBottom(value){heights.set('padding-bottom',value);},removeProperty:k=>heights.delete(k)},
     getBoundingClientRect(){reads++;return{top:3000-view.scrollY};},
   };
   const clock = {
-    settings:{arrivalMin:140,arrivalMax:240,arrivalDistance:.24},
+    settings:{arrivalMin:140,arrivalMax:240,arrivalDistance:.24,stagger:24},
     approach:(value,target,dt,immediate)=>immediate||Math.abs(target-value)<.0001?target:value+(target-value)*(1-Math.exp(-dt/70)),
     subscribe(value){client=value;return()=>releases++;},invalidate(){client.measure();},wake(){wakes++;},
   };
@@ -50,7 +53,7 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
     IntersectionObserver:class{constructor(callback){near=callback;}observe(){}disconnect(){}},
   });
   client.measure();
-  return {views,events,view,media,attributes,heights,display,frameStyles,chapterStyles,text,
+  return {views,phones,events,view,media,attributes,heights,display,frameStyles,chapterStyles,text,
     measure:()=>client.measure(),render:(y,immediate=true)=>client.render({y,dt:16.67,immediate}),
     near:()=>near([{isIntersecting:true}]),resolve:index=>{views[index].naturalWidth=1924;waits[index]?.();},
     reads:()=>reads,writes:()=>writes,wakes:()=>wakes,releases:()=>releases};
@@ -110,6 +113,39 @@ const small=fixture();small.view.innerHeight=500;small.measure();assert(!small.h
 for(const options of [{width:390,frameHeight:229},{width:1100,frameHeight:640}]){
   const portrait=fixture(options);portrait.render(start);assert.equal(portrait.frameStyles.get('--case-device-y'),'0px','shorter Macs keep a centered native composition');
 }
+// Real two-phone controller: lower/left first, upper/right second, pause, native tail.
+const app=fixture({phone:true}), rise=522, gap=24, appStart=start-675, release=start+rise*2+gap+hold-675;
+const shifts=()=>app.phones.map(phone=>Number(parseFloat(phone.style.values.get('--case-phone-y')).toFixed(6)));
+assert.equal(app.heights.get('pin-height'),`${900+release-start}px`);
+assert.equal(app.heights.get('padding-bottom'),'148px','the tail reserves the complete phones after the pin ends');
+const appReads=app.reads();
+app.render(appStart);assert.deepEqual(shifts(),[720,990]);
+app.render(appStart+rise/2);assert.deepEqual(shifts(),[360,990],'only the lower phone rises first');
+app.render(appStart+rise);assert.deepEqual(shifts(),[0,990],'the lower phone settles before the upper one starts');
+app.render(appStart+rise+gap+rise/2);assert.deepEqual(shifts(),[0,495],'the higher phone rises second');
+const appHalf=shifts();app.render(release);app.render(appStart+rise+gap+rise/2);assert.deepEqual(shifts(),appHalf,'both entrances reverse exactly');
+app.render(appStart+rise*2+gap);assert.deepEqual(shifts(),[0,0]);
+app.render(release-1);assert.deepEqual(shifts(),[0,0],'the composition has a full reading hold before release');
+app.render(release+100);assert.deepEqual(shifts(),[0,0],'after release only native page movement remains');
+assert(150-100>=0&&150+850-100<=900,'the reserved native tail reveals both entire phones in the viewport');
+assert.equal(app.reads(),appReads,'phone scroll frames never measure layout');
+app.render(release+1000);const appWrites=app.writes();assert.equal(app.render(release+1500),false);assert.equal(app.writes(),appWrites,'phone rendering sleeps at rest');
+app.render(appStart);let phoneMoving=app.render(appStart+rise/2,false);for(let i=0;i<150&&phoneMoving;i++)phoneMoving=app.render(appStart+rise/2,false);assert(!phoneMoving,'phone follow easing settles');
+app.media.matches=true;app.measure();app.render(release);assert(!app.heights.size&&!app.attributes.has('data-phone-ready'));assert.deepEqual(shifts(),[0,0],'reduced motion shows the complete static composition');
+const mobile=fixture({phone:true,width:390});mobile.render(start);assert(!mobile.heights.size&&!mobile.attributes.has('data-phone-ready'),'small screens keep ordinary scrolling');
+const lateApp=fixture({phone:true,pending:1});lateApp.near();lateApp.render(release);assert.deepEqual(lateApp.phones.map(phone=>Number(parseFloat(phone.style.values.get('--case-phone-y')).toFixed(6))),[720,990],'both images decode before the sequence can appear');
+lateApp.resolve(1);await Promise.resolve();let lateMoving=lateApp.render(release,false);assert(lateMoving);for(let i=0;i<150&&lateMoving;i++)lateMoving=lateApp.render(release,false);assert(!lateMoving&&lateApp.wakes()>0);
+for(const [slug,names] of [['dor-os',['dor-os-report','dor-os-home']],['academic-quest',['academic-quest-planner','academic-quest-campus']]]){
+  const html=readFileSync(new URL(`../case-studies/${slug}/index.html`,import.meta.url),'utf8');
+  assert(html.includes('data-case-phone-story')&&html.includes('data-case-showcase-story'));
+  assert.equal((html.match(/class="case-app-phone(?: case-app-phone--lower)?"/g)||[]).length,2);
+  assert(!html.includes('data-case-screen-story')&&!html.includes('data-screen-to='));
+  assert(html.indexOf(`apps/${names[0]}.webp`)<html.indexOf(`apps/${names[1]}.webp`),'phone order matches the supplied reference');
+  for(const name of names)for(const suffix of ['','-368']){
+    const bytes=readFileSync(new URL(`../assets/cases/apps/${name}${suffix}.webp`,import.meta.url));
+    assert(bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP');
+  }
+}
 for(const slug of ['emyasa','stone-kuche','parsomen','dor']){
   const html=readFileSync(new URL(`../case-studies/${slug}/index.html`,import.meta.url),'utf8');
   assert.equal((html.match(/class="case-device-shell"/g)||[]).length,1,'one fixed shell per case');
@@ -129,4 +165,5 @@ for(const selector of ['.case-screen-story','.case-showcase.case-device']){
 assert(!/case-screen-nav|case-screen-controls|case-screen-counter|padding-bottom: 116px/.test(css));
 assert(css.includes('mask-image: var(--case-line-mask, none)')&&!css.includes('--case-overview-opacity')&&!css.includes('--case-overview-rise'),'the original curtain overlap fades only actual text lines');
 assert(css.includes('mask-clip: no-clip')&&css.includes('mask-size: var(--case-line-mask-size')&&css.includes('mask-position: var(--case-line-mask-position'),'mask painting extends beyond tight text boxes without changing layout');
-console.log('PASS: unclipped accents, descenders and glyph overhang, unchanged text layout, staggered reversible line fade, untouched Mac framing and curtain entrance, four reading holds and blends, native release, cached layout, finite settling, image readiness and reduced motion.');
+assert(css.includes('.case-phone-story { position: relative; z-index: 2; background: transparent; }'));
+console.log('PASS: staggered lower/upper iPhones, pause and native full-phone reveal, responsive/reduced fallback, readiness and reverse, unclipped line fades, unchanged Mac sequence, cached layout and finite settling.');

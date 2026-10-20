@@ -140,7 +140,7 @@ for(const [index,slug] of slugs.entries()){
   const next=slugs[(index+1)%slugs.length];
   assert(new RegExp(`class="case-next-cover"[^>]*><img src="/assets/cases/heroes/${next}\\.webp"`).test(html),'each next-case teaser has its destination image');
   if(['dor-os','academic-quest'].includes(slug)){
-    assert.equal(photos.length,2,'apps have their hero and next-case teaser');assert(!html.includes('case-showcase'),'apps have no interior screenshot gallery');
+    assert.equal(photos.length,4,'apps have their hero, two supplied iPhones and next-case teaser');assert(html.includes('data-case-phone-story')&&!html.includes('data-case-screen-story'),'apps use their own two-phone story');
   }else assert(html.includes(`/assets/cases/mac/${slug}-1.webp`));
 }
 assert(!read('assets/page-transitions.css').includes('heven-curtain-safety'),'no fixed CSS timer can reveal an unready destination');
