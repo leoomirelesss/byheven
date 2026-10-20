@@ -24,11 +24,14 @@
   let displayed = views.map((_, index) => index === 0 ? 1 : 0);
   const clamp = value => Math.max(0, Math.min(1, value));
   const ease = value => value * value * value * (value * (value * 6 - 15) + 10);
+  // Match the home phone's softer velocity curve for large vertical movements.
+  const glide = value => value * value * (3 - 2 * value);
   let enabled = false, start = 0, hold = 1, blend = 1, travel = 1, readingLead = 0;
-  let position = 0, active = 0, last = '', warmed = false, alive = true;
+  let position = 0, active = 0, last = '', warmed = false, alive = true, shellFailed = false;
   let lift = false, center = 0, overlap = false, fadeDistance = 1, lastY = '', frameHeight = 0;
   let phoneStart = 0, phoneRise = 1, phoneDelay = 0, phoneHeight = 1, phoneBases = [];
   const phoneProgress = phones.map(() => 0), phoneShifts = phones.map(() => null);
+  const phoneReveal = phones.map((_, index) => ready[index] ? 1 : 0), phoneOpacity = phones.map(() => null);
   const fadeText = y => text.forEach(block => {
     if (!overlap || !block.lines.length) {
       if (block.last) block.element.style.removeProperty('--case-line-mask');
@@ -45,7 +48,7 @@
     block.element.style.setProperty('--case-line-mask', mask); block.last = mask;
   });
   const paint = (value, state) => {
-    const base = failed[0] ? ready.findIndex(Boolean) : 0;
+    const base = ready.findIndex(Boolean);
     const targets = views.map((_, index) => index === base ? 1 : index > base && ready[index] ? ease(clamp((value - (index * hold + (index - 1) * blend + readingLead)) / blend)) : 0);
     const opacities = targets.map((target, index) => catchup[index] && !reduced.matches ? clock.approach(displayed[index], target, state.dt, false) : target);
     const moving = opacities.some((value, index) => value !== targets[index]);
@@ -69,6 +72,7 @@
     if (warmed) return;
     warmed = true;
     [...pictures, ...(!isPhone && shell ? [shell] : [])].forEach((image, index) => {
+      let retried = false;
       image.loading = 'eager';
       const loaded = () => {
         if (!alive) return;
@@ -77,16 +81,31 @@
           catchup[index] ||= !ready[index] && (isPhone || index > 0) && !reduced.matches;
           ready[index] = true; failed[index] = false;
           if (recovering) {
+            image.hidden = false;
             story.hidden = false;
             if (isPhone) phones[index].hidden = false;
             clock.invalidate();
           }
+        } else if (index === pictures.length && shellFailed) {
+          shellFailed = false; image.hidden = false; clock.invalidate();
         }
         last = ''; clock.wake();
       };
       const unavailable = () => {
-        if (!alive || index >= pictures.length) return;
+        if (!alive) return;
+        // Try the other existing resolution once; never loop requests or upscale assets.
+        const backup = (image.srcset || '').split(',').map(source => source.trim().split(/\s+/)[0]).find(source => source && !(image.currentSrc || image.src).endsWith(source));
+        if (!retried && backup) {
+          if (index < pictures.length) ready[index] = false;
+          retried = true; image.srcset = ''; image.src = backup;
+          last = ''; clock.wake();
+          return;
+        }
+        if (index >= pictures.length) {
+          shellFailed = true; image.hidden = true; clock.invalidate(); return;
+        }
         ready[index] = false; failed[index] = true;
+        image.hidden = true;
         if (isPhone) phones[index].hidden = true;
         // Failed media must never leave an empty pinned chapter or a broken phone
         // drifting over the following content. The project information stays intact.
@@ -105,7 +124,8 @@
   };
   const unsubscribe = clock.subscribe({
     measure() {
-      enabled = !story.hidden && !reduced.matches && window.innerHeight >= 640 && window.innerWidth >= 900;
+      enabled = !story.hidden && !shellFailed && !reduced.matches && window.innerHeight >= 640 && window.innerWidth >= 900;
+      chapter.toggleAttribute('data-device-static', shellFailed);
       story.toggleAttribute(isPhone ? 'data-phone-ready' : 'data-screen-ready', enabled);
       const height = stage.offsetHeight;
       frameHeight = frame.offsetHeight;
@@ -114,18 +134,19 @@
       center = (height - frameHeight) / 2;
       overlap = enabled && chapter.hasAttribute('data-showcase-ready');
       hold = Math.max(320, Math.min(600, height * .52));
-      blend = Math.min(clock.settings.arrivalMax, Math.max(clock.settings.arrivalMin, height * clock.settings.arrivalDistance));
+      const arrivalDistance = Math.min(clock.settings.arrivalMax, Math.max(clock.settings.arrivalMin, height * clock.settings.arrivalDistance));
+      blend = arrivalDistance * 1.2;
       travel = hold * 4 + blend * 3;
       // Redistribute the existing distance: the first screen settles before reading,
       // and the fourth releases sooner. No extra scroll is added.
-      readingLead = Math.min(hold * .3, blend * .65);
+      readingLead = Math.min(hold * .3, arrivalDistance * .65);
       start = story.getBoundingClientRect().top + window.scrollY;
       if (isPhone) {
         phoneHeight = height;
-        phoneRise = Math.max(360, Math.min(620, height * .58));
+        phoneRise = Math.max(560, Math.min(1000, height * .9));
         phoneDelay = clock.settings.stagger;
-        phoneStart = start - height * .75;
-        travel = phoneRise * 2 + phoneDelay + hold - height * .75;
+        phoneStart = start - height * .9;
+        travel = phoneRise * 2 + phoneDelay + hold - height * .9;
         phoneBases = phones.map(phone => frame.offsetTop + phone.offsetTop);
         if (enabled) {
           pin.style.height = `${height + travel}px`;
@@ -142,7 +163,7 @@
         } else {
           display.setAttribute('tabindex', '0');
           display.setAttribute('aria-roledescription', 'carrusel');
-          display.setAttribute('aria-label', `${story.dataset.screenProject}: cuatro vistas del sitio. Desliza horizontalmente o usa las flechas izquierda y derecha.`);
+          display.setAttribute('aria-label', `${story.dataset.screenProject}: ${views.filter((_, index) => !failed[index]).length} vistas del sitio. Desliza horizontalmente o usa las flechas izquierda y derecha.`);
         }
         views.forEach(image => {
           image.setAttribute('aria-hidden', String(enabled));
@@ -153,7 +174,7 @@
       if (overlap) {
         const overviewTop = overview.getBoundingClientRect().top;
         const stickyTop = Math.min(24, window.innerHeight - overview.offsetHeight - 24);
-        fadeDistance = Math.max(clock.settings.arrivalMin, blend * .65);
+        fadeDistance = Math.max(clock.settings.arrivalMin, arrivalDistance * .65);
         // Measure real wrapped lines without replacing text or changing the layout.
         text.forEach(block => {
           const bounds = block.element.getBoundingClientRect();
@@ -189,16 +210,21 @@
       if (isPhone) {
         let moving = false;
         phones.forEach((phone, index) => {
-          const target = !enabled ? 1 : !ready[index] ? 0 : ease(clamp((state.y - phoneStart - index * (phoneRise + phoneDelay)) / phoneRise));
-          // A late image catches up smoothly even during an already eased wheel frame.
-          phoneProgress[index] = clock.approach(phoneProgress[index], target, state.dt, !enabled || (state.immediate && !catchup[index]));
-          if (phoneProgress[index] === target) catchup[index] = false;
-          moving ||= phoneProgress[index] !== target;
-          const shift = enabled ? phoneHeight * (index ? 1.1 : .8) * (1 - phoneProgress[index]) : 0;
+          const target = !enabled ? 1 : !ready[index] ? phoneProgress[index] : glide(clamp((state.y - phoneStart - index * (phoneRise + phoneDelay)) / phoneRise));
+          // Late media fades into its current pose with a short lift, rather than
+          // racing through an entire missed entrance in a few frames.
+          const revealTarget = !enabled || ready[index] ? 1 : 0;
+          phoneReveal[index] = clock.approach(phoneReveal[index], revealTarget, state.dt, !enabled || (state.immediate && !catchup[index]));
+          phoneProgress[index] = clock.approach(phoneProgress[index], target, state.dt, !enabled || state.immediate || catchup[index]);
+          if (phoneReveal[index] === revealTarget) catchup[index] = false;
+          moving ||= phoneProgress[index] !== target || phoneReveal[index] !== revealTarget;
+          const opacity = glide(phoneReveal[index]);
+          if (opacity !== phoneOpacity[index]) { phone.style.opacity = String(opacity); phoneOpacity[index] = opacity; }
+          const shift = enabled ? phoneHeight * (index ? 1.1 : .8) * (1 - phoneProgress[index]) + clock.settings.arrivalShift * (1 - phoneReveal[index]) : 0;
           if (shift !== phoneShifts[index]) { phone.style.setProperty('--case-phone-y', `${shift}px`); phoneShifts[index] = shift; }
         });
         const stageY = state.y < start ? start - state.y : Math.min(0, start + travel - state.y);
-        const front = stageY + Math.min(...phoneBases.flatMap((base, index) => failed[index] ? [] : [base + phoneShifts[index]]));
+        const front = stageY + Math.min(...phoneBases.flatMap((base, index) => failed[index] || !ready[index] ? [] : [base + phoneShifts[index]]));
         fadeText(start - front);
         return moving;
       }
@@ -209,7 +235,7 @@
         return false;
       }
       position = clock.approach(position, target, state.dt, state.immediate || target === 0 || target === travel);
-      const y = lift ? center + 80 - 64 * ease(clamp(position / (hold * .55))) : 0;
+      const y = lift ? center + 80 - 64 * glide(clamp(position / (hold * .75))) : 0;
       if (y !== lastY) { frame.style.setProperty('--case-device-y', `${y}px`); lastY = y; }
       // The same moving-front geometry as the phones, including settle and release.
       const stageY = state.y < start ? start - state.y : Math.min(0, start + travel - state.y);
@@ -221,10 +247,12 @@
   if (display) {
     const navigate = event => {
       if (enabled || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const count = views.filter((_, index) => !failed[index]).length;
+      if (!count) return;
       event.preventDefault();
       const width = display.clientWidth;
       const current = Math.round(display.scrollLeft / Math.max(1, width));
-      const next = event.key === 'Home' ? 0 : event.key === 'End' ? views.length - 1 : Math.max(0, Math.min(views.length - 1, current + (event.key === 'ArrowRight' ? 1 : -1)));
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? count - 1 : Math.max(0, Math.min(count - 1, current + (event.key === 'ArrowRight' ? 1 : -1)));
       display.scrollTo({left: width * next, behavior: 'instant'});
     };
     display.addEventListener('keydown', navigate);
@@ -234,7 +262,7 @@
   const proximity = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
     if (!entries.some(entry => entry.isIntersecting)) return;
     warm(); proximity.disconnect();
-  }, {rootMargin: '100% 0px'}) : null;
+  }, {rootMargin: '150% 0px'}) : null;
   if (proximity) proximity.observe(story); else warm();
   reduced.addEventListener('change', clock.invalidate);
   window.addEventListener('pagehide', event => {
