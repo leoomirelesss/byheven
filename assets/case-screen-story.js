@@ -7,7 +7,8 @@
   const frame = story.querySelector('.case-device-frame');
   const chapter = story.parentElement;
   const overview = chapter.querySelector('.case-editorial');
-  const copy = overview.querySelector('.case-editorial-row');
+  const text = [...overview.querySelectorAll('.case-editorial-label span, .case-editorial-summary, .case-editorial-row > h3, .case-editorial-copy > p, .case-editorial-facts dt, .case-editorial-facts dd')].map(element => ({element, lines: [], last: ''}));
+  const range = document.createRange();
   const display = story.querySelector('.case-device-display');
   const views = [...story.querySelectorAll('.case-device-view')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,7 +20,22 @@
   const ease = value => value * value * value * (value * (value * 6 - 15) + 10);
   let enabled = false, start = 0, hold = 1, blend = 1, travel = 1;
   let position = 0, active = 0, last = '', warmed = false, alive = true;
-  let lift = false, center = 0, overlap = false, fadeEnd = 0, lastY = '', lastOpacity = '';
+  let lift = false, center = 0, overlap = false, fadeDistance = 1, lastY = '';
+  const fadeText = y => text.forEach(block => {
+    if (!overlap || !block.lines.length) {
+      if (block.last) block.element.style.removeProperty('--case-line-mask');
+      block.last = ''; return;
+    }
+    let from = 0;
+    const stops = block.lines.map(line => {
+      const opacity = (1 - ease(clamp((y - line.end + fadeDistance) / fadeDistance))).toFixed(4);
+      const stop = `rgba(0,0,0,${opacity}) ${from}px, rgba(0,0,0,${opacity}) ${line.to}px`;
+      from = line.to; return stop;
+    });
+    const mask = `linear-gradient(to bottom, ${stops.join(', ')})`;
+    if (mask === block.last) return;
+    block.element.style.setProperty('--case-line-mask', mask); block.last = mask;
+  });
   const paint = (value, state) => {
     const targets = views.map((_, index) => index === 0 ? 1 : ready[index] ? ease(clamp((value - (index * hold + (index - 1) * blend)) / blend)) : 0);
     const opacities = targets.map((target, index) => catchup[index] && !reduced.matches ? clock.approach(displayed[index], target, state.dt, false) : target);
@@ -77,17 +93,35 @@
       else story.style.removeProperty('height');
       start = story.getBoundingClientRect().top + window.scrollY;
       if (overlap) {
-        const textBottom = Math.min(24, window.innerHeight - overview.offsetHeight - 24) + copy.getBoundingClientRect().bottom - overview.getBoundingClientRect().top;
+        const overviewTop = overview.getBoundingClientRect().top;
+        const stickyTop = Math.min(24, window.innerHeight - overview.offsetHeight - 24);
         const macTop = center + (lift ? center + 80 : 0) + frameHeight * 71 / 1500;
-        fadeEnd = start + macTop - textBottom;
+        fadeDistance = Math.max(clock.settings.arrivalMin, blend * .65);
+        // Measure real wrapped lines without replacing text or changing the layout.
+        text.forEach(block => {
+          const bounds = block.element.getBoundingClientRect();
+          const shift = parseFloat(block.element.closest('[data-arrival-item]')?.style.getPropertyValue('--arrival-y')) || 0;
+          range.selectNodeContents(block.element);
+          const boxes = [];
+          [...range.getClientRects()].filter(rect => rect.width && rect.height).forEach(rect => {
+            const previous = boxes.at(-1);
+            if (previous && Math.abs(previous.top - rect.top) < 2) previous.bottom = Math.max(previous.bottom, rect.bottom);
+            else boxes.push({top: rect.top, bottom: rect.bottom});
+          });
+          block.lines = boxes.map((box, index) => ({
+            end: start + macTop - (stickyTop + box.bottom - overviewTop - shift),
+            to: index === boxes.length - 1 ? bounds.height : ((box.bottom + boxes[index + 1].top) / 2 - bounds.top),
+          }));
+          block.element.setAttribute('data-case-exit-lines', '');
+          block.last = '';
+        });
       }
-      last = ''; lastY = ''; lastOpacity = '';
+      last = ''; lastY = '';
     },
     render(state) {
       const target = Math.max(0, Math.min(travel, state.y - start));
-      // The original sticky copy stays put; it disappears gently before the Mac meets it.
-      const opacity = overlap ? 1 - ease(clamp((state.y - fadeEnd + blend) / blend)) : 1;
-      if (opacity !== lastOpacity) { chapter.style.setProperty('--case-overview-opacity', String(opacity)); lastOpacity = opacity; }
+      // Lower lines fade first as the Mac approaches; upper lines remain readable.
+      fadeText(state.y);
       if (!enabled) {
         if (lastY !== 0) { frame.style.setProperty('--case-device-y', '0px'); lastY = 0; }
         return paint(0, state);
