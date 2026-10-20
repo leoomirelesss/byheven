@@ -17,15 +17,15 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
   const stage = {get offsetHeight(){reads++;return 900;}}, display = {setAttribute(k,v){attributes.set(k,v);}};
   const frame = {get offsetHeight(){reads++;return frameHeight;},style:{setProperty(k,v){writes++;frameStyles.set(k,v);}}};
   const text = [
-    {rows:[[0,24]]}, {rows:[[200,290],[300,390]]},
+    {rows:[[0,24]]}, {rows:[[196,294],[300,406]],boxTop:200,boxBottom:400},
     {rows:[[600,624],[634,658],[668,692]],shift:32},
     {rows:[[940,960]]}, {rows:[[980,1000]]},
-  ].map(({rows,shift=0})=>({
-    rows,mask:new Map(),attributes:new Map(),
+  ].map(({rows,shift=0,boxTop=rows[0][0],boxBottom=rows.at(-1)[1]})=>({
+    rows,attributes:new Map(),
     style:{setProperty(k,v){writes++;this.values.set(k,v);},removeProperty(k){writes++;this.values.delete(k);},values:new Map()},
     closest:()=>({style:{getPropertyValue:()=>String(shift)}}),setAttribute(k,v){this.attributes.set(k,v);},
-    getBoundingClientRect(){reads++;return{top:1000+rows[0][0]+shift-view.scrollY,height:rows.at(-1)[1]-rows[0][0]};},
-    getClientRects(){reads++;return rows.map(([top,bottom])=>({top:1000+top+shift-view.scrollY,bottom:1000+bottom+shift-view.scrollY,width:400,height:bottom-top}));},
+    getBoundingClientRect(){reads++;return{top:1000+boxTop+shift-view.scrollY,bottom:1000+boxBottom+shift-view.scrollY,left:100,right:500,width:400,height:boxBottom-boxTop};},
+    getClientRects(){reads++;return rows.map(([top,bottom])=>({top:1000+top+shift-view.scrollY,bottom:1000+bottom+shift-view.scrollY,left:98,right:502,width:404,height:bottom-top}));},
   }));
   const overview = {offsetHeight:1200,querySelectorAll:()=>text,getBoundingClientRect(){reads++;return{top:1000-view.scrollY};}};
   const chapter = {querySelector:()=>overview,hasAttribute:()=>width>=900,style:{setProperty(k,v){writes++;chapterStyles.set(k,v);}}};
@@ -58,6 +58,16 @@ function fixture({pending = -1, frameHeight = 911.25, width = 1440} = {}) {
 const hold=468, blend=216, travel=hold*4+blend*3, start=3000;
 const env=fixture();assert.equal(env.heights.get('height'),`${900+travel}px`);
 const reads=env.reads();
+for(const block of env.text){
+  const [x,y]=block.style.values.get('--case-line-mask-position').split(' ').map(parseFloat);
+  const [width,height]=block.style.values.get('--case-line-mask-size').split(' ').map(parseFloat);
+  assert(x<-2&&width>404,'the paint surface includes horizontal glyph overhang');
+  assert(y<0&&height>0,'accents have room above the box');
+}
+const [inkX,inkY]=env.text[1].style.values.get('--case-line-mask-position').split(' ').map(parseFloat);
+const [inkWidth,inkHeight]=env.text[1].style.values.get('--case-line-mask-size').split(' ').map(parseFloat);
+assert(inkY<-4&&inkY+inkHeight>206,'the mask covers glyph ascenders above and descenders below a tight heading box');
+assert(inkX+inkWidth>402,'the final character also keeps its right overhang');
 const center=(900-911.25)/2;
 const macTop=center*2+80+911.25*71/1500;
 const textBottom=900-1200-24+1000, fadeEnd=start+macTop-textBottom;
@@ -118,4 +128,5 @@ for(const selector of ['.case-screen-story','.case-showcase.case-device']){
 }
 assert(!/case-screen-nav|case-screen-controls|case-screen-counter|padding-bottom: 116px/.test(css));
 assert(css.includes('mask-image: var(--case-line-mask, none)')&&!css.includes('--case-overview-opacity')&&!css.includes('--case-overview-rise'),'the original curtain overlap fades only actual text lines');
-console.log('PASS: bottom-to-top stagger across actual wrapped lines, untouched text and section background, reversible fade, unchanged Mac framing and curtain entrance, four reading holds and blends, native release, cached layout, finite settling, image readiness and reduced motion.');
+assert(css.includes('mask-clip: no-clip')&&css.includes('mask-size: var(--case-line-mask-size')&&css.includes('mask-position: var(--case-line-mask-position'),'mask painting extends beyond tight text boxes without changing layout');
+console.log('PASS: unclipped accents, descenders and glyph overhang, unchanged text layout, staggered reversible line fade, untouched Mac framing and curtain entrance, four reading holds and blends, native release, cached layout, finite settling, image readiness and reduced motion.');

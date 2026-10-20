@@ -102,16 +102,26 @@
           const bounds = block.element.getBoundingClientRect();
           const shift = parseFloat(block.element.closest('[data-arrival-item]')?.style.getPropertyValue('--arrival-y')) || 0;
           range.selectNodeContents(block.element);
+          const rects = [...range.getClientRects()].filter(rect => rect.width && rect.height);
+          // Font ink can extend outside a tight line box. Keep accents and descenders
+          // inside the mask's paint surface without adding layout padding or margins.
+          const bleed = Math.ceil(Math.max(0, ...rects.map(rect => rect.height)) * .16) + 2;
+          const paintTop = Math.min(bounds.top, ...rects.map(rect => rect.top)) - bleed;
+          const paintBottom = Math.max(bounds.bottom, ...rects.map(rect => rect.bottom)) + bleed;
+          const paintLeft = Math.min(bounds.left, ...rects.map(rect => rect.left)) - bleed;
+          const paintRight = Math.max(bounds.right, ...rects.map(rect => rect.right)) + bleed;
           const boxes = [];
-          [...range.getClientRects()].filter(rect => rect.width && rect.height).forEach(rect => {
+          rects.forEach(rect => {
             const previous = boxes.at(-1);
             if (previous && Math.abs(previous.top - rect.top) < 2) previous.bottom = Math.max(previous.bottom, rect.bottom);
             else boxes.push({top: rect.top, bottom: rect.bottom});
           });
           block.lines = boxes.map((box, index) => ({
             end: start + macTop - (stickyTop + box.bottom - overviewTop - shift),
-            to: index === boxes.length - 1 ? bounds.height : ((box.bottom + boxes[index + 1].top) / 2 - bounds.top),
+            to: index === boxes.length - 1 ? paintBottom - paintTop : ((box.bottom + boxes[index + 1].top) / 2 - paintTop),
           }));
+          block.element.style.setProperty('--case-line-mask-size', `${paintRight - paintLeft}px ${paintBottom - paintTop}px`);
+          block.element.style.setProperty('--case-line-mask-position', `${paintLeft - bounds.left}px ${paintTop - bounds.top}px`);
           block.element.setAttribute('data-case-exit-lines', '');
           block.last = '';
         });

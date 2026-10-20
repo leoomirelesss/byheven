@@ -78,7 +78,13 @@ body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom
 .case-showcase-story { position: relative; display: flow-root; isolation: isolate; }
 @media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
   .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; }
-  .case-showcase-story[data-showcase-ready] [data-case-exit-lines] { -webkit-mask-image: var(--case-line-mask, none); mask-image: var(--case-line-mask, none); }
+  .case-showcase-story[data-showcase-ready] [data-case-exit-lines] {
+    -webkit-mask-image: var(--case-line-mask, none); mask-image: var(--case-line-mask, none);
+    -webkit-mask-clip: no-clip; mask-clip: no-clip;
+    -webkit-mask-size: var(--case-line-mask-size, 100% 100%); mask-size: var(--case-line-mask-size, 100% 100%);
+    -webkit-mask-position: var(--case-line-mask-position, 0 0); mask-position: var(--case-line-mask-position, 0 0);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
   .case-showcase-story[data-showcase-ready] > .case-screen-story { margin-top: clamp(96px, 18svh, 180px); }
 }
 
