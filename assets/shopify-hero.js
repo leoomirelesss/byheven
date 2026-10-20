@@ -55,7 +55,7 @@
     if (phoneImage) phoneImage.src = `assets/phone/screen-${screenNames[index]}.webp`;
   };
   const measure = () => {
-    staticMobile = window.innerWidth < 900 && window.innerHeight < 600;
+    staticMobile = window.innerWidth < 900 && window.innerHeight < 700;
     story.toggleAttribute('data-scroll-ready', !motion.matches && !staticMobile);
     start = story.getBoundingClientRect().top + window.scrollY;
     height = scene.offsetHeight; width = scene.clientWidth;
