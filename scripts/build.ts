@@ -3,6 +3,7 @@ import { cp, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { verifyPublicSite } from "./verify-public-site.mjs";
+import { verifySEO } from "./verify-seo.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const out = resolve(root, "dist");
 await build({entryPoints: [resolve(root, "src/case-index-motion.ts")], outfile: resolve(root, "assets/case-index-motion.js"), bundle: true, format: "esm", target: "es2022", minify: true});
@@ -14,4 +15,5 @@ for (const path of ["index.html", "robots.txt", "sitemap.xml", "assets", "case-s
   await cp(resolve(root, path), resolve(out, path), { recursive: true });
 }
 verifyPublicSite(out);
+verifySEO(out);
 console.log("Built static one-page home; no process island or React/GSAP runtime is shipped by the home.");

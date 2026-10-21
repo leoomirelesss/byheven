@@ -167,7 +167,7 @@
         }
         views.forEach(image => {
           image.setAttribute('aria-hidden', String(enabled));
-          image.alt = enabled ? '' : image.dataset.screenLabel;
+          image.alt = image.dataset.screenAlt || image.dataset.screenLabel;
           if (!enabled) image.style.opacity = '1';
         });
       }
