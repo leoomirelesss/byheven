@@ -1,27 +1,32 @@
-# Consultation requests
+# Consultations: direct booking and WhatsApp
 
-The home contact form now prepares a free 25-minute consultation request for the existing WhatsApp number. It does not claim to reserve a meeting or save a lead server-side. The visitor must send the prepared WhatsApp message.
+## Live booking
 
-## Current behavior
+The contact section links directly to the public Google Calendar appointment schedule. It uses a normal external anchor, without an iframe or third-party scheduling script. The visual layout and shared motion are retained.
+
+Verified visitor URL:
+https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ3jK8hvrT8yHq5aVDeUpOYiuWhItsYSCyCf69eJDeVJQyuy0p4wl7zpXMiAbQOq7ev0js-Pgj68?gv=true
+
+Owner-approved schedule, saved on 2026-10-21:
+
+- Monday–Friday: 16:00–20:00; Saturday: 09:00–12:00; Sunday unavailable.
+- Local time in Torreón: UTC−06:00. Google displays Central Standard Time – Mexico City (same local time as America/Monterrey).
+- Free 25-minute consultation, Google Meet generated after booking.
+- Ten-minute buffer, minimum 24 hours' notice, maximum three bookings per day, 60-day booking horizon.
+- Availability checks enabled against the owner's primary calendar. Accepted/created busy events there prevent conflicting reservations. The current plan does not include checking additional calendars; commitments on other calendars must also be blocked on the primary calendar.
+- Booking asks for name, surname, email and a required short description of the business need. No payment required.
+- Google owns booking, confirmation and calendar invitations. No Google API credentials, customer calendar details or event titles are exposed in website code.
+
+The public visitor page was opened and verified with weekday, Saturday and unavailable Sunday slots. No real/test appointment was submitted, so invite delivery, actual occupied-slot exclusion and cancellation/rescheduling still require an end-to-end booking with the owner. Do not describe those as tested.
+
+## Alternative: WhatsApp request
+
+Visitors can reserve directly without first filling the website form. Those who prefer a conversation can use the separate WhatsApp form or existing direct WhatsApp links.
 
 - Required: name, deliberate service selection, short description of the need.
 - Optional: business/site, estimated budget, desired start time.
 - USD estimates are monthly for Shopify administration and per project for web development and automation. Orientation requests keep the period undefined. An amount is cleared when its period changes.
-- Budget ranges do not advertise service prices or automatically reject inquiries. No budget is a valid answer.
-- WhatsApp receives one encoded message with the request context. The form remains intact when returning from WhatsApp; no personal data is written to localStorage, sessionStorage, a database or analytics.
-- Direct WhatsApp links remain available. Layout, shared motion, page transitions and SEO metadata are retained.
-- `npm run test:contact` exercises the actual controller and real HTML controls. The production build includes this check.
-
-## Connect real scheduling
-
-The owner's Google Calendar account, actual working hours and public appointment-schedule URL have not been supplied or connected. Do not invent a booking URL, expose calendar events, show assumed time slots, or claim that a request is confirmed.
-
-Once the owner provides the appointment-schedule link:
-
-1. Verify the owning account and availability calendars. Keep personal event details private.
-2. Configure the approved meeting duration (25 minutes), a 10-minute buffer, at least 24 hours' notice and a maximum of three appointments per day. Confirm the owner's available days/hours and use America/Monterrey as the owner's time zone.
-3. Enable calendar availability checks and Google Meet conferencing. Confirm whether checking secondary calendars and reminders requires an eligible plan.
-4. Link the real booking page from the consultation section. Keep the current form for WhatsApp requests so visitors do not have to submit the same details twice to reserve a time.
-5. Test public booking, occupied slots, confirmation, cancellation and rescheduling with the owner. Use a clearly labeled test appointment and remove it after the test.
-
-Reference: https://support.google.com/calendar/answer/10729749
+- Budget ranges qualify the request; they do not advertise prices or reject inquiries. No budget is valid.
+- The form prepares one encoded WhatsApp message. The visitor must send it; this alone does not reserve a meeting. Copy makes the distinction explicit.
+- Returning from WhatsApp preserves the form. No personal data is written to localStorage, sessionStorage, a database or analytics.
+- `npm run test:contact` exercises the real controller and HTML fields, as well as the separate verified booking link. The build includes this check.

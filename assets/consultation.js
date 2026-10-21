@@ -1,5 +1,5 @@
-/* Consultation requests use the existing WhatsApp handoff. A request is not a
-   booking: calendar availability must be connected before offering time slots. */
+/* WhatsApp is an alternative to the separate Google Calendar booking link.
+   Sending this request alone does not reserve a meeting. */
 (() => {
   const form = document.getElementById('contact-form');
   if (!form) return;

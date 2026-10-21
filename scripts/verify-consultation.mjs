@@ -9,8 +9,17 @@ assert(formMarkup,'the actual consultation form exists');
 assert(home.includes('src="assets/consultation.js" defer'),'home loads the controller');
 assert(!readFileSync(new URL('../assets/home-finish.js',import.meta.url),'utf8').includes("getElementById('contact-form')"),'one submission owner');
 assert(/name="service" required><option value="" selected>/.test(formMarkup),'service is a deliberate choice');
-assert(formMarkup.includes('Consulta gratuita de 25 minutos'));
-assert(formMarkup.includes('Envíala para que coordinemos la fecha y hora contigo.'),'no unconnected booking promise');
+assert(formMarkup.includes('consulta gratuita de 25 minutos'));
+const booking=home.match(/<a\b[^>]*id="consultation-booking"[^>]*>[\s\S]*?<\/a>/)?.[0];
+assert(booking,'a separate direct booking link avoids duplicate form submission');
+const bookingUrl=new URL(booking.match(/href="([^"]+)"/)[1]);
+assert.equal(bookingUrl.origin,'https://calendar.google.com');
+assert.equal(bookingUrl.pathname,'/calendar/u/0/appointments/schedules/AcZssZ3jK8hvrT8yHq5aVDeUpOYiuWhItsYSCyCf69eJDeVJQyuy0p4wl7zpXMiAbQOq7ev0js-Pgj68');
+assert.equal(bookingUrl.searchParams.get('gv'),'true');
+assert(booking.includes('Agenda tu consulta gratuita')&&booking.includes('noopener noreferrer'));
+assert(home.includes('id="consultation-booking-note"')&&home.includes('25 minutos por Google Meet'));
+assert(formMarkup.includes('Continuar por WhatsApp'),'the alternate request identifies its actual destination');
+assert(formMarkup.includes('Envíala para que coordinemos la fecha y hora contigo.'),'WhatsApp requests never claim a confirmed booking');
 assert(!/type="email"|name="decision|type="datetime-local"/.test(formMarkup),'no redundant contact, authority or fake time slot fields');
 
 function environment() {
