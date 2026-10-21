@@ -81,6 +81,8 @@ html { --nav-offset: 20px; scroll-padding-top: 20px; }
 .home-field--full { grid-column: 1 / -1; }
 .home-field label { font-size: 12px; color: #ceced7; }
 .home-field label span { color: #aaa6b4; font-size: 11px; }
+.home-field label #contact-budget-label { color: inherit; font-size: inherit; }
+.home-field-note { color: #aaa6b4; font-size: 12px; line-height: 1.5; }
 .home-field input, .home-field select, .home-field textarea { width: 100%; max-width: 100%; padding: 13px 0; border: 0; border-bottom: 1px solid #61596e; border-radius: 0; background: transparent; color: #ceced7; font: 400 16px/1.4 'Outfit',sans-serif; }
 .home-field input, .home-field select { min-height: 50px; }
 .home-field textarea { min-height: 120px; resize: vertical; }

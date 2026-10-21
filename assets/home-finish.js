@@ -131,28 +131,5 @@
     observer.observe(footer);
   }
 
-  const form = document.getElementById('contact-form');
-  const status = document.getElementById('home-form-status');
-  const required = form ? [...form.querySelectorAll('[required]')] : [];
-  required.forEach(field => field.addEventListener('input', () => field.setCustomValidity('')));
-  form?.addEventListener('submit', event => {
-    event.preventDefault();
-    required.forEach(field => field.setCustomValidity(field.value.trim() ? '' : 'Completa este campo para continuar.'));
-    if (!form.reportValidity()) return;
-    const value = name => form.elements.namedItem(name)?.value.trim() || '';
-    const message = [
-      'Hola by ˈHevən, me gustaría platicar sobre mi proyecto.',
-      '',
-      `Nombre: ${value('name')}`,
-      ...(value('business') ? [`Negocio o sitio: ${value('business')}`] : []),
-      `Me interesa: ${value('service')}`,
-      '',
-      value('text')
-    ].join('\n');
-    const url = new URL(form.action);
-    url.searchParams.set('text', message);
-    if (status) status.textContent = 'Tu mensaje está listo. Se abrirá WhatsApp para que lo revises y lo envíes.';
-    window.location.assign(url.href);
-  });
 })();
 

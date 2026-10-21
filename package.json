@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run typecheck && npm run test:motion && node --import tsx scripts/build.ts",
+    "build": "npm run typecheck && npm run test:motion && npm run test:contact && node --import tsx scripts/build.ts",
     "typecheck": "tsc --noEmit",
-    "test:motion": "node scripts/verify-home-motion.mjs && node --import tsx scripts/verify-case-vapour.ts && node scripts/verify-case-details.mjs"
+    "test:motion": "node scripts/verify-home-motion.mjs && node --import tsx scripts/verify-case-vapour.ts && node scripts/verify-case-details.mjs",
+    "test:contact": "node scripts/verify-consultation.mjs"
   },
   "engines": {
     "node": ">=22"
