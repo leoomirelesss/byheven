@@ -1,6 +1,6 @@
 # Home y componentes
 
-El home es estático: teléfono → servicios → proyectos → FAQ → contacto → footer. La sección «Cómo trabajamos» se retiró del contenido y de la navegación. Sus componentes React y sus recursos anteriores permanecen disponibles en el repositorio, pero el home ya no los importa ni hidrata.
+El home es estático: teléfono → servicios → proyectos → FAQ → contacto → footer. La sección «Cómo trabajamos» se retiró del contenido y de la navegación. Sus componentes, recursos y dependencia GSAP se retiraron durante la limpieza; siguen recuperables en el historial de Git.
 
 ## Rutas
 
@@ -8,7 +8,7 @@ El home es estático: teléfono → servicios → proyectos → FAQ → contacto
 - Teléfono/textos: `assets/shopify-hero.js`; escena WebGL: `tools/phone/runtime.mjs`.
 - Galería: `assets/cases.js`; FAQ: `assets/faq-scroll.js`.
 - Servicios, navegación, contacto y respuestas: sus controladores existentes en `assets/`.
-- Componentes reutilizables shadcn: `components/ui/`; datos archivados del proceso: `components/process-cards.tsx`.
+- Componentes reutilizables shadcn: `components/ui/`. La demo del proceso se retiró.
 - TypeScript y alias `@/`: `tsconfig.json`. Tailwind: `styles/components.css`; `cn`: `lib/utils.ts`.
 
 React, TypeScript y Tailwind están instalados. `components/ui` mantiene las importaciones de shadcn estables. No hace falta reiniciar la configuración. En otro proyecto, comenzar con `npx shadcn@latest init`; aquí se pueden añadir componentes mediante `npx shadcn@latest add <nombre>`. El home ya no solicita el bundle React/GSAP de proceso ni sus hojas CSS. El fondo continuo se conserva.
@@ -91,3 +91,8 @@ Los enlaces de «Estudio» coinciden con el menú: Inicio, Servicios, Proyectos,
 `HevenMotion.settings` es ahora el perfil común: rueda .68/110ms, amortiguación 70ms, entrada desde .92 del viewport en .24 de su altura (140–240px), subida 32px, opacidad inicial .72, stagger de 24px hasta 72px, desfase .14 y parallax máximo 2.5%. El home consume estos valores y el índice usa la misma amortiguación/easing; las imágenes comparten escala 1.065 y hover 1.09. La galería horizontal y el índice vertical conservan sus direcciones, usando la misma amplitud y los mismos límites de viewport (900px de ancho y 640px de alto). El fondo principal de proyectos sigue congelado.
 
 Pruebas: perfil del reloj real compartido, menús/footers equivalentes, capa de luz idéntica, cue al primer scroll, build/TypeScript, movimiento y teléfono. Revisión visual del preview pendiente en el navegador del usuario.
+
+
+### Limpieza de la versión anterior
+
+Se retiraron secuencias de frames, videos, capturas antiguas y recursos de proceso, paquetes y logos que no se cargan en el sitio actual. El CSS embebido del home conserva las declaraciones aplicables al contenido vigente; se retiraron selectores de secciones eliminadas. La compilación publica únicamente el home, casos y recursos actuales. `phone-model.html` y las herramientas del modelo permanecen para desarrollo y no se publica la página de revisión. La ruta anterior `/diseno-web-torreon/` redirige a `/case-studies/`. El caché HTTP útil se conserva; no se purgan datos del navegador.

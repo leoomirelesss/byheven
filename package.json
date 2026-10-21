@@ -6,7 +6,6 @@
   "scripts": {
     "build": "npm run typecheck && npm run test:motion && node --import tsx scripts/build.ts",
     "typecheck": "tsc --noEmit",
-    "test:process": "node scripts/verify-process.mjs",
     "test:motion": "node scripts/verify-home-motion.mjs && node --import tsx scripts/verify-case-vapour.ts && node scripts/verify-case-details.mjs"
   },
   "engines": {
@@ -16,7 +15,6 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "framer-motion": "14.3.0",
-    "gsap": "3.15.0",
     "lucide-react": "1.57.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",

@@ -105,21 +105,4 @@
   window.addEventListener('pagehide', hideAllPeeks);
   fine.addEventListener('change', hideAllPeeks);
   reduced.addEventListener('change', hideAllPeeks);
-  // The dedicated static pages reuse the site's expandable navigation.
-  if (document.body.hasAttribute('data-case-page') && !document.body.hasAttribute('data-home-navigation')) {
-    const toggle = document.querySelector('.cinema-menu-toggle');
-    const panel = document.getElementById('mobile-menu-panel');
-    const nav = document.querySelector('.cinema-nav');
-    const setMenu = (open, returnFocus = false) => {
-      document.body.classList.toggle('mobile-menu-open', open);
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-      panel.setAttribute('aria-hidden', String(!open)); panel.inert = !open;
-      if (open) { nav.classList.add('is-expanded'); panel.querySelector('a')?.focus(); }
-      else if (returnFocus) toggle.focus();
-    };
-    toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
-    panel?.addEventListener('click', event => { if (event.target.closest('a')) setMenu(false); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open')) setMenu(false, true); });
-  }
 })();
