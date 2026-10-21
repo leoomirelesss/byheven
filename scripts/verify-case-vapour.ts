@@ -184,9 +184,11 @@ console.log('PASS: eased acceleration, row stagger, caption delay, bounded image
 
 // Reusing the home footer must also preserve its navigation and keyboard behavior.
 const homeHtml = readFileSync(new URL('../index.html',import.meta.url),'utf8');
-const homeFooter = homeHtml.slice(homeHtml.indexOf('  <div class="sticky-footer-wrapper">'),homeHtml.lastIndexOf('</body>')).trim();
-const caseFooter = html.slice(html.indexOf('  <div class="sticky-footer-wrapper">'),html.lastIndexOf('</body>')).replaceAll('href="/#','href="#').trim();
-assert.equal(caseFooter,homeFooter,'case page reuses exactly the home footer with cross-page anchors');
+// Prepared WhatsApp messages follow the page; footer layout and destinations match.
+const footerMarkup = (page:string) => page.slice(page.indexOf('  <div class="sticky-footer-wrapper">'),page.lastIndexOf('</body>')).replaceAll('href="/#','href="#').replace(/(href="https:\/\/wa\.me\/528718876019)\?text=[^"]*/g,'$1').trim();
+const homeFooter = footerMarkup(homeHtml);
+const caseFooter = footerMarkup(html);
+assert.equal(caseFooter,homeFooter,'case page reuses the home footer with cross-page anchors and contextual contact messages');
 assert(html.includes('data-home-navigation')&&html.includes('/assets/home-finish.js'),'home controller owns case navigation and footer');
 const {default: footerVM}=await import('node:vm');
 const footerWindowEvents:Record<string,(e:any)=>void>={};

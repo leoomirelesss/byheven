@@ -4,7 +4,8 @@ import vm from 'node:vm';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const slugs = ['emyasa','stone-kuche','parsomen','dor','dor-os','academic-quest'];
-const footer = page => page.slice(page.indexOf('  <div class="sticky-footer-wrapper">'),page.lastIndexOf('</body>')).replaceAll('href="/#','href="#').trim();
+// Footer layout and destinations stay shared; only the prepared message varies by case.
+const footer = page => page.slice(page.indexOf('  <div class="sticky-footer-wrapper">'),page.lastIndexOf('</body>')).replaceAll('href="/#','href="#').replace(/(href="https:\/\/wa\.me\/528718876019)\?text=[^"]*/g,'$1').trim();
 for (const [index, slug] of slugs.entries()) {
   const html = read(`case-studies/${slug}/index.html`);
   assert.equal((html.match(/<h1\b/g)||[]).length,1);
@@ -13,6 +14,15 @@ for (const [index, slug] of slugs.entries()) {
   assert(html.includes(`/case-studies/${slugs[(index+1)%slugs.length]}/`),'all six cases form a complete navigation cycle');
   assert(!html.includes('/#process'));
   assert.equal(footer(html),footer(read('index.html')),'every detail page uses the home footer');
+  const caseName = html.match(/<h1[^>]+aria-label="([^"]+)"/)[1].replace(/\.$/,'');
+  const contactLinks = [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)];
+  assert.equal(contactLinks.length,4,'menu, invitation and both footer contact links are available');
+  for (const [,href] of contactLinks) {
+    const url = new URL(href), message = url.searchParams.get('text');
+    assert.equal(url.pathname,'/528718876019','contact recipient is unchanged');
+    assert(message?.startsWith('Hola by ˈHevən,') && message.includes(caseName),'the prepared message carries the brand and current case');
+    if (['dor-os','academic-quest'].includes(slug)) assert(message.includes('aplicación') && !message.includes('Shopify'),'app enquiries ask about app development');
+  }
   for(const [,path] of html.matchAll(/(?:src|href)="(\/assets\/[^"#]+)"/g)){
     const file=new URL(`..${path}`,import.meta.url);assert(existsSync(file),path);
     if(path.endsWith('.webp')){const bytes=readFileSync(file);assert(bytes.length>32&&bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP','valid supplied image: '+path);}
