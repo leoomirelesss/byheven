@@ -1,6 +1,6 @@
 /* Mobile composition only. Approved desktop rules and artwork remain authoritative. */
 @media (max-width: 899px) {
-  html { --mobile-gutter: clamp(20px, 5vw, 32px); scroll-padding-bottom: 100px; overflow-x: clip; }
+  html { --mobile-gutter: clamp(20px, 5vw, 32px); --mobile-ease: cubic-bezier(.2,.8,.2,1); scroll-padding-bottom: 100px; overflow-x: clip; }
   body { -webkit-text-size-adjust: 100%; width: 100%; max-width: 100%; overflow-x: clip; }
   body[data-case-page] { padding-bottom: 0; }
   :is(a, button, summary, input, select, textarea) { scroll-margin-block: 24px 110px; }
@@ -13,8 +13,9 @@
   .cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
   .cinema-nav .cinema-menu-toggle, .cinema-nav-mark { width: 44px; height: 44px; }
   .cinema-nav-contact { min-height: 44px; font-size: .875rem; }
-  .cinema-menu-panel.mobile-menu-panel { padding: max(28px, env(safe-area-inset-top)) var(--mobile-gutter) 100px; gap: 12px; overscroll-behavior: contain; }
-  .cinema-menu-panel.mobile-menu-panel a { min-height: 44px; padding-block: 6px; font-size: clamp(1.75rem, 1.2rem + 4vw, 3rem); overflow-wrap: anywhere; }
+  .cinema-menu-panel.mobile-menu-panel { padding: max(28px, env(safe-area-inset-top)) var(--mobile-gutter) 100px; gap: 12px; overscroll-behavior: contain; backdrop-filter: none; -webkit-backdrop-filter: none; transition: opacity 280ms var(--mobile-ease), visibility 280ms; }
+  .cinema-menu-panel.mobile-menu-panel a { min-height: 44px; padding-block: 6px; font-size: clamp(1.75rem, 1.2rem + 4vw, 3rem); overflow-wrap: anywhere; transform: translateY(6px); transition: transform 280ms var(--mobile-ease), color 160ms; }
+  body.mobile-menu-open .cinema-menu-panel.mobile-menu-panel a { transform: none; }
   .cinema-menu-panel p { margin: 0 0 20px; }
   body:has(.home-field :focus) .cinema-nav { opacity: 0; visibility: hidden; pointer-events: none; }
 
@@ -146,9 +147,29 @@
   .mobile-gallery-controls button:focus-visible { outline: 2px solid #ceced7; outline-offset: 4px; }
   .mobile-gallery-controls button:active { background: #ceced71a; }
   .case-device .mobile-gallery-controls { align-self: flex-end; }
+
+  /* One touch language: immediate press, restrained release, no layout animation. */
+  :is(.cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact, .cinema-nav-mark, .flow-contact, .home-primary-link, .mobile-gallery-controls button, .chat-question, .commerce-service-toggle, .mobile-faq-more, .sticky-footer .social-link) {
+    touch-action: manipulation;
+    transition: scale 180ms var(--mobile-ease), background-color 180ms var(--mobile-ease), color 180ms var(--mobile-ease), border-color 180ms var(--mobile-ease);
+  }
+  :is(.cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact, .cinema-nav-mark, .flow-contact, .home-primary-link, .mobile-gallery-controls button, .chat-question, .commerce-service-toggle, .mobile-faq-more, .sticky-footer .social-link):active:not(:disabled) { scale: .98; transition-duration: 80ms; }
+  .mobile-gallery-controls button:active:not(:disabled) { scale: .94; }
+  .commerce-service-panel { transition: grid-template-rows 300ms var(--mobile-ease), visibility 300ms; }
+  .chat-item.is-animated .chat-message { animation: mobile-reply-in 260ms var(--mobile-ease) both; }
+  .chat-item.is-animated .chat-message + .chat-message { animation-delay: 30ms; }
+  @keyframes mobile-reply-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  ::view-transition-group(root) { animation-duration: 480ms; }
+  ::view-transition-new(root) { animation-duration: 480ms; animation-timing-function: cubic-bezier(.65,0,.25,1); }
+
   @media (max-width: 359px) { .footer-nav-grid { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) {
     .flow-story .flow-hero::after { display: none; }
+    :is(.cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact, .cinema-nav-mark, .flow-contact, .home-primary-link, .mobile-gallery-controls button, .chat-question, .commerce-service-toggle, .mobile-faq-more, .sticky-footer .social-link):active:not(:disabled) { scale: none; transition: none; }
+    .cinema-menu-panel.mobile-menu-panel, .cinema-menu-panel.mobile-menu-panel a, .commerce-service-panel,
+    :is(.cinema-nav .cinema-menu-toggle, .cinema-nav .cinema-nav-contact, .cinema-nav-mark, .flow-contact, .home-primary-link, .chat-question, .commerce-service-toggle, .mobile-faq-more),
+    .chat-item.is-animated .chat-message { transition: none; animation: none; transform: none; }
+    ::view-transition-group(root), ::view-transition-new(root) { animation: none; }
     .mobile-gallery-controls button, .sticky-footer * { transition: none; animation: none; }
   }
 }

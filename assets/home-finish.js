@@ -22,7 +22,11 @@
     if (main) main.inert = open;
     if (footer) footer.inert = open;
     syncNavigation();
-    if (open) requestAnimationFrame(() => panel?.querySelector('a')?.focus());
+    if (open) requestAnimationFrame(() => {
+      // A quick mobile close must not focus the now-hidden panel on the next frame.
+      if (window.innerWidth < 900 && !document.body.classList.contains('mobile-menu-open')) return;
+      panel?.querySelector('a')?.focus();
+    });
     else if (returnFocus) {
       if (footerVisible) footer?.querySelector('a')?.focus({preventScroll: true});
       else toggle?.focus();
@@ -55,6 +59,12 @@
     });
     resetReply(item);
     if (motion.matches) return;
+    if (window.innerWidth < 900) {
+      // Mobile answers are immediately readable; animate their arrival, not a typing wait.
+      item.classList.add('is-animated');
+      pending.set(item, []);
+      return;
+    }
     const messages = [...item.querySelectorAll('.chat-message')];
     const typing = item.querySelector('.chat-typing');
     const region = item.querySelector('.chat-reply');

@@ -32,6 +32,8 @@
       controls.className = 'mobile-gallery-controls';
       controls.setAttribute('role', 'group');
       controls.setAttribute('aria-label', isMac ? 'Pantallas del proyecto' : 'Recorrer proyectos');
+      let positions = [], maximum = 0, requestedIndex = null;
+      const nearest = () => positions.reduce((best, position, i) => Math.abs(position - track.scrollLeft) < Math.abs(positions[best] - track.scrollLeft) ? i : best, 0);
       const buttons = [-1, 1].map(direction => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -40,28 +42,48 @@
         const icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (direction < 0 ? 'M19 12H5m6-6-6 6 6 6' : 'M5 12h14m-6-6 6 6-6 6') + '"/></svg>';
         button.innerHTML = icon;
         listen(button, 'click', () => {
-          const items = [...track.children].filter(item => !item.hidden);
-          if (!items.length) return;
-          const first = items[0].offsetLeft;
-          const positions = items.map(item => item.offsetLeft - first);
-          const current = positions.reduce((best, position, i) => Math.abs(position - track.scrollLeft) < Math.abs(positions[best] - track.scrollLeft) ? i : best, 0);
-          const next = Math.max(0, Math.min(items.length - 1, current + direction));
-          track.scrollTo({left: positions[next], behavior: reduced.matches ? 'instant' : 'smooth'});
+          if (!positions.length) return;
+          // Retarget native scrolling from the last request, even before its midpoint.
+          const current = requestedIndex ?? nearest();
+          requestedIndex = Math.max(0, Math.min(positions.length - 1, current + direction));
+          track.scrollTo({left: positions[requestedIndex], behavior: reduced.matches ? 'instant' : 'smooth'});
+          sync();
         });
         controls.append(button);
         return button;
       });
       parent.append(controls);
       const sync = () => {
-        buttons[0].disabled = track.scrollLeft <= 2;
-        buttons[1].disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+        if (requestedIndex !== null && Math.abs(track.scrollLeft - positions[requestedIndex]) <= 2) requestedIndex = null;
+        const destination = requestedIndex === null ? track.scrollLeft : positions[requestedIndex];
+        buttons[0].disabled = !positions.length || destination <= 2;
+        buttons[1].disabled = !positions.length || destination >= maximum - 2;
+      };
+      const measure = () => {
+        const items = [...track.children].filter(item => !item.hidden);
+        maximum = Math.max(0, track.scrollWidth - track.clientWidth);
+        const first = items[0]?.offsetLeft || 0;
+        positions = [...new Set(items.map(item => Math.max(0, Math.min(maximum, item.offsetLeft - first))))];
+        requestedIndex = null;
+        sync();
+      };
+      const takeOver = () => {
+        if (requestedIndex === null) return;
+        requestedIndex = null;
+        track.scrollTo({left: track.scrollLeft, behavior: 'instant'});
+        sync();
       };
       listen(track, 'scroll', sync, {passive: true});
-      const resize = new ResizeObserver(sync);
+      // Touch and wheel stay native: no preventDefault, capture or extra momentum.
+      listen(track, 'pointerdown', takeOver, {passive: true});
+      listen(track, 'wheel', takeOver, {passive: true});
+      listen(track, 'keydown', () => { requestedIndex = null; sync(); });
+      listen(track, 'scrollend', () => { requestedIndex = null; sync(); });
+      const resize = new ResizeObserver(measure);
       resize.observe(track);
-      const changes = new MutationObserver(sync);
+      const changes = new MutationObserver(measure);
       changes.observe(track, {subtree: true, attributes: true, attributeFilter: ['hidden']});
-      sync();
+      measure();
       cleanups.push(() => {
         resize.disconnect(); changes.disconnect(); controls.remove();
         if (!previousId) track.removeAttribute('id');

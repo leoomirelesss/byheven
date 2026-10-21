@@ -58,8 +58,26 @@ next.handlers.click();assert.equal(track.scrollLeft,300);assert(next.disabled);
 prev.handlers.click();assert.equal(track.scrollLeft,200);
 track.children[1].hidden=true;track.children[2].offsetLeft=100;track.children[3].offsetLeft=200;track.scrollWidth=300;track.scrollLeft=0;
 observerCallbacks.forEach(fn=>fn());next.handlers.click();assert.equal(track.scrollLeft,100,'failed/hidden images do not leave empty stops');
+
+// Model a smooth scroll still in flight; button intent must not wait for a midpoint.
+reduced.matches=false;
+track.children.forEach((item,i)=>{item.hidden=false;item.offsetLeft=i*100;});
+track.scrollWidth=400;track.scrollLeft=0;observerCallbacks.forEach(fn=>fn());
+track.scrollTo=options=>{track.lastScroll=options;};
+next.handlers.click();assert.equal(track.lastScroll.left,100);
+next.handlers.click();assert.equal(track.lastScroll.left,200,'a second tap advances before the first animation finishes');
+prev.handlers.click();assert.equal(track.lastScroll.left,100,'reverse immediately retargets the requested destination');
+track.scrollLeft=38;track.handlers.scroll();
+track.handlers.pointerdown();assert.equal(track.lastScroll.left,38);assert.equal(track.lastScroll.behavior,'instant','touch takes over at the current position');
+track.scrollLeft=180;track.handlers.scroll();next.handlers.click();assert.equal(track.lastScroll.left,300,'after a native swipe the buttons use the actual position');
+assert(next.disabled);assert(!prev.disabled);
+track.scrollLeft=230;track.handlers.wheel();assert.equal(track.lastScroll.left,230,'wheel input can also interrupt a button animation');
+prev.handlers.click();assert.equal(track.lastScroll.left,100);
+track.scrollLeft=100;track.handlers.scrollend();next.handlers.click();assert.equal(track.lastScroll.left,200,'completed scrolling clears the earlier destination');
+track.scrollLeft=170;track.handlers.keydown();prev.handlers.click();assert.equal(track.lastScroll.left,100,'keyboard takeover drops the pending destination');
+reduced.matches=true;next.handlers.click();assert.equal(track.lastScroll.behavior,'instant');
 mobile.matches=false;change();assert(controls.removed);assert.equal(aborted,1);assert.equal(track.getAttribute('id'),'existing-gallery');
-console.log('PASS: mobile syntax, eight-page wiring, desktop no-op, gallery boundaries, buttons, reduced motion, failed-image skipping and breakpoint cleanup.');
+console.log('PASS: mobile syntax, eight-page wiring, desktop no-op, gallery boundaries, rapid retargeting, touch/wheel/keyboard takeover, reduced motion, failed-image skipping and cleanup.');
 
 // Exercise the actual hero at short and tall mobile heights, then restore desktop.
 const heroSource = read('assets/shopify-hero.js');
@@ -120,4 +138,47 @@ photo.handlers.load();assert(!photoClasses.has('is-mobile-device-failed'),'a rec
 photo.handlers.error();assert(photoClasses.has('is-mobile-device-failed'));
 photoMobile.matches=false;photoMobile.change();assert(!photoClasses.has('is-mobile-device-failed'),'desktop cleanup removes the fallback flag');
 console.log('PASS: supplied mobile phone load failure, recovery and breakpoint cleanup.');
+
+// Exercise the shared FAQ controller: mobile answers immediately, desktop keeps typing.
+const finishSource=read('assets/home-finish.js');
+transformSync(finishSource,{loader:'js'});
+for(const width of [390,899,900,1440]) {
+ const summary=element(),typing=element(),region=element(),messages=[element(),element()],classes=new Set(),delays=[];
+ const item={...element(),open:false,classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)},
+  querySelector:q=>q==='summary'?summary:q==='.chat-typing'?typing:region,querySelectorAll:()=>messages};
+ const preference={matches:false,addEventListener(t,fn){this.change=fn;}};
+ vm.runInNewContext(finishSource,{
+  window:{innerWidth:width,matchMedia:()=>preference,addEventListener(){}},
+  document:{querySelector:()=>null,getElementById:()=>null,querySelectorAll:()=>[item],addEventListener(){}},
+  setTimeout(fn,delay){delays.push(delay);return delays.length;},clearTimeout(){}
+ });
+ summary.handlers.click();item.open=true;item.handlers.toggle();
+ if(width<900){
+  assert.equal(delays.length,0,'mobile FAQ has no artificial typing timer');
+  assert(messages.every(m=>!m.hidden));assert(typing.hidden);assert.equal(region.getAttribute('aria-busy'),'false');
+ }else{
+  assert.deepEqual(delays,[380,600],'approved desktop typing timing stays unchanged');
+  assert(messages.every(m=>m.hidden));assert(!typing.hidden);
+ }
+ preference.matches=true;preference.change();
+ assert(messages.every(m=>!m.hidden));assert(typing.hidden);assert(!classes.has('is-animated'),'reduced motion immediately exposes complete answers');
+ item.open=false;item.handlers.toggle();assert.equal(region.getAttribute('aria-busy'),'false');
+}
+
+// Closing before the next frame must not send mobile focus into the hidden menu.
+const menuToggle=element(),menuPanel=element(),menuMain=element(),menuClasses=new Set(),frames=[];
+let linkFocus=0;
+menuPanel.querySelector=()=>({focus(){linkFocus++;}});
+vm.runInNewContext(finishSource,{
+ window:{innerWidth:390,matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(){}},
+ document:{querySelector:q=>q==='.cinema-menu-toggle'?menuToggle:q==='main'?menuMain:null,
+  getElementById:id=>id==='mobile-menu-panel'?menuPanel:null,querySelectorAll:()=>[],addEventListener(){},
+  body:{classList:{contains:c=>menuClasses.has(c),toggle(c,on){on?menuClasses.add(c):menuClasses.delete(c);}}}},
+ requestAnimationFrame:fn=>frames.push(fn)
+});
+menuToggle.handlers.click();menuToggle.handlers.click();frames.splice(0).forEach(fn=>fn());
+assert.equal(linkFocus,0);assert(menuPanel.inert);assert(!menuMain.inert);assert.equal(menuToggle.getAttribute('aria-expanded'),'false');
+menuToggle.handlers.click();menuToggle.handlers.click();menuToggle.handlers.click();frames.splice(0).forEach(fn=>fn());
+assert(!menuPanel.inert);assert(menuMain.inert);assert.equal(menuToggle.getAttribute('aria-expanded'),'true');assert(linkFocus>0);
+console.log('PASS: immediate mobile FAQ, unchanged desktop timing, reduced-motion answers and rapid menu reversal without hidden focus.');
 
