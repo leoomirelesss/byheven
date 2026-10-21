@@ -12,7 +12,7 @@ for (const page of ['index.html','case-studies/index.html',...['emyasa','stone-k
  assert.equal((html.match(/mobile-experience\.css/g)||[]).length,1);
  assert.equal((html.match(/mobile-experience\.js/g)||[]).length,1);
  assert(html.includes('media="(max-width: 899px)"'));
- assert(/<a class="cinema-nav-mark" href="(?:\/)?#inicio" aria-label="by Heven, inicio">/.test(html),'the star is a real home link on every page');
+ assert(/<a class="cinema-nav-mark" href="(?:\/)?#inicio" aria-label="by ˈHevən, inicio">/.test(html),'the star is a real home link on every page');
  assert(!html.includes('↗'),'arrows are SVG on Safari as well as desktop');
  assert(html.includes('/assets/brand/star-mark.svg'));
 }

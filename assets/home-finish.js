@@ -141,7 +141,7 @@
     if (!form.reportValidity()) return;
     const value = name => form.elements.namedItem(name)?.value.trim() || '';
     const message = [
-      'Hola BY HEVËN, me gustaría platicar sobre mi proyecto.',
+      'Hola by ˈHevən, me gustaría platicar sobre mi proyecto.',
       '',
       `Nombre: ${value('name')}`,
       ...(value('business') ? [`Negocio o sitio: ${value('business')}`] : []),
