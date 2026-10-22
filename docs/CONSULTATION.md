@@ -23,10 +23,11 @@ The public visitor page was opened and verified with weekday, Saturday and unava
 
 Visitors can reserve directly without first filling the website form. Those who prefer a conversation can use the separate WhatsApp form or existing direct WhatsApp links.
 
-- Required: name, deliberate service selection, short description of the need.
-- Optional: business/site, estimated budget, desired start time.
+- Required: name, deliberate service selection, estimated budget and desired start time.
+- Optional: business/site and short description of the need.
+- Budget and start show empty prompts. Visitors may explicitly select no budget yet or no date defined; these remain valid answers.
 - USD estimates are monthly for Shopify administration and per project for web development and automation. Orientation requests keep the period undefined. An amount is cleared when its period changes.
 - Budget ranges qualify the request; they do not advertise prices or reject inquiries. No budget is valid.
-- The form prepares one encoded WhatsApp message. The visitor must send it; this alone does not reserve a meeting. Copy makes the distinction explicit.
+- The form prepares one encoded WhatsApp message. The visitor must send it; this alone does not reserve a meeting. The submit label identifies WhatsApp; the separate booking CTA identifies direct scheduling.
 - Returning from WhatsApp preserves the form. No personal data is written to localStorage, sessionStorage, a database or analytics.
 - `npm run test:contact` exercises the real controller and HTML fields, as well as the separate verified booking link. The build includes this check.
