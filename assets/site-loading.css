@@ -1,12 +1,9 @@
 html[data-site-loading="pending"] { overflow: hidden; }
-html[data-site-loading="pending"]::before { content: ''; position: fixed; inset: 0; z-index: 2147482998; background: #08070b; }
-.site-loader { display: none; position: fixed; inset: 0; z-index: 2147482999; isolation: isolate; place-items: center; overflow: hidden; background: #08070b; }
+.site-loader { display: none; position: fixed; inset: 0; z-index: 2147482999; mix-blend-mode: screen; place-items: center; overflow: hidden; background: transparent; }
 html[data-site-loading] .site-loader { display: grid; }
 html[data-site-loading="leaving"] .site-loader { opacity: 0; pointer-events: none; transition: opacity 480ms cubic-bezier(.22,1,.36,1); }
-.site-loader::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 85% 25%, #4e2c7136, transparent 60%), radial-gradient(ellipse at 15% 85%, #6c527329, transparent 60%); }
-.site-loader__field { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .site-loader__identity { position: relative; width: min(68vw, 340px); }
-/* Original artwork. Only opacity changes; the signature stays still. */
-.site-loader__logo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; filter: invert(1); mix-blend-mode: screen; animation: heven-signature-pulse 1.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+/* Blend the whole transparent layer so the original white paper never forms a box. */
+.site-loader__logo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; filter: invert(1) contrast(1.04); animation: heven-signature-pulse 1.8s cubic-bezier(.45,.05,.55,.95) infinite; }
 @keyframes heven-signature-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) { .site-loader__logo { animation: none; } html[data-site-loading="leaving"] .site-loader { transition: none; } }

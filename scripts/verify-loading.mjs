@@ -11,8 +11,8 @@ for (const page of pages) {
   const html = read(page);
   assert.equal((html.match(/src="\/assets\/site-loading.js"/g) || []).length, 1);
   assert(html.includes('href="/assets/site-loading.css"'));
-  assert(html.includes('class="site-loader"') && html.includes('class="site-loader__field"'));
-  assert(html.includes('src="/assets/loading-field.js" defer'));
+  assert(html.includes('class="site-loader"'));
+  assert(!/loading-field|site-loader__field/.test(html),'no decorative field is loaded');
   assert(!/Entrar al sitio|Cargando la experiencia|site-loader__line|data-loading-skip/.test(html));
   assert(html.includes('loading-signature.webp" width="640" height="640"'));
 }
@@ -106,26 +106,7 @@ assert(restored.loader.removed && !restored.main.inert, 'history restoration nev
 const project = fixture({homePage: false}); project.mount(); project.fonts.resolve(); await settle(); assert.equal(project.frames.size, 0);
 project.load(); await settle(); project.runFrames(); project.advance(480); assert(project.loader.removed, 'case pages wait for their actual hero image');
 
-// Exercise the actual halftone renderer: bounded work and complete teardown.
-function artFixture(reduced = false) {
-  const queue = new Map(); let id = 0, visibility, draws = 0, dots = 0, maxDots = 0;
-  const doc = {hidden: false, addEventListener(type, fn) { visibility = fn; }};
-  const context = {setTransform() {}, clearRect() { maxDots = Math.max(maxDots, dots); dots = 0; draws++; }, beginPath() {}, fill() {},
-    arc(x, y, radius) { assert(Number.isFinite(x + y + radius) && radius > 0); dots++; }};
-  const canvas = {getContext: () => context, getBoundingClientRect: () => ({width: 1363, height: 936})};
-  const window = {devicePixelRatio: 3};
-  vm.runInNewContext(read('assets/loading-field.js'), {window, document: doc, AbortController, performance: {now: () => 0},
-    ResizeObserver: class {observe() {} disconnect() {}},
-    requestAnimationFrame: fn => { queue.set(++id, fn); return id; }, cancelAnimationFrame: key => queue.delete(key)});
-  const stop = window.HevenLoadingField.mount(canvas, reduced);
-  return {canvas, queue, stop, get draws() { return draws; }, get dots() { return Math.max(maxDots, dots); },
-    at(time) { const batch = [...queue.values()]; queue.clear(); batch.forEach(fn => fn(time)); },
-    hide() { doc.hidden = true; visibility(); }};
-}
-const art = artFixture(); assert.equal(art.canvas.width, 2045, 'DPR is capped');
-art.at(100); const initialDraws = art.draws; art.at(110); assert.equal(art.draws, initialDraws, 'the field does not redraw at native 120Hz');
-art.at(150); assert(art.draws > initialDraws); assert(art.dots <= 160 * 104, 'particle count stays bounded');
-art.hide(); assert.equal(art.queue.size, 0); art.stop(); assert.equal(art.queue.size, 0);
-const staticArt = artFixture(true); assert.equal(staticArt.draws, 1); assert.equal(staticArt.queue.size, 0); staticArt.stop();
 assert(css.includes('heven-signature-pulse') && !css.includes('site-loader__skip'));
-console.log('PASS: eight-page loading gate, real GLB first frame, no CSS hardware, cached/mobile/case media, font readiness, failure/timeout/Escape, focus, reduced motion, breakpoint changes, history, bounded halftone animation and cleanup.');
+assert(css.includes('background: transparent') && css.includes('mix-blend-mode: screen'),'only the ink overlays the existing page');
+assert(!/::before|::after|radial-gradient|backdrop-filter/.test(css),'no cover, veil, blur or decorative background');
+console.log('PASS: transparent logo-only loader, real GLB first frame, no CSS hardware, cached/mobile/case media, font readiness, failure/timeout/Escape, focus, reduced motion, breakpoint changes, history and cleanup.');
