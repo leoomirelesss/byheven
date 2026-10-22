@@ -1,4 +1,4 @@
-# Technical SEO — 21 October 2026
+# Technical SEO — launched 22 October 2026
 
 Scope: the existing eight public pages. No layout, animation, timing, visible copy or navigation changes.
 
@@ -12,7 +12,7 @@ Scope: the existing eight public pages. No layout, animation, timing, visible co
 - Project index: CollectionPage and ItemList for the six visible projects.
 - Case pages: WebPage, CreativeWork, ImageObject and BreadcrumbList. D’OR OS remains an MVP; Academic Quest remains a prototype. No invented outcomes, app-store listings, prices or publication dates.
 - Descriptive hero and gallery image alternatives. Decorative images retain empty alternatives. Gallery descriptions survive the reduced-motion/mobile path without changing animation logic.
-- Existing robots.txt and the eight-URL sitemap retained; no artificial last-modified dates or URL migrations.
+- Public robots.txt allows crawling and declares the eight-URL sitemap. Each URL has a fixed lastmod of 2026-10-22, the actual public release of the redesigned content. Update a URL’s lastmod only after a significant content change; do not stamp every build.
 - Build-time SEO guard checks metadata uniqueness, canonicals, real JPEG signatures/dimensions, image attributes, graph references, project destinations and prototype status. It fails the build on regressions.
 
 ## Validation and limits
@@ -23,12 +23,19 @@ Static body comparison allows only image alternative attributes to change. All s
 
 These are source and build checks, not a Google Rich Results Test certification, a ranking forecast or a measured Core Web Vitals result. Graph entities and relations can be valid without qualifying for a Google rich-result feature.
 
-## Remaining launch work
+## Public launch verification — 22 October 2026
 
-1. Release the approved version to the public canonical domain. Keep preview authentication enabled.
-2. Check public responses, redirects, robots headers and canonical resolution; verify that page and social-image URLs are reachable without authentication.
-3. Verify Search Console ownership, submit the sitemap and inspect the home and case URLs. Run Google's Rich Results Test against public URLs.
-4. Inspect actual WhatsApp/social unfurls after publication. Preview authentication blocks third-party preview crawlers; platform caching can delay updated thumbnails.
-5. Measure organic inquiries and conversion events separately from clicks to WhatsApp. No analytics identifiers or tracking were invented in this change.
+- Approved source 25caef3 was released to main in merge commit 3f03d1e; production deployment dpl_DF5pdgxBMgasYBJbipj5PMCNFea3 is READY.
+- https://byheven.com/ redirects to https://www.byheven.com/. Both domains are verified and assigned to the existing Vercel project. Preview protection remains enabled.
+- All eight canonical pages return public HTTP 200 and the approved source; robots headers/meta allow indexing. Every social JPEG is publicly accessible.
+- robots.txt and sitemap.xml return public HTTP 200 with their expected content. The retired /diseno-web-torreon/ URL redirects to /case-studies/; a nonexistent route returns HTTP 404.
+- Search Console property sc-domain:byheven.com is verified with owner access. The updated sitemap was submitted on 22 October 2026. Google fetched it and reported eight submitted URLs, zero errors and zero warnings.
+- Home inspection reports indexed, robots allowed and matching user/Google canonicals. Its last crawl predates this release. The case index and individual cases still require Google’s crawl/indexing; sitemap acceptance is not confirmation that those pages are indexed.
 
-The site targets the services actually shown in its content. No hidden keyword text, doorway pages, FAQ-rich-result promises or llms.txt ranking claims are added.
+## Follow-up
+
+1. Review Google’s processing of the eight URLs and its next crawl of the home. Inspect coverage before making indexing claims.
+2. Measure organic inquiries and conversion events separately from WhatsApp clicks. No analytics identifiers or tracking have been invented.
+3. Check actual social unfurls; platform caches can delay refreshed thumbnails.
+
+No rankings, rich results, traffic or sales are guaranteed by this technical release. No hidden keyword text, doorway pages, FAQ-rich-result promises or llms.txt ranking claims are added.
