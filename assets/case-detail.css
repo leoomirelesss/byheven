@@ -1,0 +1,128 @@
+/* Shared editorial case template. Black hero shadows open onto a frozen violet aurora. */
+body[data-case-detail] { isolation: isolate; background: #0c0912; padding-bottom: 0; overflow-x: clip; }
+.case-detail-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: #0c0912; }
+.case-detail-atmosphere::before { content: ''; position: absolute; inset: -5%; filter: blur(40px); background: linear-gradient(#000 2%, transparent 38%, #0c0912 100%), radial-gradient(ellipse 60% 22% at 20% 53%, #85758b80, transparent 85%), radial-gradient(ellipse 55% 24% at 83% 56%, #78649570, transparent 86%), radial-gradient(ellipse 60% 18% at 52% 66%, #4b354c75, transparent 86%), #0c0912; }
+.case-detail-atmosphere:has([data-haze-ready])::before { display: none; }
+[data-case-detail] :is(#case-main, .case-showcase-story) > .case-editorial[aria-labelledby="project-overview"] { background: linear-gradient(#000, transparent min(55svh, 600px)); }
+[data-case-detail] .case-page-chrome { position: absolute; inset: 0 0 auto; z-index: 5; color: #f1edf4; }
+.case-hero { position: relative; isolation: isolate; height: 100svh; min-height: 640px; max-height: 1400px; overflow: clip; background: #000; }
+.case-hero-media { position: absolute; z-index: -2; inset: -10% 0; margin: 0; transform: translate3d(0, var(--case-hero-y, 0px), 0); }
+.case-hero-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--case-hero-focus, 50% 45%); }
+.case-hero::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: linear-gradient(180deg, #0000001a 0%, #00000038 30%, #00000065 58%, #000000c2 80%, #000 100%), linear-gradient(90deg, #0000005c, transparent 75%); }
+.case-hero-description { position: absolute; top: 35%; left: 2.65vw; width: min(390px, 44vw); margin: 0; color: #f1edf4; font: 400 clamp(18px, 1.65vw, 30px)/1.2 'Outfit', sans-serif; letter-spacing: -.025em; }
+.case-hero-title { position: absolute; inset: 52% 2.65vw auto; margin: 0; color: #f1edf4; font: 400 clamp(72px, 11.7vw, 230px)/1.05 'Outfit', sans-serif; letter-spacing: -.065em; }
+.case-hero-name { display: block; }
+.case-title-word { display: inline-block; white-space: nowrap; transform: translate3d(0, var(--case-word-y, 0px), 0); }
+.case-title-stop { display: inline-block; }
+.case-title-char { position: relative; display: inline-block; }
+.case-title-char[data-scramble] { color: transparent; }
+.case-title-char[data-scramble]::after { content: attr(data-scramble); position: absolute; inset: 0; text-align: center; color: #f1edf4; pointer-events: none; }
+.case-hero-meta { position: absolute; inset: auto 2.65vw 42px; display: flex; justify-content: space-between; align-items: center; gap: 24px; color: #c5bdce; font-size: 11px; }
+.case-hero-meta > p { margin: 0; max-width: 38%; }
+.case-editorial { padding: clamp(72px, 8vw, 150px) 2.65vw; }
+.case-editorial-label { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 0 0 clamp(45px, 5.5vw, 100px); padding-bottom: 22px; color: #aaa2b7; font-size: 12px; }
+.case-editorial-summary { max-width: 1500px; margin: 0 0 clamp(70px, 8vw, 150px); color: #ceced7; font: 400 clamp(38px, 5.1vw, 98px)/1.08 'Outfit', sans-serif; letter-spacing: -.045em; }
+.case-editorial-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: start; }
+.case-editorial-row > h3 { margin: 5px 0 0; color: #aaa2b7; font-size: 12px; font-weight: 400; }
+.case-editorial-copy { max-width: 740px; }
+.case-editorial-copy > p { margin: 0; color: #b9b1c5; font-size: clamp(16px, 1.3vw, 23px); line-height: 1.5; }
+.case-editorial-facts { margin: 56px 0 0; font-size: 13px; }
+.case-editorial-facts > div { display: grid; grid-template-columns: 1fr 1.7fr; gap: 28px; padding: 20px 0; }
+.case-editorial-facts dt { color: #91879f; }
+.case-editorial-facts dd { margin: 0; text-align: right; color: #d5cedf; }
+.case-showcase { margin: 0 2.65vw; overflow: clip; background: #191320; }
+.case-showcase img { display: block; width: 100%; height: auto; }
+.case-editorial + .case-deliverables { padding-top: 0; }
+.case-deliverables h2 { margin: 0; max-width: 600px; font: 400 clamp(38px, 5vw, 92px)/1.04 'Outfit',sans-serif; letter-spacing: -.045em; }
+.case-deliverables ol { list-style: none; counter-reset: delivery; padding: 0; margin: 0 0 32px; }
+.case-deliverables li { display: grid; grid-template-columns: 34px 1fr; gap: 20px; padding: 24px 0; font-size: clamp(18px, 1.65vw, 30px); line-height: 1.25; letter-spacing: -.02em; }
+.case-deliverables li:first-child { padding-top: 0; }
+.case-deliverables li::before { counter-increment: delivery; content: counter(delivery, decimal-leading-zero); margin-top: .4em; color: #91879f; font-size: 10px; letter-spacing: 0; }
+.case-next-project { padding: 0 2.65vw; }
+.case-next-label { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 22px; color: #aaa2b7; font-size: 12px; }
+.case-next-label a { text-decoration: none; padding-block: 10px; }
+.case-next-cover { position: relative; isolation: isolate; display: flex; align-items: end; justify-content: space-between; gap: 30px; min-height: clamp(350px, 65svh, 800px); padding: clamp(24px, 4vw, 74px); overflow: clip; text-decoration: none; }
+.case-next-cover > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform var(--case-image-duration) var(--case-image-ease); }
+.case-next-cover::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #0c09121a, #0c0912ba); }
+.case-next-cover h2 { margin: 0; max-width: 85%; color: #f1edf4; font: 400 clamp(46px, 8.5vw, 165px)/1.02 'Outfit',sans-serif; letter-spacing: -.055em; }
+.case-next-cover .case-arrow { width: clamp(48px, 5vw, 84px); height: auto; aspect-ratio: 1; }
+.case-next-cover:focus-visible { outline: 3px solid #ceced7; outline-offset: 6px; }
+[data-case-detail] .case-invitation { border: 0; margin-top: 60px; }
+@media (hover:hover) and (pointer:fine) { .case-next-cover:hover > img { transform: scale(1.035); } }
+@media (max-width: 700px) {
+  .case-hero { min-height: 610px; max-height: 1000px; }
+  .case-hero-description { left: 24px; top: 30%; width: min(300px, 76vw); font-size: 21px; }
+  .case-hero-title { inset-inline: 24px; top: 53%; font-size: clamp(44px, 13vw, 84px); }
+  .case-hero-meta { inset: auto 24px 118px; }
+  .case-hero-meta > p { max-width: 62%; font-size: 10px; line-height: 1.5; }
+  .case-editorial { padding: 70px 24px; }
+  .case-editorial-label { margin-bottom: 45px; font-size: 11px; }
+  .case-editorial-summary { font-size: clamp(34px, 8.5vw, 56px); margin-bottom: 60px; }
+  .case-editorial-row { grid-template-columns: 1fr; gap: 28px; }
+  .case-editorial-copy { max-width: none; }
+  .case-editorial-facts { margin-top: 38px; font-size: 12px; }
+  .case-showcase, .case-next-project { margin-inline: 24px; }
+  .case-next-project { padding: 0; }
+  .case-deliverables h2 { font-size: 42px; margin-bottom: 20px; }
+  .case-next-cover { min-height: 430px; padding: 24px; }
+  .case-next-cover h2 { max-width: 75%; font-size: clamp(40px, 11vw, 70px); overflow-wrap: anywhere; }
+}
+@media (max-height: 600px) and (min-width: 701px) { .case-hero { height: 650px; } }
+@media (max-height: 700px) and (min-width: 701px) { .case-hero-title { top: 50%; font-size: clamp(90px, 12vw, 210px); } }
+@media (prefers-reduced-motion: reduce) {
+  .case-hero-media, .case-title-word { transform: none !important; }
+  .case-next-cover > img { transition: none; transform: none !important; }
+}
+
+/* A short native overlap: read the overview, then lift the complete image above it. */
+.case-showcase-story { position: relative; display: flow-root; isolation: isolate; }
+@media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  .case-showcase-story[data-showcase-ready] > .case-editorial { position: sticky; top: var(--case-overview-top, 24px); z-index: 1; }
+  .case-showcase-story[data-showcase-ready] [data-case-exit-lines] {
+    -webkit-mask-image: var(--case-line-mask, none); mask-image: var(--case-line-mask, none);
+    -webkit-mask-clip: no-clip; mask-clip: no-clip;
+    -webkit-mask-size: var(--case-line-mask-size, 100% 100%); mask-size: var(--case-line-mask-size, 100% 100%);
+    -webkit-mask-position: var(--case-line-mask-position, 0 0); mask-position: var(--case-line-mask-position, 0 0);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
+  .case-showcase-story[data-showcase-ready] > :is(.case-screen-story, .case-phone-story) { margin-top: clamp(96px, 18svh, 180px); }
+}
+
+
+/* One stable Mac; only its display layers crossfade. The stage rises as before. */
+.case-screen-story { position: relative; z-index: 2; background: transparent; }
+.case-showcase-story[data-device-static] > .case-editorial { position: relative; top: auto; }
+.case-showcase.case-device { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 0; padding: 24px 2.65vw; overflow: visible; background: transparent; }
+.case-device-frame { position: relative; width: min(100%, 1600px); aspect-ratio: 8/5; flex: 0 0 auto; transform: translate3d(0, var(--case-device-y, 0px), 0); }
+.case-device-frame > .case-device-shell { position: absolute; inset: 0; z-index: 2; display: block; width: 100%; height: 100%; pointer-events: none; }
+.case-device-display { position: absolute; left: 9.916666667%; top: 6.666666667%; display: flex; width: 80.166666667%; height: 82.266666667%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; background: #08080a; }
+.case-device-display::-webkit-scrollbar { display: none; }
+.case-device-display:focus-visible { outline: 2px solid #ceced7; outline-offset: -3px; }
+.case-device-display > .case-device-view { position: relative; display: block; flex: 0 0 100%; width: 100%; height: 100%; opacity: 1; scroll-snap-align: start; }
+.case-screen-story[data-screen-ready] .case-device-display { display: block; overflow: hidden; }
+.case-screen-story[data-screen-ready] .case-device-view { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.case-screen-story[data-screen-ready] .case-device-view:first-child { opacity: 1; }
+.case-device-frame .case-device-view[hidden], .case-device-frame .case-device-shell[hidden] { display: none; }
+.case-screen-story[data-screen-ready] > .case-device { position: sticky; top: 0; height: 100svh; }
+@media (min-width: 900px) { .case-screen-story[data-screen-ready] .case-device-frame { width: min(100%, 1600px, calc(168svh - 54px)); } }
+@media (max-width: 700px) { .case-showcase.case-device { padding-inline: 12px; } }
+@media (prefers-reduced-motion: reduce) { .case-device-frame { transform: none; } }
+@media print { .case-screen-story { height: auto !important; } .case-screen-story > .case-device { position: static; height: auto; } .case-device-frame { transform: none; } }
+
+/* Two independent iPhones follow the supplied staggered composition. */
+.case-phone-story { position: relative; z-index: 2; background: transparent; }
+.case-phone-stage { position: relative; margin: 0; padding: 24px 2.65vw; overflow: visible; background: transparent; }
+.case-phone-pair { position: relative; display: grid; grid-template-columns: 41.1% 41.1%; justify-content: space-between; align-items: start; width: min(74.4%, 1488px, 96svh); margin: clamp(48px, 14svh, 150px) auto 0; }
+.case-app-phone { position: relative; min-width: 0; }
+.case-app-phone--lower { margin-top: clamp(56px, 14svh, 168px); }
+.case-app-phone img { display: block; width: 100%; height: auto; }
+.case-phone-story[data-phone-ready] .case-phone-stage { position: sticky; top: 0; height: 100svh; }
+.case-phone-story[data-phone-ready] .case-app-phone { transform: translate3d(0, var(--case-phone-y, 120svh), 0); }
+@media (max-width: 700px) {
+  .case-phone-stage { padding-inline: 24px; }
+  .case-phone-pair { width: 100%; grid-template-columns: 44% 44%; margin-top: 24px; }
+  .case-app-phone--lower { margin-top: 64px; }
+}
+@media print { .case-phone-story { padding-bottom: 0 !important; } .case-phone-pin { height: auto !important; } .case-phone-story .case-phone-stage { position: static; height: auto; } .case-app-phone { transform: none !important; } }
+
+@media print { .case-detail-atmosphere { display: none; } .case-hero { height: 500px; min-height: 0; } .case-title-word { transform: none; } .case-editorial [data-case-exit-lines] { -webkit-mask-image: none !important; mask-image: none !important; } }

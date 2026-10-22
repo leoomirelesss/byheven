@@ -1,0 +1,39 @@
+/* Frozen Velvet Haze. Layout and hierarchy come from the original cases.css. */
+body[data-case-index] { isolation: isolate; background: #0c0912; overflow-x: clip; padding-bottom: 0; }
+.case-index-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: #0c0912; }
+/* Static fallback retains the folded light if WebGL is unavailable. */
+.case-index-atmosphere::before { content: ''; position: absolute; inset: -3%; background: linear-gradient(156deg, transparent 26%, #0c0912b8 49%, #0c0912 74%), radial-gradient(ellipse at 79% 4%, #49358d75, transparent 43%), radial-gradient(ellipse at 28% 20%, #82788f70, #40334f60 34%, transparent 65%), #0c0912; filter: blur(25px); }
+.case-index-atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .023; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); background-size: 180px 180px; }
+.case-haze-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.case-haze-canvas[data-haze-ready] { opacity: 1; }
+.case-index-atmosphere:has(.case-haze-canvas[data-haze-ready])::before,
+.case-index-atmosphere:has(.case-haze-canvas[data-haze-ready])::after { display: none; }
+:is(.case-vapour-title, .case-vapour-block) { position: relative; }
+.case-vapour-ink { display: block; }
+:is(.case-vapour-title, .case-vapour-block) [data-vapour-word] { display: inline-block; }
+:is(.case-vapour-title, .case-vapour-block).is-vaporizing > .case-vapour-ink { -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--vapour-front) - 24px), #000 calc(var(--vapour-front) + 24px)); mask-image: linear-gradient(90deg, transparent calc(var(--vapour-front) - 24px), #000 calc(var(--vapour-front) + 24px)); }
+.case-vapour-canvas { position: absolute; pointer-events: none; opacity: 0; max-width: none; }
+body[data-case-index] .case-invitation { border-top: 0; }
+@media (max-width: 600px) { body[data-case-index] .case-index-hero h1 { font-size: clamp(60px, 16vw, 96px); } }
+@media (prefers-reduced-motion: reduce) {
+  :is(.case-vapour-title, .case-vapour-block).is-vaporizing > .case-vapour-ink { mask-image: none; -webkit-mask-image: none; }
+  .case-vapour-canvas { display: none; }
+}
+@media print { .case-index-atmosphere, .case-vapour-canvas { display: none; } .case-vapour-ink { mask-image: none !important; -webkit-mask-image: none !important; } }
+
+/* Transform-only movement preserves the established grid, spacing and caption placement. */
+body[data-case-index] .is-case-motion { transform: translate3d(0, var(--case-entry-y, 0px), 0); opacity: var(--case-entry-opacity, 1); }
+body[data-case-index] .case-index-grid .is-case-motion .case-card-bottom { transform: translate3d(0, var(--case-caption-y, 0px), 0); }
+body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: 0 var(--case-image-depth, 0%); transform: scale(var(--case-cover-scale)); }
+@media (hover: hover) and (pointer: fine) {
+  body[data-case-index] .case-index-grid .is-case-motion:hover .case-cover { transform: scale(var(--case-cover-hover-scale)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-case-index] .is-case-motion, body[data-case-index] .is-case-motion .case-card-bottom { transform: none; opacity: 1; }
+  body[data-case-index] .case-index-grid .is-case-motion .case-cover { translate: none; transform: none; transition: none; }
+}
+
+.case-scroll-cue { display: inline-flex; align-items: center; gap: 12px; color: #b5b0c1; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; transition: opacity 260ms ease-out; }
+.case-scroll-cue svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.case-scroll-cue.is-dismissed { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .case-scroll-cue { transition: none; } }

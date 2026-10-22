@@ -1,0 +1,13 @@
+html[data-site-loading="pending"] { overflow: hidden; }
+.site-loader { display: none; position: fixed; inset: 0; z-index: 2147482999; mix-blend-mode: screen; place-items: center; overflow: hidden; background: transparent; }
+/* Separate from the screen-blended signature, so black really dims the page. */
+.site-loading-veil { display: none; position: fixed; inset: 0; z-index: 2147482998; background: rgba(0, 0, 0, .6); pointer-events: none; }
+html[data-site-loading] :is(.site-loader, .site-loading-veil) { display: grid; }
+html[data-site-loading="leaving"] .site-loading-veil { opacity: 0; transition: opacity 680ms cubic-bezier(.22,1,.36,1) 60ms; }
+html[data-site-loading="leaving"] .site-loader { opacity: 0; pointer-events: none; transition: opacity 260ms cubic-bezier(.22,1,.36,1); }
+html[data-site-loading="leaving"] .site-loader__logo { animation-play-state: paused; }
+.site-loader__identity { position: relative; width: min(68vw, 340px); }
+/* Blend the whole transparent layer so the original white paper never forms a box. */
+.site-loader__logo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; filter: invert(1) contrast(1.04); animation: heven-signature-pulse 1.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes heven-signature-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .site-loader__logo { animation: none; } html[data-site-loading="leaving"] :is(.site-loader, .site-loading-veil) { transition: none; } }

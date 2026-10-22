@@ -1,0 +1,15 @@
+/* No Preflight: the existing home keeps its own reset and typography. */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../components";
+
+@theme inline {
+  --color-background: var(--gradient-background);
+  --color-foreground: var(--gradient-foreground);
+}
+
+[data-gradient-card] {
+  --gradient-background: #f4f0f8;
+  --gradient-foreground: #241833;
+}

@@ -1,0 +1,22 @@
+/* Animate snapshots of the actual pages, never an intermediate color layer.
+   Unsupported browsers retain normal navigation, anchors and history. */
+@view-transition { navigation: auto; }
+::view-transition-group(root) { animation-duration: 760ms; }
+::view-transition-image-pair(root) { isolation: isolate; }
+::view-transition-old(root),
+::view-transition-new(root) { mix-blend-mode: normal; }
+::view-transition-old(root) { animation: none; z-index: 1; }
+::view-transition-new(root) {
+  z-index: 2;
+  animation: heven-page-reveal 760ms cubic-bezier(.76,0,.24,1) both;
+}
+@keyframes heven-page-reveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
