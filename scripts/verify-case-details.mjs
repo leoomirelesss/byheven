@@ -150,7 +150,7 @@ for(const [index,slug] of slugs.entries()){
   const html=read(`case-studies/${slug}/index.html`);
   assert(html.includes(`/assets/cases/heroes/${slug}.webp`));
   assert(html.includes('/assets/case-detail-background.js')&&html.includes('class="case-detail-atmosphere"'),'every detail page shares the adapted aurora');
-  const photos=[...html.matchAll(/<img[^>]+src="([^\"]+\.webp)"/g)];
+  const photos=[...html.matchAll(/<img[^>]+src="([^\"]+\.webp)"/g)].filter(([,src])=>src.startsWith('/assets/cases/'));
   const next=slugs[(index+1)%slugs.length];
   assert(new RegExp(`class="case-next-cover"[^>]*><img src="/assets/cases/heroes/${next}\\.webp"`).test(html),'each next-case teaser has its destination image');
   if(['dor-os','academic-quest'].includes(slug)){
