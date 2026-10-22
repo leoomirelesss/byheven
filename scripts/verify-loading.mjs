@@ -11,7 +11,9 @@ for (const page of pages) {
   const html = read(page);
   assert.equal((html.match(/src="\/assets\/site-loading.js"/g) || []).length, 1);
   assert(html.includes('href="/assets/site-loading.css"'));
-  assert(html.includes('class="site-loader"') && html.includes('data-loading-skip'));
+  assert(html.includes('class="site-loader"') && html.includes('class="site-loader__field"'));
+  assert(html.includes('src="/assets/loading-field.js" defer'));
+  assert(!/Entrar al sitio|Cargando la experiencia|site-loader__line|data-loading-skip/.test(html));
   assert(html.includes('loading-signature.webp" width="640" height="640"'));
 }
 assert(!/class="flow-phone"|class="flow-screen"|class="flow-island"/.test(home), 'the provisional hardware is not present in HTML');
@@ -56,7 +58,7 @@ function fixture({mobile = false, reduced = false, homePage = true, cachedImage 
     ready(state = 'ready') { scene.dataset.phoneState = state; if (state === 'ready') classes.add('has-phone-3d'); notify?.(); },
     load() { image.naturalWidth = 1080; fire(image, 'load'); },
     failImage() { fire(image, 'error'); },
-    skip() { document.activeElement = loader; fire(document, 'click', {target: {closest: () => true}, preventDefault() {}}); },
+    skip() { document.activeElement = loader; fire(document, 'keydown', {key: 'Escape'}); },
     restore() { fire(window, 'pageshow', {persisted: true}); },
     resize(toDesktop) { desktop.matches = toDesktop; fire(desktop, 'change'); },
     runFrames() { for (let i = 0; i < 3 && frames.size; i++) { const batch = [...frames.values()]; frames.clear(); batch.forEach(fn => fn()); } },
@@ -86,7 +88,7 @@ slow.fonts.resolve(); slow.ready(); await settle(); assert.equal(slow.frames.siz
 
 const skipped = fixture(); skipped.mount(); skipped.skip();
 assert(skipped.loader.removed && skipped.main.focused && !skipped.main.inert);
-assert.equal(skipped.timers.size, 0, 'skip cancels deadlines and restores navigation');
+assert.equal(skipped.timers.size, 0, 'Escape cancels deadlines and restores navigation');
 const early = fixture(); early.advance(10000); early.mount(); assert(!early.main.inert, 'a delayed DOM cannot re-lock the page after timeout');
 
 const failure = fixture({mobile: true}); failure.mount(); failure.fonts.resolve(); failure.failImage(); await settle(); failure.runFrames(); failure.advance(480);
@@ -104,4 +106,26 @@ assert(restored.loader.removed && !restored.main.inert, 'history restoration nev
 const project = fixture({homePage: false}); project.mount(); project.fonts.resolve(); await settle(); assert.equal(project.frames.size, 0);
 project.load(); await settle(); project.runFrames(); project.advance(480); assert(project.loader.removed, 'case pages wait for their actual hero image');
 
-console.log('PASS: eight-page loading gate, real GLB first frame, no CSS hardware, cached/mobile/case media, font readiness, failure/timeout/skip, focus, reduced motion, breakpoint changes, history and cleanup.');
+// Exercise the actual halftone renderer: bounded work and complete teardown.
+function artFixture(reduced = false) {
+  const queue = new Map(); let id = 0, visibility, draws = 0, dots = 0, maxDots = 0;
+  const doc = {hidden: false, addEventListener(type, fn) { visibility = fn; }};
+  const context = {setTransform() {}, clearRect() { maxDots = Math.max(maxDots, dots); dots = 0; draws++; }, beginPath() {}, fill() {},
+    arc(x, y, radius) { assert(Number.isFinite(x + y + radius) && radius > 0); dots++; }};
+  const canvas = {getContext: () => context, getBoundingClientRect: () => ({width: 1363, height: 936})};
+  const window = {devicePixelRatio: 3};
+  vm.runInNewContext(read('assets/loading-field.js'), {window, document: doc, AbortController, performance: {now: () => 0},
+    ResizeObserver: class {observe() {} disconnect() {}},
+    requestAnimationFrame: fn => { queue.set(++id, fn); return id; }, cancelAnimationFrame: key => queue.delete(key)});
+  const stop = window.HevenLoadingField.mount(canvas, reduced);
+  return {canvas, queue, stop, get draws() { return draws; }, get dots() { return Math.max(maxDots, dots); },
+    at(time) { const batch = [...queue.values()]; queue.clear(); batch.forEach(fn => fn(time)); },
+    hide() { doc.hidden = true; visibility(); }};
+}
+const art = artFixture(); assert.equal(art.canvas.width, 2045, 'DPR is capped');
+art.at(100); const initialDraws = art.draws; art.at(110); assert.equal(art.draws, initialDraws, 'the field does not redraw at native 120Hz');
+art.at(150); assert(art.draws > initialDraws); assert(art.dots <= 160 * 104, 'particle count stays bounded');
+art.hide(); assert.equal(art.queue.size, 0); art.stop(); assert.equal(art.queue.size, 0);
+const staticArt = artFixture(true); assert.equal(staticArt.draws, 1); assert.equal(staticArt.queue.size, 0); staticArt.stop();
+assert(css.includes('heven-signature-pulse') && !css.includes('site-loader__skip'));
+console.log('PASS: eight-page loading gate, real GLB first frame, no CSS hardware, cached/mobile/case media, font readiness, failure/timeout/Escape, focus, reduced motion, breakpoint changes, history, bounded halftone animation and cleanup.');

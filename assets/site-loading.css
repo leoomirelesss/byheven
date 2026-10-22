@@ -1,19 +1,12 @@
-/* The supplied handwritten mark stays unchanged; screen blending removes its white paper. */
 html[data-site-loading="pending"] { overflow: hidden; }
-html[data-site-loading="pending"]::before { content: ''; position: fixed; inset: 0; z-index: 2147482998; background: #0c0912; }
-.site-loader { display: none; position: fixed; inset: 0; z-index: 2147482999; isolation: isolate; place-items: center; overflow: hidden; background: #0c0912; color: #ceced7; font-family: 'Outfit', sans-serif; }
+html[data-site-loading="pending"]::before { content: ''; position: fixed; inset: 0; z-index: 2147482998; background: #08070b; }
+.site-loader { display: none; position: fixed; inset: 0; z-index: 2147482999; isolation: isolate; place-items: center; overflow: hidden; background: #08070b; }
 html[data-site-loading] .site-loader { display: grid; }
 html[data-site-loading="leaving"] .site-loader { opacity: 0; pointer-events: none; transition: opacity 480ms cubic-bezier(.22,1,.36,1); }
-.site-loader::before { content: ''; position: absolute; inset: -25%; z-index: -2; background: radial-gradient(ellipse at 19% 65%, #b5a3d43d, transparent 35%), radial-gradient(ellipse at 80% 32%, #8970b643, transparent 37%), radial-gradient(ellipse at 60% 95%, #4f3a773d, transparent 40%); animation: heven-loading-light 4s ease-in-out infinite alternate; }
-.site-loader::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .25; background: radial-gradient(circle, #ddd4f0 0 .65px, transparent 1px) 0 0 / 5px 5px; mask-image: radial-gradient(ellipse at 24% 70%, #000, transparent 65%), radial-gradient(ellipse at 80% 25%, #000, transparent 60%); }
-.site-loader__identity { display: grid; justify-items: center; width: min(76vw, 320px); }
-.site-loader__logo { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; filter: invert(1); mix-blend-mode: screen; }
-.site-loader__line { width: 72px; height: 1px; margin-top: 8px; background: #b8a6d52e; overflow: hidden; }
-.site-loader__line::after { content: ''; display: block; width: 36px; height: 1px; background: #d6c9ea; box-shadow: 0 0 12px #c4abf0; animation: heven-loading-line 1.8s cubic-bezier(.45,0,.3,1) infinite; }
-.site-loader__status { margin: 18px 0 0; font-size: .6875rem; line-height: 1.5; letter-spacing: .08em; color: #bdb4ce; }
-.site-loader__skip { position: absolute; bottom: max(28px, env(safe-area-inset-bottom)); min-height: 44px; padding: 10px 18px; border: 0; background: none; color: #bdb4ce; font: inherit; font-size: .75rem; cursor: pointer; }
-.site-loader__skip:is(:hover, :focus-visible) { color: #fff; }
-.site-loader__skip:focus-visible { outline: 1px solid #d6c9ea; outline-offset: 3px; border-radius: 4px; }
-@keyframes heven-loading-light { to { transform: translate3d(3%, -2%, 0); opacity: .65; } }
-@keyframes heven-loading-line { from { transform: translateX(-36px); } to { transform: translateX(108px); } }
-@media (prefers-reduced-motion: reduce) { .site-loader::before, .site-loader__line::after { animation: none; } html[data-site-loading="leaving"] .site-loader { transition: none; } }
+.site-loader::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 85% 25%, #4e2c7136, transparent 60%), radial-gradient(ellipse at 15% 85%, #6c527329, transparent 60%); }
+.site-loader__field { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.site-loader__identity { position: relative; width: min(68vw, 340px); }
+/* Original artwork. Only opacity changes; the signature stays still. */
+.site-loader__logo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; filter: invert(1); mix-blend-mode: screen; animation: heven-signature-pulse 1.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes heven-signature-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .site-loader__logo { animation: none; } html[data-site-loading="leaving"] .site-loader { transition: none; } }

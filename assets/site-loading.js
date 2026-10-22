@@ -6,13 +6,14 @@
   const abort = new AbortController();
   const restore = new Map();
   let finished = false, closing = false, mounted = false, observer, frame = 0, exitTimer;
+  let stopField = () => {};
   const listen = (node, type, handler) => node.addEventListener(type, handler, {signal: abort.signal});
   root.dataset.siteLoading = 'pending';
   const finish = () => {
     if (finished) return;
     finished = true;
     clearTimeout(deadline); clearTimeout(exitTimer); cancelAnimationFrame(frame);
-    observer?.disconnect(); abort.abort();
+    observer?.disconnect(); abort.abort(); stopField();
     restore.forEach((inert, node) => { node.inert = inert; });
     const loader = document.querySelector('.site-loader');
     const hadFocus = loader?.contains(document.activeElement);
@@ -38,9 +39,7 @@
   };
   // A broken module, font or connection must never trap the visitor.
   const deadline = setTimeout(finish, 10000);
-  listen(document, 'click', event => {
-    if (event.target.closest?.('[data-loading-skip]')) { event.preventDefault(); finish(); }
-  });
+  listen(document, 'keydown', event => { if (event.key === 'Escape') finish(); });
   listen(window, 'pageshow', event => { if (event.persisted) finish(); });
   listen(window, 'pagehide', finish);
 
@@ -84,6 +83,7 @@
   const mount = () => {
     if (mounted || finished) return;
     mounted = true;
+    stopField = window.HevenLoadingField?.mount(document.querySelector('.site-loader__field'), reduced.matches) || stopField;
     for (const node of document.body.children) {
       if (node.matches('.site-loader, script, style, link')) continue;
       restore.set(node, node.inert); node.inert = true;
