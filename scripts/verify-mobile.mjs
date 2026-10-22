@@ -96,12 +96,12 @@ for (const height of [568, 844]) {
  client.measure();
  assert.equal(story.attrs.get('data-scroll-ready'),false,'all mobile heights use natural hero flow');
  assert.equal(preloads,0,'mobile does not preload the discarded screens');
- assert.equal(image.src,'assets/phone/screen-home.webp');
+ assert.equal(image.src,'','the removed CSS phone does not request duplicate screens');
  assert.deepEqual(slides.map(s=>s.inert),[false,true,true],'only the visible mobile chapter is focusable');
  assert.equal(client.render({y:0}),false,'mobile hero does not animate on scroll');
  win.innerWidth=1440;client.measure();
  assert.equal(story.attrs.get('data-scroll-ready'),true,'desktop story returns at the approved breakpoint');
- assert.equal(preloads,2,'only desktop prepares its two extra screens');
+ assert.equal(preloads,0,'the GLB renderer exclusively owns its screen textures');
  for (const [y, x, angle] of [[0,619.2,-24],[1188,964.8,360],[2376,244.8,720]]) {
    client.render({y,dt:16.67,immediate:true});
    assert(Math.abs(parseFloat(scene.style.values.get('--phone-x'))-x)<.001,'approved desktop phone positions remain unchanged');
@@ -133,7 +133,7 @@ vm.runInNewContext(source,{
  document:{...doc,querySelectorAll:()=>[],querySelector:q=>q==='.flow-mobile-device img'?photo:null},
  AbortController:class{signal={};abort(){this.signal.aborted=true;}},ResizeObserver:class{},MutationObserver:class{}
 });
-assert(photoClasses.has('is-mobile-device-failed'),'an image already failed before script startup exposes the CSS phone');
+assert(photoClasses.has('is-mobile-device-failed'),'an image already failed before startup hides the unavailable render');
 photo.handlers.load();assert(!photoClasses.has('is-mobile-device-failed'),'a recovered image restores the supplied phone');
 photo.handlers.error();assert(photoClasses.has('is-mobile-device-failed'));
 photoMobile.matches=false;photoMobile.change();assert(!photoClasses.has('is-mobile-device-failed'),'desktop cleanup removes the fallback flag');

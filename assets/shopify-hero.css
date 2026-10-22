@@ -23,20 +23,10 @@
 .flow-contact { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 11px 26px; border-radius: 100px; color: var(--brand-dark); background: #ceced7; font-size: 12px; font-weight: 400; text-decoration: none; transition: background .25s, color .25s, transform .25s; }
 .flow-contact:is(:hover,:focus-visible) { background: #72558d; color: #ffffff; transform: translateY(-2px); }
 .flow-scene { position: absolute; inset: 0; pointer-events: none; }
-.flow-phone-position { position: absolute; width: var(--phone-w); left: 43%; top: 33%; perspective: 1800px; transform: translate3d(var(--scene-x, 0px), var(--scene-y, 0px), 0); transition: transform .8s cubic-bezier(.16,1,.3,1); }
-.flow-phone { position: relative; width: var(--phone-w); height: calc(var(--phone-w) * 2.07); border-radius: calc(var(--phone-w) * .13); transform: rotateX(var(--phone-rx, 0deg)) rotateY(var(--phone-ry, -24deg)) rotateZ(var(--phone-rz, 15deg)) scale(var(--phone-scale, 1)); transform-style: preserve-3d; background: linear-gradient(115deg, #818188, #171719 13%, #57565f 50%, #070708 68%, #62616a); border: 1px solid #7d7c835c; padding: 6px; box-shadow: 18px 18px 0 -4px #252429, 20px 18px 0 -3px #62616b, 30px 35px 50px #0008, -8px -8px 15px #b2a6cd12; }
-.flow-phone::before { content: ''; position: absolute; right: -17px; top: 21%; height: 12%; width: 4px; border-radius: 4px; background: linear-gradient(#727178, #252429); }
-.flow-phone::after { content: ''; position: absolute; inset: 4px; border-radius: inherit; transform: rotateY(180deg) translateZ(2px); backface-visibility: hidden; background: radial-gradient(circle at 19% 11%, #08090b 0 5.5%, #66686b 5.7% 6.5%, transparent 6.7%), radial-gradient(circle at 43% 17%, #08090b 0 5.5%, #66686b 5.7% 6.5%, transparent 6.7%), radial-gradient(circle at 19% 23%, #08090b 0 5.5%, #66686b 5.7% 6.5%, transparent 6.7%), linear-gradient(140deg, #55575b, #303235 65%, #45474a); }
-.flow-screen { position: relative; height: 100%; width: 100%; border-radius: calc(var(--phone-w) * .11); padding: 0; overflow: hidden; background: #f7f7f7; box-shadow: inset 0 0 0 1px #ffffff15; }
-.flow-screen::after { content: ''; pointer-events: none; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(110deg, #ffffff07, transparent 28%, transparent 68%, #ffffff05); }
-.flow-island { position: absolute; left: 35%; top: 1.1%; width: 30%; height: 2.5%; background: #000; border-radius: 30px; box-shadow: inset 0 -1px 2px #ffffff08; }
-.flow-phone-home { position: absolute; bottom: 9px; left: 34%; width: 32%; height: 3px; border-radius: 10px; background: #111; }
-.flow-screen-image { display: block; width: 100%; height: 100%; object-fit: fill; }
+.flow-phone-position { visibility: hidden; position: absolute; width: var(--phone-w); left: 43%; top: 33%; perspective: 1800px; transform: translate3d(var(--scene-x, 0px), var(--scene-y, 0px), 0); transition: transform .8s cubic-bezier(.16,1,.3,1); }
 .flow-mobile-device { display: none; }
-.flow-screen { backface-visibility: hidden; transform: translateZ(1px); }
 .flow-scene { z-index: 2; }
-.flow-device-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
-.has-phone-3d .flow-phone-position { visibility: hidden; }
+.flow-device-canvas { opacity: 0; transition: opacity 480ms cubic-bezier(.22,1,.36,1); position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
 .cinema-nav { position: fixed; z-index: 1000; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: 88px; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 4px; border-radius: 16px; border: 1px solid #ffffff80; background: #d9d6e2ed; box-shadow: inset 0 1px 0 #ffffffa6, inset 0 -1px 0 #ffffff26, 0 8px 30px #24183326; font-family: 'Outfit', sans-serif; transition: width .45s cubic-bezier(.16,1,.3,1), border-radius .45s; }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .cinema-nav { background: linear-gradient(135deg, #f5f3f8b8, #dedbe79c); -webkit-backdrop-filter: blur(30px) saturate(.65); backdrop-filter: blur(30px) saturate(.65); }
@@ -127,3 +117,7 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
 .flow-hero.has-started-scrolling .flow-scroll-cue { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .flow-scroll-cue { transition: none; } }
 
+
+/* Never expose the retired CSS hardware, even during context loss or failed modules. */
+.flow-scene.has-phone-3d .flow-device-canvas { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .flow-device-canvas { transition: none; } }

@@ -35,8 +35,6 @@
   const device = scene?.querySelector('.flow-phone-position');
   if (!story || !scene || !device || !clock) return;
   const slides = [...scene.querySelectorAll('[data-phase]')];
-  const phoneImage = scene.querySelector('.flow-screen-image');
-  const screenNames = ['home', 'collection', 'product'];
   let active = -1, start = 0, step = 1, width = 1, height = 1, keys;
   let progress = 0, lastProgress = -1, pointerX = 0, pointerY = 0, px = 0, py = 0;
   let force = true, scrollStarted = false, staticMobile = false;
@@ -44,18 +42,8 @@
   const clamp = n => Math.max(0, Math.min(1, n));
   const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
   const mix = (a,b,t) => a + (b-a) * t;
-  // Decode the CSS fallback's next screens before a turn needs them.
-  let screensPrepared = false;
-  const prepareScreens = () => {
-    if (screensPrepared || window.innerWidth < 900) return;
-    screensPrepared = true;
-    screenNames.slice(1).forEach(name => { const image = new Image(); image.src = `assets/phone/screen-${name}.webp`; image.decode?.().catch(() => {}); });
-  };
-  const setScreen = index => {
-    if (index === active) return;
-    active = index;
-    if (phoneImage) phoneImage.src = `assets/phone/screen-${screenNames[index]}.webp`;
-  };
+  // Screen textures are owned by the GLB renderer; no CSS-device duplicate loads.
+  const setScreen = index => { active = index; };
   const measure = () => {
     staticMobile = window.innerWidth < 900;
     story.toggleAttribute('data-scroll-ready', !motion.matches && !staticMobile);
@@ -73,7 +61,6 @@
       setScreen(0);
       return;
     }
-    prepareScreens();
     start = story.getBoundingClientRect().top + window.scrollY;
     height = scene.offsetHeight; width = scene.clientWidth;
     step = Math.max(1, height * 1.32);

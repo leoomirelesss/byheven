@@ -19,7 +19,7 @@ if(host) init().catch(error=> {
   host.dataset.phoneState='fallback';
   const status=document.querySelector('[data-viewer-status]');
   if(status) status.textContent='Render del modelo. El giro interactivo requiere WebGL.';
-  console.warn('Phone 3D: using static screen fallback.',error.message);
+  console.warn('Phone 3D unavailable; continuing without a provisional device.',error.message);
 });
 
 async function init() {
@@ -40,10 +40,12 @@ async function init() {
   for(const [color,intensity,x,y,z] of [[0xffffff,5,-4,5,5],[0xd8dfff,3,5,1,-2],[0xffffff,2,0,-4,3]]) {
     const light=new T.DirectionalLight(color,intensity); light.position.set(x,y,z); scene.add(light);
   }
+  let disposed=false;
   const textures=[], loader=new T.TextureLoader();
   function loadScreen(index) {
     const names=['home','collection','product'];
     return loader.loadAsync(new URL(`screen-${names[index]}.webp`,base).href).then(texture=> {
+      if(disposed) { texture.dispose(); return; }
       texture.colorSpace=T.SRGBColorSpace; texture.flipY=false;
       texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
       textures[index]=texture;
@@ -53,7 +55,7 @@ async function init() {
   }
   const [gltf]=await Promise.all([
     new GLTFLoader().loadAsync(new URL('iphone-17-pro.glb',base).href),
-    loadScreen(0), Promise.allSettled([loadScreen(1),loadScreen(2)]),
+    loadScreen(0),
   ]);
   const phone=gltf.scene; scene.add(phone);
   let display;
@@ -63,7 +65,7 @@ async function init() {
   display.material.toneMapped=false;
   display.material.map=textures[0]; display.material.needsUpdate=true;
   let pose={left:43,top:33,rx:0,ry:-24,rz:15,scale:1,index:0,px:0,py:0};
-  let frame=0,visible=true,contextLost=false,disposed=false;
+  let frame=0,visible=true,contextLost=false;
   let width=1,height=1,phonePixelWidth=280;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const schedule=()=> { if(!frame && visible && !document.hidden && !contextLost && !disposed) frame=requestAnimationFrame(draw); };
@@ -105,7 +107,9 @@ async function init() {
   canvas.addEventListener('webglcontextlost',event=> {
     event.preventDefault(); contextLost=true; host.classList.remove('has-phone-3d'); host.dataset.phoneState='fallback';
   });
-  canvas.addEventListener('webglcontextrestored',()=> { contextLost=false; host.classList.add('has-phone-3d'); host.dataset.phoneState='ready'; schedule(); });
+  canvas.addEventListener('webglcontextrestored',()=> { contextLost=false; draw(); host.classList.add('has-phone-3d'); host.dataset.phoneState='ready'; });
+  // Prepare the actual model's shaders before revealing its first rendered frame.
+  await renderer.compileAsync(scene,camera);
   host.append(canvas);
   const observer=new ResizeObserver(resize); observer.observe(host);
   const intersection=new IntersectionObserver(entries=> { visible=entries[0].isIntersecting; if(visible) schedule(); }); intersection.observe(host);
@@ -125,7 +129,10 @@ async function init() {
     }));
     const status=document.querySelector('[data-viewer-status]'); if(status) status.textContent='Arrastra para girar el teléfono.';
   } else window.dispatchEvent(new Event('flow:ready'));
-  draw(); host.classList.add('has-phone-3d'); host.dataset.phoneState='ready';
+  draw();
+  if(!contextLost) { host.classList.add('has-phone-3d'); host.dataset.phoneState='ready'; }
+  // Later chapters must not hold the opening behind the loading screen.
+  Promise.allSettled([loadScreen(1),loadScreen(2)]).then(schedule);
   window.addEventListener('pagehide',event=> {
     if(event.persisted) return;
     disposed=true; cancelAnimationFrame(frame); observer.disconnect(); intersection.disconnect();
