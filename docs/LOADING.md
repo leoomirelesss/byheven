@@ -1,6 +1,6 @@
 # Initial readiness
 
-Eight public documents share a small loading gate using the supplied handwritten logo. The optimized WebP preserves its composition; Only the supplied signature pulses over the existing page. The fixed layer is transparent and screen-blends its ink to prevent the original white paper from forming a rectangle. There is no background, veil, blur, texture, visible text, button or progress indicator. No generated percentage or mandatory display duration is used.
+Eight public documents share a small loading gate using the supplied handwritten logo. The optimized WebP preserves its composition; Only the supplied signature pulses over the existing page. A separate black layer at 60% opacity dims the page; keeping it outside the signature’s screen-blended layer preserves both the dimming and the logo’s transparent ink. There is no blur, texture, visible text, button or progress indicator. After readiness, the pulse pauses, the signature fades over 260 ms and the black layer clears over 680 ms with a 60 ms offset; cleanup completes at 760 ms. Reduced motion skips both fades. No generated percentage or mandatory display duration is used.
 
 Home desktop waits for the real GLB first draw and font readiness. The retired CSS hardware is removed from HTML and styles; its empty position anchor retains the approved sizing and scroll geometry. The canvas remains transparent until the real model is ready. WebGL/import failure continues without drawing a substitute device.
 

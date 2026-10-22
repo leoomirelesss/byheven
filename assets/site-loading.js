@@ -17,6 +17,7 @@
     const loader = document.querySelector('.site-loader');
     const hadFocus = loader?.contains(document.activeElement);
     loader?.remove();
+    document.querySelector('.site-loading-veil')?.remove();
     delete root.dataset.siteLoading;
     if (hadFocus) {
       const main = document.querySelector('main');
@@ -34,7 +35,7 @@
     restore.forEach((inert, node) => { node.inert = inert; });
     if (reduced.matches) { finish(); return; }
     root.dataset.siteLoading = 'leaving';
-    exitTimer = setTimeout(finish, 480);
+    exitTimer = setTimeout(finish, 760);
   };
   // A broken module, font or connection must never trap the visitor.
   const deadline = setTimeout(finish, 10000);
@@ -83,7 +84,7 @@
     if (mounted || finished) return;
     mounted = true;
     for (const node of document.body.children) {
-      if (node.matches('.site-loader, script, style, link')) continue;
+      if (node.matches('.site-loader, .site-loading-veil, script, style, link')) continue;
       restore.set(node, node.inert); node.inert = true;
     }
     const scene = document.querySelector('.flow-scene');
