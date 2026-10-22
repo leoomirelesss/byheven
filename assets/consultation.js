@@ -55,6 +55,9 @@
     ].join('\n');
     const url = new URL(form.action);
     url.searchParams.set('text', message);
+    window.HevenAnalytics?.track('consultation_request', {
+      service_type: ({'Administración de Shopify': 'shopify', 'Diseño y desarrollo web': 'web', 'Automatización e IA': 'automation'})[value('service')] || 'guidance'
+    });
     window.location.assign(url.href);
   });
 })();
