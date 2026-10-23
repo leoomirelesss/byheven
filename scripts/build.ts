@@ -6,6 +6,8 @@ import { verifyPublicSite } from "./verify-public-site.mjs";
 import { verifySEO } from "./verify-seo.mjs";
 import { verifyDiscovery } from "./verify-discovery.mjs";
 import { indexNowKey } from "./discovery-config.mjs";
+import { optimizeDelivery } from "./optimize-delivery.js";
+import { verifyDelivery } from "./verify-delivery.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const out = resolve(root, "dist");
 await build({entryPoints: [resolve(root, "src/case-index-motion.ts")], outfile: resolve(root, "assets/case-index-motion.js"), bundle: true, format: "esm", target: "es2022", minify: true});
@@ -16,6 +18,8 @@ await mkdir(out, { recursive: true });
 for (const path of ["index.html", "robots.txt", "sitemap.xml", `${indexNowKey}.txt`, "assets", "case-studies"]) {
   await cp(resolve(root, path), resolve(out, path), { recursive: true });
 }
+await optimizeDelivery(out);
+verifyDelivery(out);
 verifyPublicSite(out);
 verifySEO(out);
 verifyDiscovery(out);

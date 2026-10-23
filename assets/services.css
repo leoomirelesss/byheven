@@ -1,5 +1,5 @@
 /* Editorial services: shared palette and type with the Shopify story. */
-#services.commerce-services { --services-ink: #ceced7; --services-muted: #9999a5; --services-rule: #35353d; padding: clamp(76px, 8vw, 150px) 2.65vw clamp(88px, 9vw, 160px); background: #090909; color: var(--services-ink); font-family: 'Outfit', sans-serif; }
+#services.commerce-services { --services-ink: #ceced7; --services-muted: #b5b0c1; --services-rule: #35353d; padding: clamp(76px, 8vw, 150px) 2.65vw clamp(88px, 9vw, 160px); background: #090909; color: var(--services-ink); font-family: 'Outfit', sans-serif; }
 .commerce-services-inner { max-width: 1800px; margin: 0 auto; }
 #services.commerce-services.is-arrival-paused { min-height: var(--services-arrival-height); }
 .is-arrival-paused > .commerce-services-inner { position: sticky; top: var(--services-arrival-top); }
