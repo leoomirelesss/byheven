@@ -107,7 +107,7 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
 .flow-slide[data-flow-results] .flow-results-layout > .flow-feature-title { position: static; font-size: clamp(52px, min(7.2vw, 12svh), 132px); }
 .flow-slide[data-flow-results] .flow-results-layout > .flow-result-copy { position: static; width: 100%; max-width: none; }
 /* The expressive trace is not a measured sales series. */
-.flow-growth { position: relative; width: 100%; height: min(100%, 260px); min-height: 0; align-self: center; pointer-events: none; }
+.flow-growth { position: relative; width: 78%; height: min(100%, 260px); min-height: 0; align-self: center; pointer-events: none; }
 .flow-growth svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .flow-growth-halo { opacity: .2; }
 .flow-growth-stroke { stroke-dasharray: 1; stroke-dashoffset: var(--growth-rest, 0); }
