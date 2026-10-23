@@ -80,6 +80,17 @@
     check();
   });
 
+  const initialFonts = () => {
+    const fonts = document.fonts;
+    if (!fonts?.load) return fonts?.ready;
+    // All opening compositions use Outfit. Both variable weights and the brand
+    // glyphs must be ready; Inter/Mono used in the footer must not hold the hero.
+    return Promise.allSettled([
+      fonts.load('400 16px "Outfit"', 'by ˈHevən'),
+      fonts.load('500 16px "Outfit"', 'by ˈHevən'),
+    ]);
+  };
+
   const mount = () => {
     if (mounted || finished) return;
     mounted = true;
@@ -90,7 +101,7 @@
     const scene = document.querySelector('.flow-scene');
     const visual = scene ? phoneReady(scene) : imageReady(document.querySelector('.case-hero-media img'));
     // Wait for the visible composition, not window.load or below-the-fold images.
-    Promise.allSettled([visual, document.fonts?.ready]).then(() => {
+    Promise.allSettled([visual, initialFonts()]).then(() => {
       if (finished || closing) return;
       observer?.disconnect();
       frame = requestAnimationFrame(() => { frame = requestAnimationFrame(reveal); });

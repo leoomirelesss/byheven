@@ -25,7 +25,7 @@ assert(runtime.indexOf("host.dataset.phoneState='ready'") < runtime.indexOf('Pro
 assert(read('assets/phone/phone-entry.js').includes("scene.dataset.phoneState = 'failed'"));
 
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return {promise, resolve}; };
-function fixture({mobile = false, reduced = false, homePage = true, cachedImage = false} = {}) {
+function fixture({mobile = false, reduced = false, homePage = true, cachedImage = false, legacyFonts = false} = {}) {
   const handlers = new Map(), timers = new Map(), frames = new Map();
   let id = 0, notify, resets = 0;
   const target = () => ({addEventListener(type, fn, options) {
@@ -46,15 +46,16 @@ function fixture({mobile = false, reduced = false, homePage = true, cachedImage 
   const classes = new Set();
   const scene = {dataset: {}, classList: {contains: c => classes.has(c)}, querySelector: () => image};
   const desktop = {...target(), matches: !mobile};
-  const fonts = deferred();
-  const document = {...target(), documentElement: root, readyState: 'loading', fonts: {ready: fonts.promise}, body: {children: [nav, main, menu, veil, loader]}, activeElement: null,
+  const fonts = deferred(), offscreenFonts = deferred(), requestedFonts = [];
+  const fontSet = legacyFonts ? {ready: fonts.promise} : {ready: offscreenFonts.promise, load(font, text) {requestedFonts.push({font,text}); return fonts.promise;}};
+  const document = {...target(), documentElement: root, readyState: 'loading', fonts: fontSet, body: {children: [nav, main, menu, veil, loader]}, activeElement: null,
     querySelector: selector => selector === '.site-loader' ? loader : selector === '.site-loading-veil' ? veil : selector === 'main' ? main : selector === '.flow-scene' ? (homePage ? scene : null) : selector === '.case-hero-media img' ? image : null};
   const window = {...target(), matchMedia: query => query.includes('min-width') ? desktop : {matches: reduced}, HevenMotion: {reset() { resets++; }}};
   vm.runInNewContext(source, {window, document, AbortController, Promise,
     MutationObserver: class {constructor(fn) { notify = fn; } observe() {} disconnect() { this.disconnected = true; }},
     setTimeout: (fn, ms) => { timers.set(++id, {fn, ms}); return id; }, clearTimeout: key => timers.delete(key),
     requestAnimationFrame: fn => { frames.set(++id, fn); return id; }, cancelAnimationFrame: key => frames.delete(key)});
-  return {root, image, document, loader, veil, main, nav, menu, desktop, fonts, frames, timers,
+  return {root, image, document, loader, veil, main, nav, menu, desktop, fonts, offscreenFonts, requestedFonts, frames, timers,
     mount() { fire(document, 'DOMContentLoaded'); },
     ready(state = 'ready') { scene.dataset.phoneState = state; if (state === 'ready') classes.add('has-phone-3d'); notify?.(); },
     load() { image.naturalWidth = 1080; fire(image, 'load'); },
@@ -75,10 +76,16 @@ desktop.fonts.resolve(); await settle(); desktop.runFrames();
 assert.equal(desktop.root.dataset.siteLoading, 'leaving'); assert(!desktop.main.inert);
 desktop.advance(760); assert(desktop.loader.removed && desktop.veil.removed); assert.equal(desktop.root.dataset.siteLoading, undefined);
 assert(desktop.menu.inert, 'existing inert menu stays inert'); assert.equal(desktop.timers.size, 0); assert.equal(desktop.frames.size, 0);
+assert.deepEqual(desktop.requestedFonts.map(f=>f.font), ['400 16px "Outfit"','500 16px "Outfit"']);
+assert(desktop.requestedFonts.every(f=>f.text.includes('ˈHevən')), 'the brand extended glyphs are ready before revealing');
+assert(desktop.loader.removed, 'offscreen fonts can remain unresolved without delaying the opening');
 desktop.ready(); await settle(); assert.equal(desktop.root.dataset.siteLoading, undefined, 'later phone changes never reopen a document loader');
 
 const mobile = fixture({mobile: true, cachedImage: true}); mobile.fonts.resolve(); mobile.mount(); await settle(); mobile.runFrames(); mobile.advance(760);
 assert(mobile.loader.removed, 'cached approved mobile render releases immediately without a mandatory hold');
+const legacy = fixture({mobile: true, cachedImage: true, legacyFonts: true}); legacy.mount(); await settle();
+assert.equal(legacy.frames.size, 0); legacy.fonts.resolve(); await settle(); legacy.runFrames(); legacy.advance(760);
+assert(legacy.loader.removed, 'older FontFaceSet implementations retain their safe ready fallback');
 
 const broken = fixture(); broken.mount(); broken.fonts.resolve(); broken.ready('fallback'); await settle(); broken.runFrames(); broken.advance(760);
 assert(broken.loader.removed, 'WebGL failure allows access without a provisional phone');
