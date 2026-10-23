@@ -26,6 +26,7 @@
   .flow-story .flow-slide:not([data-phase="0"]) { display: none; }
   .flow-story .flow-hero, .flow-story[data-scroll-ready] .flow-hero { grid-template-areas: 'brand' 'title' 'copy' 'phone' 'results'; }
   .flow-story .flow-slide[data-flow-results] { grid-area: results; display: grid; gap: 16px; height: auto; min-height: 0; margin-top: 12px; }
+  .flow-story .flow-results-layout { position: static; width: 100%; height: auto; display: grid; grid-template-rows: auto; gap: 16px; }
   .flow-story .flow-slide[data-flow-results] .flow-feature-title { position: static; margin: 0; font-size: clamp(2rem, 1.25rem + 4.4vw, 3.75rem); line-height: 1.08; }
   .flow-story .flow-slide[data-flow-results] .flow-feature-title br { display: none; }
   .flow-story .flow-growth { position: relative; inset: auto; width: 100%; height: 100px; }

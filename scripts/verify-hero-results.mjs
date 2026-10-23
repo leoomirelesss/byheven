@@ -8,7 +8,7 @@ function fixture({mobile=false,reduced=false,broken=false}={}) {
   const events={}, values=new Map(); let measured=0, pathReads=0, writes=0, client, disposed=0;
   const path={getTotalLength(){pathReads++;if(broken)throw Error('unavailable geometry');return 600;},getPointAtLength(x){pathReads++;return{x,y:150-x/5};}};
   const dot={setAttribute(k,v){values.set(k,v);writes++;}};
-  const graph={style:{setProperty(k,v){values.set(k,v);writes++;}},getBoundingClientRect(){measured++;return{top:1200-win.scrollY};},querySelector:q=>q==='.flow-growth-line'?path:dot};
+  const graph={style:{setProperty(k,v){values.set(k,v);writes++;}},getBoundingClientRect(){measured++;return{top:1200-win.scrollY,width:300,height:110};},querySelector:q=>q==='.flow-growth-line'?path:dot};
   const chapter={querySelector:()=>graph},scene={dataset:{storyProgress:'0'}};
   const motion={matches:reduced,addEventListener(type,fn){events.motion=fn;}};
   const clock={subscribe(c){client=c;return()=>{disposed++;client=null;};},reset(){client?.measure();}};
@@ -22,6 +22,7 @@ const desktop=fixture();desktop.measure();const measured=desktop.reads;
 desktop.pose(1.3);assert.equal(desktop.values.get('--growth-rest'),'1');
 desktop.pose(1.65);const halfway=Number(desktop.values.get('--growth-rest'));assert(Math.abs(halfway-.5)<1e-8);
 desktop.pose(2);assert.equal(desktop.values.get('--growth-rest'),'0');
+assert(desktop.values.get('transform').endsWith('scale(2 2)'), 'the endpoint stays round when the SVG is resized');
 desktop.pose(1.65);assert.equal(Number(desktop.values.get('--growth-rest')),halfway,'reversing scroll restores the same trace position');
 const writes=desktop.writes;desktop.pose(1.65);assert.equal(desktop.writes,writes,'a stationary pose performs no extra writes');
 assert.equal(desktop.reads,measured,'scroll never measures DOM or SVG geometry');
