@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {transformSync} from 'esbuild';
+import './verify-hero-results.mjs';
 
 const source=readFileSync(new URL('../assets/scroll-story.js',import.meta.url),'utf8');
 function fixture(){

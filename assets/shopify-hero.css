@@ -104,6 +104,29 @@ body.mobile-menu-open .cinema-menu-panel { opacity: 1; visibility: visible; tran
 .flow-proof-link:hover { text-decoration: underline; }
 .flow-slide[data-phase="2"] .flow-feature-title { left: 49%; top: 8%; font-size: clamp(64px, 7.2vw, 132px); }
 .flow-slide[data-phase="2"] .flow-feature-copy { left: 49%; bottom: 18%; }
+/* Proof stays in the existing third chapter; the trace carries no invented data. */
+.flow-growth { position: absolute; left: 49%; top: 36%; width: min(45vw, 620px); height: clamp(110px, 17svh, 170px); pointer-events: none; }
+.flow-growth svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.flow-growth-halo { opacity: .28; }
+.flow-growth-stroke { stroke-dasharray: 1; stroke-dashoffset: var(--growth-rest, 0); }
+.flow-slide[data-phase="2"] .flow-result-copy { bottom: 13%; width: min(45vw, 620px); max-width: none; }
+.flow-results { display: grid; grid-template-columns: .75fr 1.25fr; column-gap: clamp(18px, 2.5vw, 46px); list-style: none; padding: 0; margin: 0 0 24px; }
+.flow-results li { min-width: 0; }
+.flow-results a { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 72px; width: fit-content; max-width: 100%; text-decoration: none; color: #e4ddeb; }
+.flow-result-value { display: block; font-size: clamp(30px, 3.4vw, 54px); font-weight: 400; line-height: 1.05; letter-spacing: -.045em; white-space: nowrap; }
+.flow-result-label { font-size: clamp(11px, .95vw, 15px); line-height: 1.35; color: #b5b0c1; }
+.flow-result-label .ui-arrow { width: 13px; height: 13px; margin-left: 5px; }
+.flow-result-copy > p { max-width: 390px; margin-bottom: 10px; }
+.flow-result-source { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; color: #b5b0c1; font-size: 11px; line-height: 1.4; text-decoration: none; }
+.flow-result-source .ui-arrow { width: 13px; height: 13px; }
+.flow-results a:is(:hover,:focus-visible) .flow-result-value, .flow-result-source:is(:hover,:focus-visible) { color: #f5effb; }
+.flow-results a:is(:hover,:focus-visible) .ui-arrow, .flow-result-source:is(:hover,:focus-visible) .ui-arrow { transform: translate(2px, -2px); }
+@media (min-width: 900px) and (max-height: 800px) {
+  .flow-slide[data-phase="2"] .flow-feature-title { font-size: clamp(64px, 6.4vw, 108px); }
+  .flow-growth { top: 34%; height: 112px; }
+  .flow-slide[data-phase="2"] .flow-result-copy { bottom: 11%; }
+  .flow-results { margin-bottom: 18px; }
+}
 @media (max-width: 700px) {
   .flow-slide, .flow-scene { min-height: 850px; }
   .flow-story[data-scroll-ready] { min-height: 0; }

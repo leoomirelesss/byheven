@@ -97,7 +97,7 @@ for (const height of [568, 844]) {
  assert.equal(story.attrs.get('data-scroll-ready'),false,'all mobile heights use natural hero flow');
  assert.equal(preloads,0,'mobile does not preload the discarded screens');
  assert.equal(image.src,'','the removed CSS phone does not request duplicate screens');
- assert.deepEqual(slides.map(s=>s.inert),[false,true,true],'only the visible mobile chapter is focusable');
+ assert.deepEqual(slides.map(s=>s.inert),[false,true,false],'opening and compact results are focusable; discarded mobile chapter stays inert');
  assert.equal(client.render({y:0}),false,'mobile hero does not animate on scroll');
  win.innerWidth=1440;client.measure();
  assert.equal(story.attrs.get('data-scroll-ready'),true,'desktop story returns at the approved breakpoint');

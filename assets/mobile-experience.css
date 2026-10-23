@@ -24,6 +24,17 @@
   .flow-story .flow-hero, .flow-story[data-scroll-ready] .flow-hero { --phone-w: clamp(154px, 42vw, 220px); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'brand' 'title' 'copy' 'phone'; gap: 24px; position: relative; top: auto; height: auto; min-height: 0; padding: max(24px, env(safe-area-inset-top)) var(--mobile-gutter) 48px; overflow: visible; clip-path: none; }
   .flow-story .flow-slide[data-phase="0"] { display: contents; }
   .flow-story .flow-slide:not([data-phase="0"]) { display: none; }
+  .flow-story .flow-hero, .flow-story[data-scroll-ready] .flow-hero { grid-template-areas: 'brand' 'title' 'copy' 'phone' 'results'; }
+  .flow-story .flow-slide[data-flow-results] { grid-area: results; display: grid; gap: 16px; height: auto; min-height: 0; margin-top: 12px; }
+  .flow-story .flow-slide[data-flow-results] .flow-feature-title { position: static; margin: 0; font-size: clamp(2rem, 1.25rem + 4.4vw, 3.75rem); line-height: 1.08; }
+  .flow-story .flow-slide[data-flow-results] .flow-feature-title br { display: none; }
+  .flow-story .flow-growth { position: relative; inset: auto; width: 100%; height: 100px; }
+  .flow-story .flow-slide[data-flow-results] .flow-result-copy { position: static; width: 100%; max-width: none; font-size: 1rem; line-height: 1.5; }
+  .flow-story .flow-results { gap: 16px; margin-bottom: 18px; }
+  .flow-story .flow-result-value { font-size: clamp(1.75rem, 1.25rem + 2.3vw, 2.5rem); }
+  .flow-story .flow-result-label { font-size: .8125rem; }
+  .flow-story .flow-result-copy > p { margin-bottom: 6px; }
+  .flow-story .flow-result-source { font-size: .75rem; }
   .flow-brand { grid-area: brand; justify-self: end; position: relative; inset: auto; font-size: 26px; min-height: 32px; margin-bottom: 8px; }
   .flow-story .flow-title { grid-area: title; position: relative; inset: auto; margin-top: 24px; font-size: clamp(2.375rem, 1.3rem + 5.2vw, 4rem); line-height: 1.05; color: #e4e1eb; }
   .flow-title-line { white-space: normal; }

@@ -49,10 +49,11 @@
     story.toggleAttribute('data-scroll-ready', !motion.matches && !staticMobile);
     if (staticMobile) {
       slides.forEach((slide, index) => {
-        slide.inert = index !== 0;
-        slide.setAttribute('aria-hidden', String(index !== 0));
+        const visible = index === 0 || index === 2;
+        slide.inert = !visible;
+        slide.setAttribute('aria-hidden', String(!visible));
         slide.style.removeProperty('--slide-y');
-        slide.classList.toggle('is-active', index === 0);
+        slide.classList.toggle('is-active', visible);
       });
       for (const key of ['left','top','ry','rz','rx','scale','x','y']) scene.style.removeProperty(`--phone-${key}`);
       scene.style.removeProperty('--asterisk-turn');
