@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {transformSync} from 'esbuild';
 import './verify-hero-results.mjs';
+import './verify-interaction-feel.mjs';
 
 const source=readFileSync(new URL('../assets/scroll-story.js',import.meta.url),'utf8');
 function fixture(){

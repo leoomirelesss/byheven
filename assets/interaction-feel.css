@@ -1,0 +1,28 @@
+/* One tactile language. Scale is independent of existing transforms/parallax. */
+:root { --feel-spring: cubic-bezier(.2,.8,.2,1); }
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --feel-spring: linear(0, 0.06452, 0.20764, 0.37551, 0.53685, 0.67594, 0.78707, 0.87050, 0.92960, 0.96897, 0.99335, 1.00698, 1.01335, 1.01515, 1.01434, 1.01224, 1.00970, 1.00723, 1.00509, 1.00336, 1.00206, 1.00113, 1.00051, 1.00013, 0.99991, 0.99980, 0.99977, 0.99978, 1); }
+}
+html[data-heven-feel] :is(a[href], button, summary, [role="button"]) {
+  scale: var(--feel-scale, 1);
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 220ms;
+  transition-timing-function: var(--feel-spring);
+  transition-delay: 0s;
+}
+html[data-heven-feel] :is(a[href], button, summary, [role="button"]):active:not(:disabled) {
+  --feel-scale: .98;
+  transition-duration: 0ms;
+  transition-delay: 0ms;
+}
+.cinema-nav { transition: width 560ms var(--feel-spring), border-radius 560ms var(--feel-spring); }
+.cinema-nav.is-expanded .cinema-menu-toggle, .cinema-nav.is-expanded .cinema-nav-contact { transition-delay: 0s; }
+.cinema-menu-panel, .cinema-menu-panel a, .case-cover, .ui-arrow, .case-arrow { transition-timing-function: var(--feel-spring); }
+@supports (corner-shape: superellipse(2)) {
+  .cinema-nav, .cinema-nav-contact, .cinema-menu-toggle, .chat-question, .chat-message, .home-field input, .home-field textarea, .home-field select { corner-shape: superellipse(2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-heven-feel] :is(a[href], button, summary, [role="button"]),
+  html[data-heven-feel] :is(a[href], button, summary, [role="button"]):active:not(:disabled) { scale: none; transition: none; }
+  .cinema-nav, .cinema-menu-panel, .cinema-menu-panel a, .case-cover, .ui-arrow, .case-arrow { transition: none; }
+}

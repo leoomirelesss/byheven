@@ -46,7 +46,8 @@
           // Retarget native scrolling from the last request, even before its midpoint.
           const current = requestedIndex ?? nearest();
           requestedIndex = Math.max(0, Math.min(positions.length - 1, current + direction));
-          track.scrollTo({left: positions[requestedIndex], behavior: reduced.matches ? 'instant' : 'smooth'});
+          if (window.HevenFeel) window.HevenFeel.scrollTo(track, positions[requestedIndex]);
+          else track.scrollTo({left: positions[requestedIndex], behavior: reduced.matches ? 'instant' : 'smooth'});
           sync();
         });
         controls.append(button);
@@ -60,6 +61,7 @@
         buttons[1].disabled = !positions.length || destination >= maximum - 2;
       };
       const measure = () => {
+        window.HevenFeel?.stop(track);
         const items = [...track.children].filter(item => !item.hidden);
         maximum = Math.max(0, track.scrollWidth - track.clientWidth);
         const first = items[0]?.offsetLeft || 0;
@@ -68,6 +70,7 @@
         sync();
       };
       const takeOver = () => {
+        window.HevenFeel?.stop(track);
         if (requestedIndex === null) return;
         requestedIndex = null;
         track.scrollTo({left: track.scrollLeft, behavior: 'instant'});
@@ -77,14 +80,15 @@
       // Touch and wheel stay native: no preventDefault, capture or extra momentum.
       listen(track, 'pointerdown', takeOver, {passive: true});
       listen(track, 'wheel', takeOver, {passive: true});
-      listen(track, 'keydown', () => { requestedIndex = null; sync(); });
-      listen(track, 'scrollend', () => { requestedIndex = null; sync(); });
+      listen(track, 'keydown', () => { window.HevenFeel?.stop(track); requestedIndex = null; sync(); });
+      listen(track, 'scrollend', () => { if (!window.HevenFeel?.isScrolling(track)) { requestedIndex = null; sync(); } });
       const resize = new ResizeObserver(measure);
       resize.observe(track);
       const changes = new MutationObserver(measure);
       changes.observe(track, {subtree: true, attributes: true, attributeFilter: ['hidden']});
       measure();
       cleanups.push(() => {
+        window.HevenFeel?.stop(track);
         resize.disconnect(); changes.disconnect(); controls.remove();
         if (!previousId) track.removeAttribute('id');
       });
