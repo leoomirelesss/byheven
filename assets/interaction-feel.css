@@ -16,6 +16,8 @@ html[data-heven-feel] :is(a[href], button, summary, [role="button"]):active:not(
   transition-delay: 0ms;
 }
 .cinema-nav { transition: width 560ms var(--feel-spring), border-radius 560ms var(--feel-spring); }
+/* Keep the home mark clickable while the dock width is still expanding. */
+.cinema-nav .cinema-nav-mark { z-index: 2; }
 .cinema-nav.is-expanded .cinema-menu-toggle, .cinema-nav.is-expanded .cinema-nav-contact { transition-delay: 0s; }
 .cinema-menu-panel, .cinema-menu-panel a, .case-cover, .ui-arrow, .case-arrow { transition-timing-function: var(--feel-spring); }
 @supports (corner-shape: superellipse(2)) {
